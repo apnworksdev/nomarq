@@ -1,0 +1,52 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { urlFor } from '../../lib/image';
+import { sanity } from '../../lib/sanity';
+import {
+  projectBySlugQuery,
+  projectSlugsQuery,
+  type Project,
+} from '../../lib/queries';
+
+export async function getStaticPaths() {
+  const slugs = await sanity.fetch<{ slug: string }[]>(projectSlugsQuery);
+
+  return slugs.map(({ slug }) => ({
+    params: { slug },
+  }));
+}
+
+const { slug } = Astro.params;
+
+const project = await sanity.fetch<Project | null>(projectBySlugQuery, { slug });
+
+if (!project) {
+  return Astro.redirect('/');
+}
+---
+
+<Layout title={`${project.title} — Nomarq`}>
+  <p><a href="/">← All projects</a></p>
+  <h1>{project.title}</h1>
+  {project.description && <p>{project.description}</p>}
+  {
+    project.image && (
+      <img
+        src={urlFor(project.image).width(1200).fit('max').url()}
+        alt={project.title}
+        width="1200"
+        loading="lazy"
+      />
+    )
+  }
+</Layout>
+
+<style>
+  img {
+    display: block;
+    width: 100%;
+    max-width: 1200px;
+    height: auto;
+    margin-top: 1.5rem;
+  }
+</style>

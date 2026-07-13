@@ -1,0 +1,63 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { urlFor } from '../lib/image';
+import { sanity } from '../lib/sanity';
+import { projectsQuery, type Project } from '../lib/queries';
+
+const projects = await sanity.fetch<Project[]>(projectsQuery);
+---
+
+<Layout title="Nomarq">
+  <h1>Projects</h1>
+
+  {
+    projects.length === 0 ? (
+      <p>No projects yet. Add some in Sanity Studio.</p>
+    ) : (
+      <ul>
+        {projects.map((project) => (
+          <li>
+            <a href={`/projects/${project.slug}`}>{project.title}</a>
+            {project.image && (
+              <img
+                src={urlFor(project.image).width(600).height(400).fit('crop').url()}
+                alt={project.title}
+                width="600"
+                height="400"
+                loading="lazy"
+              />
+            )}
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</Layout>
+
+<style>
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 2rem;
+  }
+
+  li {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  a {
+    color: inherit;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+  }
+</style>
