@@ -1,6 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import { imageAlt } from '../../lib/alt';
 import { urlFor } from '../../lib/image';
+import { formatLocation } from '../../lib/location';
 import { sanity } from '../../lib/sanity';
 import {
   projectBySlugQuery,
@@ -28,15 +30,28 @@ if (!project) {
 <Layout title={`${project.title} — Nomarq`}>
   <p><a href="/">← All projects</a></p>
   <h1>{project.title}</h1>
+  {
+    formatLocation(project.location, 'full') && (
+      <p>{formatLocation(project.location, 'full')}</p>
+    )
+  }
   {project.description && <p>{project.description}</p>}
   {
-    project.image && (
-      <img
-        src={urlFor(project.image).width(1200).fit('max').url()}
-        alt={project.title}
-        width="1200"
-        loading="lazy"
-      />
+    project.images && project.images.length > 0 && (
+      <ul>
+        {project.images.map((item, index) =>
+          item.image ? (
+            <li>
+              <img
+                src={urlFor(item.image).width(1200).fit('max').url()}
+                alt={imageAlt(item.alt, project.title, { index })}
+                width="1200"
+                loading="lazy"
+              />
+            </li>
+          ) : null,
+        )}
+      </ul>
     )
   }
 </Layout>
@@ -48,5 +63,13 @@ if (!project) {
     max-width: 1200px;
     height: auto;
     margin-top: 1.5rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+    display: grid;
+    gap: 2rem;
   }
 </style>

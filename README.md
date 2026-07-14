@@ -1,6 +1,6 @@
 # Nomarq
 
-Minimal Astro + Sanity MVP for an architecture studio portfolio.
+Astro + Sanity portfolio for the Nomarq architecture studio.
 
 ## Structure
 
@@ -40,7 +40,7 @@ cd studio
 npm run dev
 ```
 
-Open [http://localhost:3333](http://localhost:3333), create a few **Project** documents, and publish them.
+Open [http://localhost:3333](http://localhost:3333) to edit content.
 
 ### 5. Run the Astro site
 
@@ -51,13 +51,43 @@ cd web
 npm run dev
 ```
 
-Open [http://localhost:4321](http://localhost:4321) to see your projects.
+Open [http://localhost:4321](http://localhost:4321).
 
-## What's included
+## Sanity content model
 
-- **Sanity schema:** `project` (title, slug, description, image)
-- **Astro pages:** home (project list) and `/projects/[slug]` (project detail)
-- **Build-time fetching:** content is pulled from Sanity when you run `npm run build`
+### Documents
+
+- **Project** — title, slug, location, uses, year, collaborators, photography, description, images (max 6)
+- **Journal** — title, slug, category, year, metadata, description, optional external link, images (max 6)
+- **Person** — name, position
+- **Use** — taxonomy tags for project filters
+
+### Singletons
+
+- **Home** — ordered sections referencing projects or journal entries, each with layout and starting column options
+- **About** — video, contact info, image swiper, recognitions/initiatives lists, team areas
+
+### Shared objects
+
+- **imageWithAlt** — image with optional alt text
+- **location** — place + country (full/short)
+- **homeSection** — project or journal block with layout settings
+- **teamSection** — area title + ordered person references
+
+## Astro site
+
+Currently implemented:
+
+- Home project list (`/`)
+- Project detail pages (`/projects/[slug]`) with gallery, location, and alt text fallbacks
+
+Not yet implemented on the frontend:
+
+- Home sections layout
+- Journal pages
+- About page (team, swiper, lists, contact)
+
+Content is fetched from Sanity at build time (`npm run build` in `web/`).
 
 ## Deploy
 

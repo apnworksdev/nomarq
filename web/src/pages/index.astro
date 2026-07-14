@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import { imageAlt } from '../lib/alt';
 import { urlFor } from '../lib/image';
 import { sanity } from '../lib/sanity';
 import { projectsQuery, type Project } from '../lib/queries';
@@ -18,10 +19,10 @@ const projects = await sanity.fetch<Project[]>(projectsQuery);
         {projects.map((project) => (
           <li>
             <a href={`/projects/${project.slug}`}>{project.title}</a>
-            {project.image && (
+            {project.coverImage?.image && (
               <img
-                src={urlFor(project.image).width(600).height(400).fit('crop').url()}
-                alt={project.title}
+                src={urlFor(project.coverImage.image).width(600).height(400).fit('crop').url()}
+                alt={imageAlt(project.coverImage.alt, project.title)}
                 width="600"
                 height="400"
                 loading="lazy"
