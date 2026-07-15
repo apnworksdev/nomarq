@@ -1,0 +1,62 @@
+---
+import { imageAlt } from '../lib/alt';
+import {
+  getHomeSectionItem,
+  isExternalHomeLink,
+  resolveStartingColumn,
+  type HomeSection,
+} from '../lib/home';
+import { urlFor } from '../lib/image';
+
+interface Props {
+  section: HomeSection;
+  href?: string;
+}
+
+const { section, href } = Astro.props;
+const item = getHomeSectionItem(section);
+
+if (!item) {
+  return null;
+}
+
+const startingColumn = resolveStartingColumn(section);
+const layoutClass =
+  section.sectionType === 'project' && section.layout
+    ? `home-section--${section.layout}`
+    : section.sectionType === 'journal'
+      ? 'home-section--journal'
+      : undefined;
+const coverImage = item.coverImage?.image;
+const external = isExternalHomeLink(href);
+const Tag = href ? 'a' : 'div';
+const linkProps = href
+  ? external
+    ? { href, target: '_blank', rel: 'noopener noreferrer' }
+    : { href }
+  : {};
+---
+
+<article
+  class:list={['home-section', layoutClass]}
+  style={startingColumn ? { '--home-start-column': startingColumn } : undefined}
+  data-section-type={section.sectionType}
+>
+  <Tag class="home-section-link" {...linkProps}>
+    {
+      coverImage && (
+        <figure class="home-section-media">
+          <img
+            src={urlFor(coverImage).width(1200).fit('max').url()}
+            alt={imageAlt(item.coverImage?.alt, item.title)}
+            loading="lazy"
+          />
+        </figure>
+      )
+    }
+    <p class="home-section-title">{item.title}</p>
+    {section.sectionType === 'journal' && item.category && (
+      <p class="home-section-meta">{item.category}</p>
+    )}
+  </Tag>
+</article>

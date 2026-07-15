@@ -6,17 +6,24 @@ export default defineType({
   type: 'document',
   fields: [
     defineField({
-      name: 'title',
-      title: 'Title',
+      name: 'titleEn',
+      title: 'Title (English)',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'titleEs',
+      title: 'Title (Spanish)',
       type: 'string',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'slug',
       title: 'Slug',
+      description: 'Shared across languages — used for filters and URLs.',
       type: 'slug',
       options: {
-        source: 'title',
+        source: 'titleEn',
         maxLength: 96,
       },
       validation: (Rule) => Rule.required(),
@@ -24,7 +31,14 @@ export default defineType({
   ],
   preview: {
     select: {
-      title: 'title',
+      titleEn: 'titleEn',
+      titleEs: 'titleEs',
+    },
+    prepare({ titleEn, titleEs }) {
+      return {
+        title: titleEn,
+        subtitle: titleEs,
+      };
     },
   },
 });

@@ -1,7 +1,9 @@
+import { documentInternationalization } from '@sanity/document-internationalization';
 import { visionTool } from '@sanity/vision';
 import { defineConfig } from 'sanity';
 import { structureTool } from 'sanity/structure';
 
+import { defaultLanguage, localizedSchemaTypes, supportedLanguages } from './lib/i18n';
 import { schemaTypes } from './schemas';
 import { structure } from './structure';
 
@@ -19,8 +21,33 @@ export default defineConfig({
   title: 'Nomarq',
   projectId,
   dataset,
-  plugins: [structureTool({ structure }), visionTool()],
+  plugins: [
+    structureTool({ structure }),
+    visionTool(),
+    documentInternationalization({
+      supportedLanguages: [...supportedLanguages],
+      schemaTypes: [...localizedSchemaTypes],
+      languageField: 'language',
+      weakReferences: true,
+      allowCreateMetaDoc: true,
+    }),
+  ],
   schema: {
     types: schemaTypes,
+  },
+  document: {
+    newDocumentOptions: (prev, { creationContext }) => {
+      if (creationContext.type !== 'global') {
+        return prev;
+      }
+
+      return prev.filter((option) => {
+        if (!localizedSchemaTypes.includes(option.templateId as (typeof localizedSchemaTypes)[number])) {
+          return true;
+        }
+
+        return option.parameters?.language === defaultLanguage;
+      });
+    },
   },
 });

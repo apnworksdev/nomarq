@@ -12,8 +12,14 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'position',
-      title: 'Position',
+      name: 'positionEn',
+      title: 'Position (English)',
+      type: 'string',
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
+      name: 'positionEs',
+      title: 'Position (Spanish)',
       type: 'string',
       validation: (Rule) => Rule.required(),
     }),
@@ -21,7 +27,14 @@ export default defineType({
   preview: {
     select: {
       title: 'name',
-      subtitle: 'position',
+      positionEn: 'positionEn',
+      positionEs: 'positionEs',
+    },
+    prepare({ title, positionEn, positionEs }) {
+      return {
+        title,
+        subtitle: positionEs ? `${positionEn} / ${positionEs}` : positionEn,
+      };
     },
   },
 });

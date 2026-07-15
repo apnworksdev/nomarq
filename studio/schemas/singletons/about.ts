@@ -1,5 +1,7 @@
 import { defineField, defineType } from 'sanity';
 
+import { languageField } from '../fields/language';
+
 export default defineType({
   name: 'about',
   title: 'About',
@@ -12,6 +14,7 @@ export default defineType({
     { name: 'team', title: 'Team' },
   ],
   fields: [
+    languageField,
     defineField({
       name: 'videoUrl',
       title: 'Video URL',

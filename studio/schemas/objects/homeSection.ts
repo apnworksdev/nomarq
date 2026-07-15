@@ -1,25 +1,12 @@
 import { defineField, defineType } from 'sanity';
 
-type HomeSectionParent = {
-  sectionType?: 'project' | 'journal';
-  layout?: 'vertical' | 'horizontal';
-};
-
-const startingColumnOptions = (parent?: HomeSectionParent) => {
-  if (parent?.sectionType === 'journal') {
-    return [1, 2];
-  }
-
-  if (parent?.sectionType === 'project' && parent.layout === 'vertical') {
-    return [1, 2, 3, 4, 5];
-  }
-
-  if (parent?.sectionType === 'project' && parent.layout === 'horizontal') {
-    return [1, 2, 3];
-  }
-
-  return [];
-};
+import { StartingColumnInput } from '../../components/StartingColumnInput';
+import {
+  normalizeStartingColumn,
+  resolveStartingColumn,
+  startingColumnValues,
+  type HomeSectionParent,
+} from '../../lib/startingColumn';
 
 export default defineType({
   name: 'homeSection',
@@ -65,30 +52,30 @@ export default defineType({
     defineField({
       name: 'startingColumn',
       title: 'Starting column',
-      type: 'number',
+      type: 'string',
+      components: {
+        input: StartingColumnInput,
+      },
       options: {
-        list: ({ parent }) =>
-          startingColumnOptions(parent as HomeSectionParent).map((value) => ({
-            title: String(value),
-            value,
-          })),
         layout: 'radio',
       },
-      hidden: ({ parent }) => startingColumnOptions(parent as HomeSectionParent).length === 0,
+      hidden: ({ parent }) => startingColumnValues(parent as HomeSectionParent).length === 0,
       validation: (Rule) =>
         Rule.custom((value, context) => {
           const parent = context.parent as HomeSectionParent;
-          const allowed = startingColumnOptions(parent);
+          const allowed = startingColumnValues(parent);
 
           if (allowed.length === 0) {
             return true;
           }
 
-          if (value == null) {
+          const normalized = normalizeStartingColumn(value);
+
+          if (!normalized) {
             return 'Required';
           }
 
-          if (!allowed.includes(value)) {
+          if (!allowed.includes(normalized)) {
             return 'Choose a valid starting column for this section';
           }
 
@@ -124,6 +111,17 @@ export default defineType({
         return 'Journal entry is required';
       }
 
+      const startingColumn = resolveStartingColumn(value);
+      const allowed = startingColumnValues(value);
+
+      if (allowed.length > 0 && !startingColumn) {
+        return 'Starting column is required';
+      }
+
+      if (startingColumn && allowed.length > 0 && !allowed.includes(startingColumn)) {
+        return 'Starting column does not match the current section type or layout';
+      }
+
       return true;
     }),
   preview: {
@@ -131,6 +129,9 @@ export default defineType({
       sectionType: 'sectionType',
       layout: 'layout',
       startingColumn: 'startingColumn',
+      verticalCount: 'verticalCount',
+      horizontalCount: 'horizontalCount',
+      journalCount: 'journalCount',
       projectTitle: 'project.title',
       journalTitle: 'journal.title',
       journalCategory: 'journal.category',
@@ -141,6 +142,9 @@ export default defineType({
       sectionType,
       layout,
       startingColumn,
+      verticalCount,
+      horizontalCount,
+      journalCount,
       projectTitle,
       journalTitle,
       journalCategory,
@@ -149,8 +153,16 @@ export default defineType({
     }) {
       const isProject = sectionType === 'project';
       const layoutLabel = isProject && layout ? ` · ${layout}` : '';
-      const columnLabel =
-        startingColumn != null ? ` · column ${startingColumn}` : '';
+      const column =
+        resolveStartingColumn({
+          sectionType,
+          layout,
+          startingColumn,
+          verticalCount,
+          horizontalCount,
+          journalCount,
+        }) ?? null;
+      const columnLabel = column != null ? ` · column ${column}` : '';
 
       return {
         title: isProject ? projectTitle : journalTitle,

@@ -53,14 +53,46 @@ npm run dev
 
 Open [http://localhost:4321](http://localhost:4321).
 
+## Languages (EN / ES)
+
+Both Astro and Sanity use the same locale ids: `en` (default) and `es`.
+
+### Astro routing
+
+| Page | English | Spanish |
+|------|---------|---------|
+| Highlights | `/` | `/es` |
+| Projects | `/projects` | `/es/projects` |
+| Project detail | `/projects/[slug]` | `/es/projects/[slug]` |
+| About | `/about` | `/es/about` |
+
+- Config: `web/astro.config.mjs` (`prefixDefaultLocale: false` — English has no prefix)
+- Shared page logic: `web/src/views/`
+- Locale helpers: `web/src/lib/i18n.ts`, `web/src/lib/locale.ts`, `web/src/lib/ui.ts`
+- View Transitions: `<ClientRouter />` in `Layout.astro`; header persists and updates active nav client-side
+
+### Sanity localization
+
+Document-level translations via `@sanity/document-internationalization`:
+
+- **Localized types:** project, journal, home, about (one document per language, linked in Studio)
+- **Field-level i18n:** use, person (one document with EN + ES title/position fields)
+- Config: `studio/sanity.config.ts` and `studio/lib/i18n.ts`
+
+**In Studio:** open an English document → use the **Translations** panel to create or edit the Spanish version.
+
+Existing documents without a `language` field are treated as English until you publish them again.
+
+Keep `studio/lib/i18n.ts` and `web/src/lib/i18n.ts` in sync when adding languages.
+
 ## Sanity content model
 
 ### Documents
 
 - **Project** — title, slug, location, uses, year, collaborators, photography, description, images (max 6)
 - **Journal** — title, slug, category, year, metadata, description, optional external link, images (max 6)
-- **Person** — name, position
-- **Use** — taxonomy tags for project filters
+- **Person** — name, position (`positionEn`, `positionEs`)
+- **Use** — taxonomy tags for project filters (`titleEn`, `titleEs`, shared slug)
 
 ### Singletons
 
@@ -78,14 +110,17 @@ Open [http://localhost:4321](http://localhost:4321).
 
 Currently implemented:
 
-- Home project list (`/`)
-- Project detail pages (`/projects/[slug]`) with gallery, location, and alt text fallbacks
+- Highlights (`/` and `/es`)
+- Projects index (`/projects` and `/es/projects`)
+- Project detail pages with gallery, location, and alt text fallbacks
+- About placeholder (`/about` and `/es/about`)
+- Header with locale switcher and active nav states
 
 Not yet implemented on the frontend:
 
-- Home sections layout
+- Home sections layout (from Sanity Home singleton)
 - Journal pages
-- About page (team, swiper, lists, contact)
+- About page content (team, swiper, lists, contact from Sanity)
 
 Content is fetched from Sanity at build time (`npm run build` in `web/`).
 

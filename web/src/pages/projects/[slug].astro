@@ -1,75 +1,16 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import { imageAlt } from '../../lib/alt';
-import { urlFor } from '../../lib/image';
-import { formatLocation } from '../../lib/location';
-import { sanity } from '../../lib/sanity';
-import {
-  projectBySlugQuery,
-  projectSlugsQuery,
-  type Project,
-} from '../../lib/queries';
+import { getProjectStaticPaths } from '../../lib/static-paths';
+import ProjectDetailPage from '../../views/ProjectDetailPage.astro';
 
 export async function getStaticPaths() {
-  const slugs = await sanity.fetch<{ slug: string }[]>(projectSlugsQuery);
-
-  return slugs.map(({ slug }) => ({
-    params: { slug },
-  }));
+  return getProjectStaticPaths('en');
 }
 
 const { slug } = Astro.params;
 
-const project = await sanity.fetch<Project | null>(projectBySlugQuery, { slug });
-
-if (!project) {
-  return Astro.redirect('/');
+if (!slug) {
+  return Astro.redirect('/projects');
 }
 ---
 
-<Layout title={`${project.title} — Nomarq`}>
-  <p><a href="/">← All projects</a></p>
-  <h1>{project.title}</h1>
-  {
-    formatLocation(project.location, 'full') && (
-      <p>{formatLocation(project.location, 'full')}</p>
-    )
-  }
-  {project.description && <p>{project.description}</p>}
-  {
-    project.images && project.images.length > 0 && (
-      <ul>
-        {project.images.map((item, index) =>
-          item.image ? (
-            <li>
-              <img
-                src={urlFor(item.image).width(1200).fit('max').url()}
-                alt={imageAlt(item.alt, project.title, { index })}
-                width="1200"
-                loading="lazy"
-              />
-            </li>
-          ) : null,
-        )}
-      </ul>
-    )
-  }
-</Layout>
-
-<style>
-  img {
-    display: block;
-    width: 100%;
-    max-width: 1200px;
-    height: auto;
-    margin-top: 1.5rem;
-  }
-
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: 1.5rem 0 0;
-    display: grid;
-    gap: 2rem;
-  }
-</style>
+<ProjectDetailPage locale="en" slug={slug} />

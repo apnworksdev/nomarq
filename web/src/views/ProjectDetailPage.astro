@@ -1,0 +1,78 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+import { imageAlt } from '../lib/alt';
+import type { Locale } from '../lib/i18n';
+import { urlFor } from '../lib/image';
+import { formatLocation } from '../lib/location';
+import Layout from '../layouts/Layout.astro';
+import { projectBySlugQuery, type Project } from '../lib/queries';
+import { sanity } from '../lib/sanity';
+import { getUi } from '../lib/ui';
+
+interface Props {
+  locale: Locale;
+  slug: string;
+}
+
+const { locale, slug } = Astro.props;
+const copy = getUi(locale);
+
+const project = await sanity.fetch<Project | null>(projectBySlugQuery, {
+  slug,
+  language: locale,
+});
+
+if (!project) {
+  return Astro.redirect(getRelativeLocaleUrl(locale, '/projects'));
+}
+---
+
+<Layout title={`${project.title} — Nomarq`}>
+  <p>
+    <a href={getRelativeLocaleUrl(locale, '/projects')}>{copy.backToProjects}</a>
+  </p>
+  <h1>{project.title}</h1>
+  {
+    formatLocation(project.location, 'full') && (
+      <p>{formatLocation(project.location, 'full')}</p>
+    )
+  }
+  {project.description && <p>{project.description}</p>}
+  {
+    project.images && project.images.length > 0 && (
+      <ul>
+        {project.images.map((item, index) =>
+          item.image ? (
+            <li>
+              <img
+                src={urlFor(item.image).width(1200).fit('max').url()}
+                alt={imageAlt(item.alt, project.title, { index })}
+                width="1200"
+                loading="lazy"
+              />
+            </li>
+          ) : null,
+        )}
+      </ul>
+    )
+  }
+</Layout>
+
+<style>
+  img {
+    display: block;
+    width: 100%;
+    max-width: 1200px;
+    height: auto;
+    margin-top: 1.5rem;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0 0;
+    display: grid;
+    gap: 2rem;
+  }
+</style>

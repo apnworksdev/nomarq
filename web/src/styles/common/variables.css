@@ -1,0 +1,18 @@
+:root {
+  --background-color: #fff;
+  --foreground-color: #000;
+
+  --selection-background-color: transparent;
+  --selection-foreground-color: var(--gray-color);
+
+  --font-family: 'Bradford LL', sans-serif;
+  --font-size: 12px;
+  --font-weight: 400;
+  --line-height: 14px;
+  --letter-spacing: -1%;
+
+  --margin: 10px;
+
+  --columns: 8;
+  --columns-gap: var(--margin);
+}

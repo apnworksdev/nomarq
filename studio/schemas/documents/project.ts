@@ -1,26 +1,21 @@
 import { defineField, defineType } from 'sanity';
 
+import { languageField } from '../fields/language';
+import { localizedSlugField } from '../fields/localizedSlug';
+
 export default defineType({
   name: 'project',
   title: 'Project',
   type: 'document',
   fields: [
+    languageField,
     defineField({
       name: 'title',
       title: 'Title',
       type: 'string',
       validation: (Rule) => Rule.required(),
     }),
-    defineField({
-      name: 'slug',
-      title: 'Slug',
-      type: 'slug',
-      options: {
-        source: 'title',
-        maxLength: 96,
-      },
-      validation: (Rule) => Rule.required(),
-    }),
+    localizedSlugField(),
     defineField({
       name: 'location',
       title: 'Location',

@@ -1,0 +1,68 @@
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--columns), 1fr);
+  column-gap: var(--columns-gap);
+  row-gap: calc(var(--margin) * 4);
+  padding: calc(var(--margin) * 4) var(--margin);
+}
+
+.home-section {
+  grid-column: var(--home-start-column, 1) / span var(--home-span, 2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--margin);
+}
+
+.home-section--vertical {
+  --home-span: 2;
+}
+
+.home-section--horizontal {
+  --home-span: 3;
+}
+
+.home-section--journal {
+  --home-span: 2;
+}
+
+.home-section-link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--margin);
+  text-decoration: none;
+}
+
+.home-section-media {
+  overflow: hidden;
+}
+
+.home-section--vertical .home-section-media {
+  aspect-ratio: 3 / 4;
+}
+
+.home-section--horizontal .home-section-media {
+  aspect-ratio: 4 / 3;
+}
+
+.home-section--journal .home-section-media {
+  aspect-ratio: 1 / 1;
+}
+
+.home-section-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.home-section-title {
+  text-transform: uppercase;
+}
+
+.home-section-meta {
+  opacity: 0.6;
+  text-transform: capitalize;
+}
+
+.home-empty {
+  padding: calc(var(--margin) * 4) var(--margin);
+}

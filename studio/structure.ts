@@ -1,5 +1,7 @@
 import type { StructureResolver } from 'sanity/structure';
 
+import { defaultLanguage } from './lib/i18n';
+
 const singletonListItem = (
   S: Parameters<StructureResolver>[0],
   typeName: string,
@@ -10,7 +12,7 @@ const singletonListItem = (
     .id(typeName)
     .child(S.document().schemaType(typeName).documentId(typeName).title(title));
 
-const documentList = (
+const localizedDocumentList = (
   S: Parameters<StructureResolver>[0],
   typeName: string,
   title: string,
@@ -21,6 +23,9 @@ const documentList = (
     .child(
       S.documentTypeList(typeName)
         .title(title)
+        .filter(
+          `_type == "${typeName}" && (!defined(language) || language == "${defaultLanguage}")`,
+        )
         .defaultOrdering(ordering),
     );
 
@@ -31,9 +36,21 @@ export const structure: StructureResolver = (S) =>
       singletonListItem(S, 'home', 'Home'),
       singletonListItem(S, 'about', 'About'),
       S.divider(),
-      documentList(S, 'project', 'Projects', [{ field: 'year', direction: 'desc' }]),
-      documentList(S, 'journal', 'Journal', [{ field: 'year', direction: 'desc' }]),
+      localizedDocumentList(S, 'project', 'Projects', [{ field: 'year', direction: 'desc' }]),
+      localizedDocumentList(S, 'journal', 'Journal', [{ field: 'year', direction: 'desc' }]),
       S.divider(),
-      documentList(S, 'person', 'People', [{ field: 'name', direction: 'asc' }]),
-      documentList(S, 'use', 'Uses', [{ field: 'title', direction: 'asc' }]),
+      S.listItem()
+        .title('People')
+        .child(
+          S.documentTypeList('person')
+            .title('People')
+            .defaultOrdering([{ field: 'name', direction: 'asc' }]),
+        ),
+      S.listItem()
+        .title('Uses')
+        .child(
+          S.documentTypeList('use')
+            .title('Uses')
+            .defaultOrdering([{ field: 'titleEn', direction: 'asc' }]),
+        ),
     ]);

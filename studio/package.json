@@ -8,10 +8,14 @@
     "deploy": "sanity deploy"
   },
   "dependencies": {
+    "@sanity/document-internationalization": "^6.2.19",
+    "@sanity/language-filter": "^5.0.9",
     "@sanity/vision": "^3.99.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-is": "^19.2.7",
     "sanity": "^3.99.0",
+    "sanity-plugin-internationalized-array": "^5.1.19",
     "styled-components": "^6.1.19"
   },
   "devDependencies": {

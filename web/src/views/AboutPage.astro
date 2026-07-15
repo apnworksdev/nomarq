@@ -1,0 +1,17 @@
+---
+import type { Locale } from '../lib/i18n';
+import Layout from '../layouts/Layout.astro';
+import { getUi } from '../lib/ui';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = getUi(locale);
+---
+
+<Layout title={`${copy.nav.about} — Nomarq`}>
+  <h1>{copy.nav.about}</h1>
+  <p>{copy.aboutEmpty}</p>
+</Layout>

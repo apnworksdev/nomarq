@@ -1,0 +1,38 @@
+---
+import HomeSection from '../components/HomeSection.astro';
+import { getHomeSectionHref, getHomeSectionItem } from '../lib/home';
+import type { Locale } from '../lib/i18n';
+import { getLocalizedPath } from '../lib/i18n';
+import Layout from '../layouts/Layout.astro';
+import { homeQuery, type HomeDocument } from '../lib/queries';
+import { sanity } from '../lib/sanity';
+import '../styles/components/home.css';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const home = await sanity.fetch<HomeDocument | null>(homeQuery, { language: locale });
+const sections = (home?.sections ?? []).filter((section) => getHomeSectionItem(section));
+---
+
+<Layout title="Nomarq">
+  {
+    sections.length === 0 ? (
+      <p class="home-empty">No home sections yet. Add some in Sanity Studio.</p>
+    ) : (
+      <div class="home-grid">
+        {
+          sections.map((section) => (
+            <HomeSection
+              section={section}
+              href={getHomeSectionHref(section, locale, getLocalizedPath)}
+            />
+          ))
+        }
+      </div>
+    )
+  }
+</Layout>
