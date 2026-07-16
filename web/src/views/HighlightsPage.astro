@@ -1,7 +1,7 @@
 ---
 import HomeSection from '../components/HomeSection.astro';
 import { getHomeSectionHref, getHomeSectionItem } from '../lib/home';
-import type { Locale } from '../lib/i18n';
+import { defaultLocale, type Locale } from '../lib/i18n';
 import { getLocalizedPath } from '../lib/i18n';
 import Layout from '../layouts/Layout.astro';
 import { homeQuery, type HomeDocument } from '../lib/queries';
@@ -14,7 +14,10 @@ interface Props {
 
 const { locale } = Astro.props;
 
-const home = await sanity.fetch<HomeDocument | null>(homeQuery, { language: locale });
+const home = await sanity.fetch<HomeDocument | null>(homeQuery, {
+  language: locale,
+  defaultLanguage: defaultLocale,
+});
 const sections = (home?.sections ?? []).filter((section) => getHomeSectionItem(section));
 ---
 
@@ -23,16 +26,49 @@ const sections = (home?.sections ?? []).filter((section) => getHomeSectionItem(s
     sections.length === 0 ? (
       <p class="home-empty">No home sections yet. Add some in Sanity Studio.</p>
     ) : (
-      <div class="home-grid">
-        {
-          sections.map((section) => (
-            <HomeSection
-              section={section}
-              href={getHomeSectionHref(section, locale, getLocalizedPath)}
-            />
-          ))
-        }
-      </div>
+      <>
+        <nav
+          class="home-section-nav"
+          aria-label={locale === 'es' ? 'Secciones destacadas' : 'Highlight sections'}
+        >
+          <ol class="home-section-nav-list">
+            {
+              sections.map((_, index) => (
+                <li>
+                  <button
+                    type="button"
+                    class="home-section-nav-item"
+                    data-home-section-nav={index}
+                    aria-current={index === 0 ? 'true' : 'false'}
+                  >
+                    {index + 1}
+                  </button>
+                </li>
+              ))
+            }
+          </ol>
+        </nav>
+        <div class="home-grid">
+          {
+            sections.map((section, index) => (
+              <HomeSection
+                section={section}
+                index={index}
+                locale={locale}
+                href={getHomeSectionHref(section, locale, getLocalizedPath)}
+              />
+            ))
+          }
+        </div>
+      </>
     )
   }
 </Layout>
+
+<script>
+  import { initHomeHoverState } from '../lib/home-hover';
+  import { initHomeScrollState } from '../lib/home-scroll';
+
+  initHomeScrollState();
+  initHomeHoverState();
+</script>

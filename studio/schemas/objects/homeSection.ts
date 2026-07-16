@@ -1,6 +1,7 @@
 import { defineField, defineType } from 'sanity';
 
 import { StartingColumnInput } from '../../components/StartingColumnInput';
+import { englishDocumentReferenceFilter } from '../../lib/referenceFilters';
 import {
   normalizeStartingColumn,
   resolveStartingColumn,
@@ -87,6 +88,7 @@ export default defineType({
       title: 'Project',
       type: 'reference',
       to: [{ type: 'project' }],
+      options: englishDocumentReferenceFilter,
       hidden: ({ parent }) => parent?.sectionType !== 'project',
     }),
     defineField({
@@ -94,6 +96,7 @@ export default defineType({
       title: 'Journal',
       type: 'reference',
       to: [{ type: 'journal' }],
+      options: englishDocumentReferenceFilter,
       hidden: ({ parent }) => parent?.sectionType !== 'journal',
     }),
   ],

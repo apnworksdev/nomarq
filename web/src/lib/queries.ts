@@ -2,6 +2,7 @@ import type { SanityImageSource } from '@sanity/image-url';
 
 import type { Locale } from './i18n';
 import type { ImageWithAlt } from './alt';
+import { defaultLocale } from './i18n';
 import { languageFilter } from './locale';
 import type { Location } from './location';
 import type { HomeDocument } from './home';
@@ -52,8 +53,36 @@ export const projectSlugsQuery = `*[_type == "project" && defined(slug.current) 
   "slug": slug.current
 }`;
 
+const homeProjectFields = `
+  title,
+  "slug": slug.current,
+  shortDescription,
+  ${locationProjection},
+  images[] ${imageProjection}
+`;
+
+const homeJournalFields = `
+  title,
+  "slug": slug.current,
+  category,
+  shortDescription,
+  externalLink,
+  images[] ${imageProjection}
+`;
+
+const localizedProjectFromRef = `coalesce(
+  *[_type == "translation.metadata" && references(project._ref)][0].translations[language == $language][0].value->{${homeProjectFields}},
+  project->{${homeProjectFields}}
+)`;
+
+const localizedJournalFromRef = `coalesce(
+  *[_type == "translation.metadata" && references(journal._ref)][0].translations[language == $language][0].value->{${homeJournalFields}},
+  journal->{${homeJournalFields}}
+)`;
+
 export const homeQuery = `coalesce(
-  *[_type == "home" && language == $language][0],
+  *[_type == "home" && language == $defaultLanguage][0],
+  *[_type == "home" && !defined(language)][0],
   *[_id == "home"][0]
 ) {
   sections[] {
@@ -64,18 +93,8 @@ export const homeQuery = `coalesce(
     verticalCount,
     horizontalCount,
     journalCount,
-    project->{
-      title,
-      "slug": slug.current,
-      "coverImage": images[0] ${imageProjection}
-    },
-    journal->{
-      title,
-      "slug": slug.current,
-      category,
-      externalLink,
-      "coverImage": images[0] ${imageProjection}
-    }
+    "project": select(sectionType == "project" && defined(project._ref) => ${localizedProjectFromRef}),
+    "journal": select(sectionType == "journal" && defined(journal._ref) => ${localizedJournalFromRef})
   }
 }`;
 
@@ -86,6 +105,7 @@ export type ProjectQueryParams = {
 
 export type HomeQueryParams = {
   language: Locale;
+  defaultLanguage: Locale;
 };
 
 export type { HomeDocument };

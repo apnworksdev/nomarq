@@ -62,6 +62,13 @@ export default defineType({
       rows: 5,
     }),
     defineField({
+      name: 'shortDescription',
+      title: 'Short description',
+      description: 'Shown on the home page. Usually the first paragraph of the full description.',
+      type: 'text',
+      rows: 3,
+    }),
+    defineField({
       name: 'externalLink',
       title: 'External link',
       description: 'Optional. If set, the frontend can link out instead of the journal page.',

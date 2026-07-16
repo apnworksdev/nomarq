@@ -1,25 +1,41 @@
 ---
 import { imageAlt } from '../lib/alt';
 import {
+  formatHomeSectionCaption,
+  getHomeSectionCover,
+  getHomeSectionImages,
   getHomeSectionItem,
+  getHomeSectionLinkLabel,
   isExternalHomeLink,
+  isHomeSectionExpandable,
   resolveStartingColumn,
   type HomeSection,
 } from '../lib/home';
+import type { Locale } from '../lib/i18n';
 import { urlFor } from '../lib/image';
 
 interface Props {
   section: HomeSection;
   href?: string;
+  index: number;
+  locale: Locale;
 }
 
-const { section, href } = Astro.props;
+const { section, href, index, locale } = Astro.props;
 const item = getHomeSectionItem(section);
 
 if (!item) {
   return null;
 }
 
+const caption = formatHomeSectionCaption(section, locale);
+const linkLabel = getHomeSectionLinkLabel(section, locale);
+const external = isExternalHomeLink(href);
+const linkProps = href
+  ? external
+    ? { target: '_blank', rel: 'noopener noreferrer' }
+    : {}
+  : {};
 const startingColumn = resolveStartingColumn(section);
 const layoutClass =
   section.sectionType === 'project' && section.layout
@@ -27,36 +43,102 @@ const layoutClass =
     : section.sectionType === 'journal'
       ? 'home-section--journal'
       : undefined;
-const coverImage = item.coverImage?.image;
-const external = isExternalHomeLink(href);
-const Tag = href ? 'a' : 'div';
-const linkProps = href
-  ? external
-    ? { href, target: '_blank', rel: 'noopener noreferrer' }
-    : { href }
-  : {};
+const cover = getHomeSectionCover(item);
+const coverImage = cover?.image;
+const allImages = getHomeSectionImages(item).filter((image) => image.image);
+const expandable = isHomeSectionExpandable(item);
 ---
 
 <article
-  class:list={['home-section', layoutClass]}
+  class:list={['home-section', layoutClass, { 'is-active': index === 0 }]}
   style={startingColumn ? { '--home-start-column': startingColumn } : undefined}
   data-section-type={section.sectionType}
+  data-home-section={index}
+  data-home-section-expandable={expandable ? 'true' : 'false'}
 >
-  <Tag class="home-section-link" {...linkProps}>
+  {
+    coverImage && (
+      <figure class="home-section-media" data-home-section-cover>
+        <img
+          src={urlFor(coverImage).width(1200).fit('max').url()}
+          alt={imageAlt(cover?.alt, item.title)}
+          loading={index === 0 ? 'eager' : 'lazy'}
+        />
+      </figure>
+    )
+  }
+
+  <div
+    class="home-section-overlay home-section-overlay--text"
+    data-home-section-overlay-text
+  >
+    <div class="home-section-type">
+      {caption.type.map((label) => (
+        <p class="home-section-type-label">{label}</p>
+      ))}
+    </div>
+
+    <p class="home-section-detail">
+      {
+        href ? (
+          <a class="home-section-detail-link home-section-detail-trigger" href={href} {...linkProps}>
+            <span class="home-section-detail-name">{caption.title}</span>
+            {
+              caption.location && (
+                <span class="home-section-detail-location"> {caption.location}</span>
+              )
+            }
+          </a>
+        ) : (
+          <span class="home-section-detail-trigger">
+            <span class="home-section-detail-name">{caption.title}</span>
+            {
+              caption.location && (
+                <span class="home-section-detail-location"> {caption.location}</span>
+              )
+            }
+          </span>
+        )
+      }
+      {
+        item.shortDescription && (
+          <span class="home-section-description"> {item.shortDescription}</span>
+        )
+      }
+    </p>
+
     {
-      coverImage && (
-        <figure class="home-section-media">
-          <img
-            src={urlFor(coverImage).width(1200).fit('max').url()}
-            alt={imageAlt(item.coverImage?.alt, item.title)}
-            loading="lazy"
-          />
-        </figure>
+      href && (
+        <a class="home-section-link" href={href} {...linkProps}>
+          {linkLabel}
+        </a>
       )
     }
-    <p class="home-section-title">{item.title}</p>
-    {section.sectionType === 'journal' && item.category && (
-      <p class="home-section-meta">{item.category}</p>
-    )}
-  </Tag>
+  </div>
+
+  {
+    expandable && allImages.length > 0 && (
+      <div
+        class="home-section-overlay home-section-overlay--media"
+        data-home-section-overlay-media
+        data-home-section-expanded
+      >
+        <ul class="home-section-gallery">
+          {
+            allImages.map((image, imageIndex) =>
+              image.image ? (
+                <li class="home-section-gallery-item">
+                  <img
+                    src={urlFor(image.image).height(200).url()}
+                    alt={imageAlt(image.alt, item.title, { index: imageIndex })}
+                    loading="lazy"
+                  />
+                </li>
+              ) : null,
+            )
+          }
+        </ul>
+      </div>
+    )
+  }
 </article>

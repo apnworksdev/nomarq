@@ -2,17 +2,70 @@ import type { SanityImageSource } from '@sanity/image-url';
 
 import type { ImageWithAlt } from './alt';
 import type { Locale } from './i18n';
+import { formatLocation, type Location } from './location';
+import { getJournalCategoryLabel, getNavLabel, getUi } from './ui';
 
 export type HomeSectionLayout = 'vertical' | 'horizontal';
 export type HomeSectionType = 'project' | 'journal';
 
+export type HomeSectionImage = ImageWithAlt & { image?: SanityImageSource };
+
 export type HomeSectionItem = {
   title: string;
   slug?: string;
-  coverImage?: ImageWithAlt & { image?: SanityImageSource };
+  shortDescription?: string;
+  images?: HomeSectionImage[];
   externalLink?: string;
   category?: string;
+  location?: Location;
 };
+
+export function getHomeSectionImages(item: HomeSectionItem): HomeSectionImage[] {
+  return item.images ?? [];
+}
+
+export function getHomeSectionCover(item: HomeSectionItem): HomeSectionImage | undefined {
+  return getHomeSectionImages(item)[0];
+}
+
+export function isHomeSectionExpandable(item: HomeSectionItem): boolean {
+  return Boolean(item.shortDescription?.trim() || getHomeSectionImages(item).some((image) => image.image));
+}
+
+export type HomeSectionCaption = {
+  type: string[];
+  title: string;
+  location?: string;
+};
+
+export function formatHomeSectionCaption(
+  section: HomeSection,
+  locale: Locale,
+): HomeSectionCaption {
+  const item = getHomeSectionItem(section);
+
+  if (!item) {
+    return { type: [], title: '' };
+  }
+
+  if (section.sectionType === 'project') {
+    return {
+      type: [`(${getNavLabel(locale, 'projects')})`],
+      title: item.title,
+      location: formatLocation(item.location, 'short') || undefined,
+    };
+  }
+
+  const categoryLabel = item.category
+    ? getJournalCategoryLabel(locale, item.category)
+    : '';
+  const journalLabel = getUi(locale).sectionTypes.journal;
+
+  return {
+    type: [`(${journalLabel})`, `${categoryLabel}`],
+    title: item.title,
+  };
+}
 
 export type HomeSection = {
   _key: string;
@@ -61,11 +114,23 @@ export function getHomeSectionHref(
     return getLocalizedPath(locale, `/projects/${section.project.slug}`);
   }
 
-  if (section.sectionType === 'journal' && section.journal?.externalLink) {
-    return section.journal.externalLink;
+  if (section.sectionType === 'journal') {
+    if (section.journal?.externalLink) {
+      return section.journal.externalLink;
+    }
+
+    if (section.journal?.slug) {
+      return getLocalizedPath(locale, `/journal/${section.journal.slug}`);
+    }
   }
 
   return undefined;
+}
+
+export function getHomeSectionLinkLabel(section: HomeSection, locale: Locale): string {
+  const copy = getUi(locale);
+
+  return section.sectionType === 'journal' ? copy.fullJournal : copy.fullProject;
 }
 
 export function isExternalHomeLink(href: string | undefined): boolean {
