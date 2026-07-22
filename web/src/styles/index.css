@@ -1,4 +1,6 @@
 @import './common/fonts.css';
 @import './common/variables.css';
+@import './common/active-parens.css';
+@import './common/entry-layout.css';
 @import './common/globals.css';
 @import './common/main.css';

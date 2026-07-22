@@ -1,0 +1,86 @@
+@import '../common/entry-layout.css';
+
+.entry-overlay {
+  color: var(--background-color);
+  mix-blend-mode: difference;
+  pointer-events: none;
+}
+
+.entry-overlay-type {
+  grid-column: 2 / 4;
+  display: grid;
+  grid-template-columns: subgrid;
+}
+
+.entry-overlay-detail-trigger {
+  pointer-events: auto;
+}
+
+.entry-caption-detail-location,
+.entry-caption-detail-country {
+  padding-left: var(--margin);
+}
+
+.entry-overlay-description {
+  display: inline;
+  padding-left: var(--entry-description-indent);
+  white-space: pre-line;
+}
+
+.entry-overlay-description,
+.entry-overlay-link {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--transition-duration) var(--transition-timing-function),
+    visibility var(--transition-duration) var(--transition-timing-function);
+}
+
+.entry-overlay-link {
+  display: block;
+  grid-column: 7 / 8;
+}
+
+.entry-overlay:not(.is-expanded) .entry-overlay-description,
+.entry-overlay:not(.is-expanded) .entry-overlay-link,
+.home-section:not(.is-expanded) .entry-overlay-description,
+.home-section:not(.is-expanded) .entry-overlay-link {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  padding: 0;
+  pointer-events: none;
+}
+
+.entry-overlay.is-expanded .entry-overlay-description,
+.entry-overlay.is-expanded .entry-overlay-link,
+.home-section.is-expanded .entry-overlay-description,
+.home-section.is-expanded .entry-overlay-link {
+  opacity: 1;
+  visibility: visible;
+  position: static;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  padding: 0;
+  padding-left: var(--entry-description-indent);
+}
+
+.entry-overlay.is-expanded .entry-overlay-link {
+  padding-left: 0;
+}
+
+.entry-overlay.is-expanded,
+.home-section.is-expanded .entry-overlay {
+  mix-blend-mode: normal;
+  color: var(--foreground-color);
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .entry-overlay-description,
+  .entry-overlay-link {
+    transition-duration: 0.01ms;
+  }
+}

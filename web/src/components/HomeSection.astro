@@ -1,5 +1,6 @@
 ---
-import { imageAlt } from '../lib/alt';
+import EntryCaption from './EntryCaption.astro';
+import EntryGallery from './EntryGallery.astro';
 import {
   formatHomeSectionCaption,
   getHomeSectionCover,
@@ -12,7 +13,6 @@ import {
   type HomeSection,
 } from '../lib/home';
 import type { Locale } from '../lib/i18n';
-import { urlFor } from '../lib/image';
 
 interface Props {
   section: HomeSection;
@@ -44,9 +44,9 @@ const layoutClass =
       ? 'home-section--journal'
       : undefined;
 const cover = getHomeSectionCover(item);
-const coverImage = cover?.image;
 const allImages = getHomeSectionImages(item).filter((image) => image.image);
 const expandable = isHomeSectionExpandable(item);
+const galleryImages = cover?.image ? allImages : [];
 ---
 
 <article
@@ -57,59 +57,51 @@ const expandable = isHomeSectionExpandable(item);
   data-home-section-expandable={expandable ? 'true' : 'false'}
 >
   {
-    coverImage && (
-      <figure class="home-section-media" data-home-section-cover>
-        <img
-          src={urlFor(coverImage).width(1200).fit('max').url()}
-          alt={imageAlt(cover?.alt, item.title)}
+    galleryImages.length > 0 && (
+      <div data-home-section-cover>
+        <EntryGallery
+          images={galleryImages}
+          title={item.title}
           loading={index === 0 ? 'eager' : 'lazy'}
+          mode="cover"
         />
-      </figure>
+      </div>
     )
   }
 
-  <div
-    class="home-section-overlay home-section-overlay--text"
-    data-home-section-overlay-text
-  >
-    <div class="home-section-type">
-      {caption.type.map((label) => (
-        <p class="home-section-type-label">{label}</p>
-      ))}
-    </div>
+  <div class="entry-overlay entry-layout-overlay entry-layout-overlay--fixed" data-home-section-overlay-text>
+    {
+      caption.type.length > 0 && (
+        <div class="entry-overlay-type">
+          {caption.type.map((label) => (
+            <p class="entry-overlay-type-label">{label}</p>
+          ))}
+        </div>
+      )
+    }
 
-    <p class="home-section-detail">
+    <p class="entry-overlay-detail entry-layout-detail">
       {
         href ? (
-          <a class="home-section-detail-link home-section-detail-trigger" href={href} {...linkProps}>
-            <span class="home-section-detail-name">{caption.title}</span>
-            {
-              caption.location && (
-                <span class="home-section-detail-location"> {caption.location}</span>
-              )
-            }
+          <a class="entry-overlay-detail-link entry-overlay-detail-trigger" href={href} {...linkProps}>
+            <EntryCaption title={caption.title} place={caption.place} country={caption.country} />
           </a>
         ) : (
-          <span class="home-section-detail-trigger">
-            <span class="home-section-detail-name">{caption.title}</span>
-            {
-              caption.location && (
-                <span class="home-section-detail-location"> {caption.location}</span>
-              )
-            }
+          <span class="entry-overlay-detail-trigger">
+            <EntryCaption title={caption.title} place={caption.place} country={caption.country} />
           </span>
         )
       }
       {
         item.shortDescription && (
-          <span class="home-section-description"> {item.shortDescription}</span>
+          <span class="entry-overlay-description">{item.shortDescription}</span>
         )
       }
     </p>
 
     {
       href && (
-        <a class="home-section-link" href={href} {...linkProps}>
+        <a class="entry-overlay-link" href={href} {...linkProps}>
           {linkLabel}
         </a>
       )
@@ -117,27 +109,13 @@ const expandable = isHomeSectionExpandable(item);
   </div>
 
   {
-    expandable && allImages.length > 0 && (
+    expandable && galleryImages.length > 1 && (
       <div
-        class="home-section-overlay home-section-overlay--media"
+        class="home-section-overlay home-section-overlay--media entry-gallery-overlay entry-gallery-overlay--fixed"
         data-home-section-overlay-media
         data-home-section-expanded
       >
-        <ul class="home-section-gallery">
-          {
-            allImages.map((image, imageIndex) =>
-              image.image ? (
-                <li class="home-section-gallery-item">
-                  <img
-                    src={urlFor(image.image).height(200).url()}
-                    alt={imageAlt(image.alt, item.title, { index: imageIndex })}
-                    loading="lazy"
-                  />
-                </li>
-              ) : null,
-            )
-          }
-        </ul>
+        <EntryGallery images={galleryImages} title={item.title} mode="strip" />
       </div>
     )
   }

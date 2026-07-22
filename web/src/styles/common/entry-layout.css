@@ -1,0 +1,35 @@
+:root {
+  --entry-overlay-top: calc(50dvh - var(--line-height) / 2);
+  --entry-description-indent: 93px;
+  --header-offset: calc(12px + 27px + var(--margin));
+}
+
+.entry-layout-overlay {
+  display: grid;
+  width: 100%;
+  top: var(--entry-overlay-top);
+  left: 0;
+  z-index: 40;
+  grid-template-columns: repeat(var(--columns), 1fr);
+  grid-template-rows: min-content min-content;
+  column-gap: var(--margin);
+  row-gap: 30px;
+  padding: var(--margin);
+  padding-top: 0;
+}
+
+.entry-layout-overlay--fixed {
+  position: fixed;
+  right: auto;
+  bottom: auto;
+}
+
+.entry-layout-overlay--anchored {
+  position: absolute;
+  right: auto;
+  bottom: auto;
+}
+
+.entry-layout-detail {
+  grid-column: 5 / 9;
+}

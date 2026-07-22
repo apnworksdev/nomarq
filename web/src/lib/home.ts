@@ -2,7 +2,7 @@ import type { SanityImageSource } from '@sanity/image-url';
 
 import type { ImageWithAlt } from './alt';
 import type { Locale } from './i18n';
-import { formatLocation, type Location } from './location';
+import type { Location } from './location';
 import { getJournalCategoryLabel, getNavLabel, getUi } from './ui';
 
 export type HomeSectionLayout = 'vertical' | 'horizontal';
@@ -35,7 +35,8 @@ export function isHomeSectionExpandable(item: HomeSectionItem): boolean {
 export type HomeSectionCaption = {
   type: string[];
   title: string;
-  location?: string;
+  place?: string;
+  country?: string;
 };
 
 export function formatHomeSectionCaption(
@@ -49,10 +50,17 @@ export function formatHomeSectionCaption(
   }
 
   if (section.sectionType === 'project') {
+    const place = item.location?.place?.trim() || undefined;
+    const country =
+      item.location?.country?.short?.trim() ||
+      item.location?.country?.full?.trim() ||
+      undefined;
+
     return {
       type: [`(${getNavLabel(locale, 'projects')})`],
       title: item.title,
-      location: formatLocation(item.location, 'short') || undefined,
+      place,
+      country,
     };
   }
 

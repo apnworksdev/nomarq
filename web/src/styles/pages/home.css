@@ -1,0 +1,94 @@
+@import '../common/active-parens.css';
+
+.home-section-nav {
+  position: fixed;
+  left: var(--margin);
+  top: var(--entry-overlay-top);
+  z-index: 50;
+  color: var(--background-color);
+  mix-blend-mode: difference;
+  pointer-events: none;
+}
+
+.home-section-nav-list {
+  display: flex;
+  gap: calc(var(--margin) / 2);
+}
+
+.home-section-nav-item {
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--columns), 1fr);
+  column-gap: var(--columns-gap);
+}
+
+html:has(.home-grid) {
+  scroll-snap-type: y mandatory;
+}
+
+.home-section {
+  height: 100dvh;
+  grid-column: var(--home-start-column, 1) / span var(--home-span, 5);
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+}
+
+.home-section--vertical {
+  --home-span: 4;
+}
+
+.home-section--horizontal {
+  --home-span: 6;
+}
+
+.home-section--journal {
+  --home-span: 7;
+}
+
+.home-section [data-home-section-cover] {
+  height: 100%;
+}
+
+.home-section-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--transition-duration) var(--transition-timing-function),
+    visibility var(--transition-duration) var(--transition-timing-function);
+}
+
+.home-section .entry-overlay {
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--transition-duration) var(--transition-timing-function),
+    visibility var(--transition-duration) var(--transition-timing-function);
+}
+
+.home-section.is-active .entry-overlay {
+  opacity: 1;
+  visibility: visible;
+}
+
+.home-section.is-expanded .home-section-overlay--media {
+  opacity: 1;
+  visibility: visible;
+}
+
+.home-section.is-expanded .entry-media {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-section-overlay,
+  .home-section .entry-overlay {
+    transition-duration: 0.01ms;
+  }
+}

@@ -17,6 +17,15 @@ type UiStrings = {
     journal: string;
   };
   journalCategories: Record<JournalCategory, string>;
+  technicalInfo: {
+    title: string;
+    location: string;
+    use: string;
+    year: string;
+    collaborators: string;
+    photography: string;
+  };
+  relatedProjects: string;
   noProjects: string;
   aboutEmpty: string;
   backToProjects: string;
@@ -45,6 +54,15 @@ export const ui = {
       exhibition: 'Exhibition',
       initiative: 'Initiative',
     },
+    technicalInfo: {
+      title: 'Technical Information',
+      location: 'Location',
+      use: 'Use',
+      year: 'Year',
+      collaborators: 'Collaborators',
+      photography: 'Photography',
+    },
+    relatedProjects: 'Related Projects',
     noProjects: 'No projects yet. Add some in Sanity Studio.',
     aboutEmpty: 'About page content coming soon.',
     backToProjects: '← All projects',
@@ -71,6 +89,15 @@ export const ui = {
       exhibition: 'Exposición',
       initiative: 'Iniciativa',
     },
+    technicalInfo: {
+      title: 'Información Técnica',
+      location: 'Localización',
+      use: 'Uso',
+      year: 'Año',
+      collaborators: 'Colaboradores',
+      photography: 'Fotografía',
+    },
+    relatedProjects: 'Proyectos Relacionados',
     noProjects: 'Todavía no hay proyectos. Añade algunos en Sanity Studio.',
     aboutEmpty: 'El contenido de la página Nosotros llegará pronto.',
     backToProjects: '← Todos los proyectos',

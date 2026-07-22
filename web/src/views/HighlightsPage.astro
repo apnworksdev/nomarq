@@ -6,7 +6,9 @@ import { getLocalizedPath } from '../lib/i18n';
 import Layout from '../layouts/Layout.astro';
 import { homeQuery, type HomeDocument } from '../lib/queries';
 import { sanity } from '../lib/sanity';
-import '../styles/components/home.css';
+import '../styles/pages/home.css';
+import '../styles/components/entry-caption.css';
+import '../styles/components/entry-gallery.css';
 
 interface Props {
   locale: Locale;
@@ -37,7 +39,7 @@ const sections = (home?.sections ?? []).filter((section) => getHomeSectionItem(s
                 <li>
                   <button
                     type="button"
-                    class="home-section-nav-item"
+                    class:list={['home-section-nav-item', 'active-parens', { 'is-active': index === 0 }]}
                     data-home-section-nav={index}
                     aria-current={index === 0 ? 'true' : 'false'}
                   >

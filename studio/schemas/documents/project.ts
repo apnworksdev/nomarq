@@ -1,5 +1,6 @@
 import { defineField, defineType } from 'sanity';
 
+import { englishDocumentReferenceFilter } from '../../lib/referenceFilters';
 import { languageField } from '../fields/language';
 import { localizedSlugField } from '../fields/localizedSlug';
 
@@ -64,6 +65,21 @@ export default defineType({
       type: 'array',
       of: [{ type: 'imageWithAlt' }],
       validation: (Rule) => Rule.max(6),
+    }),
+    defineField({
+      name: 'relatedProjects',
+      title: 'Related projects',
+      description:
+        'Pick up to 3 related projects. Any empty slots are filled automatically from similar uses and location.',
+      type: 'array',
+      of: [
+        {
+          type: 'reference',
+          to: [{ type: 'project' }],
+          options: englishDocumentReferenceFilter,
+        },
+      ],
+      validation: (Rule) => Rule.max(3),
     }),
   ],
   preview: {

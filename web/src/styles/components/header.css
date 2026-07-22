@@ -1,3 +1,5 @@
+@import '../common/active-parens.css';
+
 .header {
   display: grid;
   align-items: center;
@@ -44,10 +46,11 @@
   color: inherit;
 }
 
-.header-nav-menu-item a.active,
-.header-language-switcher a.active {
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
+.header-nav-menu-item a,
+.header-language-switcher a {
+  display: inline-block;
+  text-decoration: none;
+  color: inherit;
 }
 
 .header-language-switcher {

@@ -1,0 +1,81 @@
+---
+import { imageAlt } from '../lib/alt';
+import type { ImageField } from '../lib/queries';
+import { urlFor } from '../lib/image';
+
+interface Props {
+  images: ImageField[];
+  title: string;
+  loading?: 'eager' | 'lazy';
+  /** cover = main image only; strip = thumbnails only; full = both */
+  mode?: 'cover' | 'strip' | 'full';
+  interactive?: boolean;
+  showCounter?: boolean;
+}
+
+const {
+  images,
+  title,
+  loading = 'lazy',
+  mode = 'full',
+  interactive = false,
+  showCounter = false,
+} = Astro.props;
+
+const validImages = images.filter((image) => image.image);
+const cover = validImages[0];
+const total = validImages.length;
+const showCover = mode === 'cover' || mode === 'full';
+const showStrip = (mode === 'strip' || mode === 'full') && validImages.length > 1;
+---
+
+{
+  showCover && cover?.image && (
+    <figure class="entry-media" data-entry-media>
+      <img
+        src={urlFor(cover.image).width(1600).fit('max').url()}
+        alt={imageAlt(cover.alt, title)}
+        loading={loading}
+        data-entry-main
+      />
+      {
+        showCounter && total > 0 && (
+          <p class="entry-gallery-counter" data-entry-counter aria-live="polite">
+            <span data-entry-counter-current>01</span>
+            {' / '}
+            <span data-entry-counter-total>{String(total).padStart(2, '0')}</span>
+          </p>
+        )
+      }
+    </figure>
+  )
+}
+
+{
+  showStrip && (
+    <ul
+      class:list={['entry-gallery', { 'entry-gallery--interactive': interactive }]}
+      data-entry-gallery={interactive ? '' : undefined}
+    >
+      {
+        validImages.map((image, imageIndex) =>
+          image.image ? (
+            <li
+              class:list={['entry-gallery-item', { 'is-active': interactive && imageIndex === 0 }]}
+              data-entry-thumb={interactive ? '' : undefined}
+              data-entry-src={interactive ? urlFor(image.image).width(1600).fit('max').url() : undefined}
+              data-entry-alt={interactive ? imageAlt(image.alt, title, { index: imageIndex }) : undefined}
+              data-entry-index={interactive ? imageIndex : undefined}
+            >
+              <img
+                src={urlFor(image.image).height(200).url()}
+                alt={imageAlt(image.alt, title, { index: imageIndex })}
+                loading="lazy"
+              />
+            </li>
+          ) : null,
+        )
+      }
+    </ul>
+  )
+}

@@ -1,0 +1,13 @@
+---
+interface Props {
+  title: string;
+  place?: string;
+  country?: string;
+}
+
+const { title, place, country } = Astro.props;
+---
+
+<span class="entry-caption-detail-name">{title}</span>
+{place && <span class="entry-caption-detail-location">{place}</span>}
+{country && <span class="entry-caption-detail-country">{country}</span>}

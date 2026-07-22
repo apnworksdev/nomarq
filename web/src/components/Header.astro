@@ -27,7 +27,7 @@ const pathWithoutLocale = stripLocaleFromPath(pathname);
             <a
               href={getRelativeLocaleUrl(locale, item.href)}
               data-nav={item.id}
-              class:list={{ active: activeNavId === item.id }}
+              class:list={['active-parens', { active: activeNavId === item.id }]}
             >
               {getNavLabel(locale, item.id)}
             </a>
@@ -42,7 +42,7 @@ const pathWithoutLocale = stripLocaleFromPath(pathname);
             <a
               href={getRelativeLocaleUrl(locale, item.href)}
               data-nav={item.id}
-              class:list={{ active: activeNavId === item.id }}
+              class:list={['active-parens', { active: activeNavId === item.id }]}
             >
               {getNavLabel(locale, item.id)}
             </a>
@@ -62,7 +62,7 @@ const pathWithoutLocale = stripLocaleFromPath(pathname);
         <a
           href={getRelativeLocaleUrl(lang, pathWithoutLocale)}
           data-locale-switcher={lang}
-          class:list={{ active: locale === lang }}
+          class:list={['active-parens', { active: locale === lang }]}
           aria-current={locale === lang ? 'true' : undefined}
           hreflang={lang}
           lang={lang}

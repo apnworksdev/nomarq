@@ -1,0 +1,34 @@
+.active-parens {
+  position: relative;
+  transition: padding var(--transition-duration) var(--transition-timing-function);
+}
+
+.active-parens::before {
+  content: '(';
+  position: absolute;
+  left: 0;
+  opacity: 0;
+  transition: opacity var(--transition-duration) var(--transition-timing-function);
+}
+
+.active-parens::after {
+  content: ')';
+  position: absolute;
+  right: 0;
+  opacity: 0;
+  transition: opacity var(--transition-duration) var(--transition-timing-function);
+}
+
+.active-parens.is-active,
+.active-parens.active {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.active-parens.is-active::before,
+.active-parens.active::before,
+.active-parens.is-active::after,
+.active-parens.active::after {
+  opacity: 1;
+  transition: opacity var(--transition-duration) var(--transition-duration) var(--transition-timing-function);
+}

@@ -1,0 +1,60 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+import EntryCaption from './EntryCaption.astro';
+import { imageAlt } from '../lib/alt';
+import type { Locale } from '../lib/i18n';
+import { urlFor } from '../lib/image';
+import type { ProjectCard } from '../lib/queries';
+
+interface Props {
+  projects: ProjectCard[];
+  heading: string;
+  locale: Locale;
+}
+
+const { projects, heading, locale } = Astro.props;
+---
+
+{
+  projects.length > 0 && (
+    <section class="project-related" aria-labelledby="project-related-title">
+      <h2 id="project-related-title" class="project-related-title">{heading}</h2>
+      <ul class="project-related-list">
+        {
+          projects.map((project) => {
+            const place = project.location?.place?.trim() || undefined;
+            const country =
+              project.location?.country?.full?.trim() ||
+              project.location?.country?.short?.trim() ||
+              undefined;
+
+            return (
+              <li class="project-related-item">
+                <a
+                  class="project-related-link"
+                  href={getRelativeLocaleUrl(locale, `/projects/${project.slug}`)}
+                >
+                  {
+                    project.coverImage?.image && (
+                      <figure class="project-related-media">
+                        <img
+                          src={urlFor(project.coverImage.image).width(900).fit('max').url()}
+                          alt={imageAlt(project.coverImage.alt, project.title)}
+                          loading="lazy"
+                        />
+                      </figure>
+                    )
+                  }
+                  <p class="project-related-caption">
+                    <EntryCaption title={project.title} place={place} country={country} />
+                  </p>
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </section>
+  )
+}

@@ -1,6 +1,6 @@
 import { onHomeActiveSectionChange } from './home-active-section';
 
-const DETAIL_TRIGGER_SELECTOR = '.home-section-detail-trigger';
+const DETAIL_TRIGGER_SELECTOR = '.entry-overlay-detail-trigger';
 const TEXT_OVERLAY_SELECTOR = '[data-home-section-overlay-text]';
 
 function expandSection(section: HTMLElement) {
