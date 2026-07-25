@@ -1,0 +1,122 @@
+.projects-filters {
+  --projects-filters-panel-duration: 0.35s;
+}
+
+.projects-filters-panel {
+  position: fixed;
+  top: var(--header-offset);
+  left: 0;
+  width: 100%;
+  z-index: var(--z-index-filters-panel);
+  color: var(--background-color);
+  mix-blend-mode: difference;
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    max-height var(--projects-filters-panel-duration) var(--transition-timing-function),
+    opacity var(--projects-filters-panel-duration) var(--transition-timing-function);
+}
+
+.projects-filters.is-open .projects-filters-panel {
+  max-height: 200px;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.projects-filters-panel-inner {
+  display: grid;
+  grid-template-columns: repeat(var(--columns), 1fr);
+  column-gap: var(--columns-gap);
+  align-items: start;
+  padding: var(--margin) var(--margin) calc(var(--margin) * 2);
+}
+
+.projects-filters-label {
+  grid-column: 1 / 2;
+}
+
+.projects-filters-uses {
+  grid-column: 2 / 7;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  column-gap: var(--columns-gap);
+}
+
+.projects-filters-use-column {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--margin) / 2);
+}
+
+.projects-filter-use {
+  cursor: pointer;
+  text-align: left;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25em;
+}
+
+.projects-filter-use-marker {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.projects-filter-use-marker-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 7px;
+}
+
+.projects-filter-use.active .projects-filter-use-marker-slot::before {
+  content: '•';
+  line-height: 1;
+}
+
+.projects-filter-search {
+  grid-column: 7 / 8;
+  align-self: start;
+  width: 100%;
+}
+
+.projects-filter-search:focus,
+.projects-filter-search:focus-visible {
+  outline: none;
+}
+
+.projects-filter-search::placeholder {
+  color: inherit;
+  opacity: 1;
+}
+
+.projects-filters-meta {
+  grid-column: 8 / 9;
+  justify-self: end;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 50px;
+}
+
+.projects-filter-clear {
+  cursor: pointer;
+  text-align: right;
+}
+
+.projects-filters-count {
+  text-align: right;
+}
+
+html.projects-filters-open {
+  --projects-filters-offset: 100px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projects-filters-panel,
+  .projects-grid {
+    transition-duration: 0.01ms;
+  }
+}

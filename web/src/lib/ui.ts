@@ -31,6 +31,20 @@ type UiStrings = {
   backToProjects: string;
   fullProject: string;
   fullJournal: string;
+  projectsFilters: {
+    toggle: string;
+    typology: string;
+    search: string;
+    clear: string;
+    results: string;
+  };
+  footer: {
+    foundationTitle: string;
+    brandName: string;
+    copyright: string;
+    legalNav: string;
+    legalLinks: Record<string, string>;
+  };
 };
 
 export const ui = {
@@ -68,6 +82,24 @@ export const ui = {
     backToProjects: '← All projects',
     fullProject: 'Full Project',
     fullJournal: 'Full entry',
+    projectsFilters: {
+      toggle: 'Filter',
+      typology: 'Typology',
+      search: 'Search...',
+      clear: 'Clear',
+      results: 'Results',
+    },
+    footer: {
+      foundationTitle: 'fundación.nomarq',
+      brandName: 'nomarq',
+      copyright: 'All Rights Reserved, nomarq',
+      legalNav: 'Legal',
+      legalLinks: {
+        'privacy-policy': 'Privacy Policy',
+        'legal-notice': 'Legal Notice',
+        'cookies-policy': 'Cookies Policy',
+      },
+    },
   },
   es: {
     nav: {
@@ -103,6 +135,24 @@ export const ui = {
     backToProjects: '← Todos los proyectos',
     fullProject: 'Proyecto completo',
     fullJournal: 'Entrada completa',
+    projectsFilters: {
+      toggle: 'Filtrar',
+      typology: 'Tipologia',
+      search: 'Buscar...',
+      clear: 'Limpiar',
+      results: 'Resultados',
+    },
+    footer: {
+      foundationTitle: 'fundación.nomarq',
+      brandName: 'nomarq',
+      copyright: 'Todos los derechos reservados, nomarq',
+      legalNav: 'Información legal',
+      legalLinks: {
+        'privacy-policy': 'Política de privacidad',
+        'legal-notice': 'Aviso legal',
+        'cookies-policy': 'Política de cookies',
+      },
+    },
   },
 } satisfies Record<Locale, UiStrings>;
 
@@ -120,4 +170,8 @@ export function getJournalCategoryLabel(locale: Locale, category: string): strin
   const labels = ui[locale].journalCategories;
 
   return labels[category as JournalCategory] ?? category;
+}
+
+export function getFooterLegalLinkLabel(locale: Locale, key: string, fallback: string): string {
+  return ui[locale].footer.legalLinks[key] ?? fallback;
 }

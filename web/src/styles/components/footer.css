@@ -1,0 +1,73 @@
+.footer {
+  width: 100%;
+  padding: 40px var(--margin) 14px var(--margin);
+  display: flex;
+  flex-direction: column;
+  gap: 310px;
+  margin-top: auto;
+}
+
+.footer-title {
+  font-size: 27px;
+  line-height: normal;
+  letter-spacing: -1%;
+}
+
+.footer-content {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(var(--columns), 1fr);
+  line-height: normal;
+}
+
+.footer-brand-name {
+  grid-column: 1 / 2;
+}
+
+.footer-contact {
+  grid-column: 2 / 5;
+}
+
+.footer-copyright {
+  margin-bottom: 30px;
+}
+
+.footer-phone {
+  margin-bottom: 8px;
+}
+
+.footer-contact-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--margin);
+}
+
+.footer-email {
+  text-decoration: none;
+  grid-column: 1 / 2;
+}
+
+.footer-address {
+  grid-column: 2 / 4;
+}
+
+.footer-legal-links {
+  grid-column: 5 / 8;
+  align-self: end;
+}
+
+.footer-legal-list {
+  display: flex;
+  gap: 20px;
+}
+
+.footer-social {
+  grid-column: 8 / 9;
+  align-self: start;
+  justify-self: end;
+}
+
+.footer-social-list {
+  display: flex;
+  gap: 20px;
+}

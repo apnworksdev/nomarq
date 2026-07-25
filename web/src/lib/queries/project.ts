@@ -1,61 +1,38 @@
 import {
-  imageProjection,
-  locationProjection,
-  projectCardFields,
-} from './shared';
-import { languageFilter } from '../locale';
+  localizedProjectCardProjection,
+  localizedProjectDetailProjection,
+  localizedProjectListProjection,
+  translatedProjectRef,
+  validProjectFilter,
+} from './localized';
 
-export const projectsQuery = `*[_type == "project" && ${languageFilter}] | order(title asc) {
-  title,
-  "slug": slug.current,
-  description,
-  ${locationProjection},
-  "coverImage": images[0] ${imageProjection}
+export const projectsQuery = `*[${validProjectFilter}] | order(title asc) {
+  ${localizedProjectListProjection}
 }`;
 
-export const projectBySlugQuery = `*[_type == "project" && slug.current == $slug && ${languageFilter}][0] {
-  title,
-  "slug": slug.current,
-  description,
-  ${locationProjection},
-  use[]->{
-    titleEn,
-    titleEs,
-    slug
-  },
-  "useRefIds": use[]._ref,
-  year,
-  collaborators,
-  photography,
-  images[] ${imageProjection},
-  "relatedProjects": relatedProjects[]->{
-    title,
-    "slug": slug.current,
-    ${locationProjection},
-    "coverImage": images[0] ${imageProjection},
-    "translated": *[_type == "translation.metadata" && references(^._id)][0].translations[language == $language][0].value->{
-      title,
-      "slug": slug.current,
-      ${locationProjection},
-      "coverImage": images[0] ${imageProjection}
-    }
+export const projectBySlugQuery = `*[${validProjectFilter} && (
+  slug.current == $slug
+  || ${translatedProjectRef}slug.current == $slug
+)][0] {
+  ${localizedProjectDetailProjection},
+  "relatedProjects": coalesce(${translatedProjectRef}relatedProjects, relatedProjects)[]->{
+    ${localizedProjectCardProjection}
   }
 }`;
 
 export const relatedProjectsQuery = `*[
-  _type == "project"
-  && ${languageFilter}
+  ${validProjectFilter}
   && slug.current != $slug
   && !(slug.current in $excludeSlugs)
 ] {
-  ${projectCardFields},
-  "score": count((use[]._ref)[@ in $useIds])
-    + select(location.country.full == $countryFull => 2, 0)
-    + select(location.place == $place => 1, 0)
+  ${localizedProjectCardProjection},
+  "score": count((coalesce(${translatedProjectRef}use, use[]._ref))[@ in $useIds])
+    + select(coalesce(${translatedProjectRef}location.country.full, location.country.full) == $countryFull => 2, 0)
+    + select(coalesce(${translatedProjectRef}location.place, location.place) == $place => 1, 0)
 }
 | order(score desc, title asc)
 [0...$limit]`;
 
-export const projectSlugsQuery = `*[_type == "project" && defined(slug.current) && ${languageFilter}] {
-  "slug": slug.current
+export const projectSlugsQuery = `*[${validProjectFilter}] {
+  "slug": coalesce(${translatedProjectRef}slug.current, slug.current)
 }`;

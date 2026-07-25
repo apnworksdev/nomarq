@@ -11,7 +11,7 @@ const { locale } = Astro.props;
 const copy = getUi(locale);
 ---
 
-<Layout title={`${copy.nav.about} — Nomarq`}>
+<Layout title={`${copy.nav.about} — Nomarq`} page="about">
   <h1>{copy.nav.about}</h1>
   <p>{copy.aboutEmpty}</p>
 </Layout>

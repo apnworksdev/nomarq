@@ -10,7 +10,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 100;
+  z-index: var(--z-index-site-header);
   color: var(--background-color);
   mix-blend-mode: difference;
 }
@@ -26,6 +26,22 @@
   grid-column: 1 / 2;
   display: flex;
   gap: calc(var(--margin) * 2);
+}
+
+.header-nav-filter {
+  grid-column: 3 / 4;
+  align-self: center;
+}
+
+.header-nav-filter-toggle {
+  cursor: pointer;
+  text-align: left;
+  display: inline-flex;
+  gap: 3px;
+}
+
+.header-nav-filter-toggle[hidden] {
+  display: none;
 }
 
 .header-nav-menu-right {

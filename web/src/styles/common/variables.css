@@ -13,6 +13,10 @@
 
   --margin: 10px;
 
+  --z-index-grid-hover: 1;
+  --z-index-filters-panel: 100;
+  --z-index-site-header: 110;
+
   --columns: 8;
   --columns-gap: var(--margin);
 

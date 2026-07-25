@@ -3,19 +3,21 @@ import { ClientRouter } from 'astro:transitions';
 
 import '../styles/index.css';
 
+import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { getLocaleFromPath } from '../lib/i18n';
 
 interface Props {
   title: string;
+  page: 'home' | 'projects' | 'project' | 'about';
 }
 
-const { title } = Astro.props;
+const { title, page } = Astro.props;
 const locale = getLocaleFromPath(Astro.url.pathname);
 ---
 
 <!doctype html>
-<html lang={locale}>
+<html lang={locale} data-page={page}>
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -30,5 +32,12 @@ const locale = getLocaleFromPath(Astro.url.pathname);
     <main>
       <slot />
     </main>
+    <Footer />
   </body>
 </html>
+
+<script>
+  import { initProjectsFiltersState } from '../lib/projects-filter';
+
+  initProjectsFiltersState();
+</script>

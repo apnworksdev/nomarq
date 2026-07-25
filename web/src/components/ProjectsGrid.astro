@@ -1,0 +1,80 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+import { imageAlt } from '../lib/alt';
+import type { Locale } from '../lib/i18n';
+import { urlFor } from '../lib/image';
+import { buildProjectsGridLayout } from '../lib/projects-grid';
+import type { Project } from '../lib/queries';
+import EntryCaption from './EntryCaption.astro';
+
+interface Props {
+  projects: Project[];
+  locale: Locale;
+}
+
+const { projects, locale } = Astro.props;
+const items = buildProjectsGridLayout(projects);
+---
+
+<div class="projects-grid" data-projects-grid>
+  {
+    items.map((item) => (
+      <>
+        <article
+          class="projects-grid-item"
+          style={{
+            gridRow: item.row,
+            gridColumn: `${item.startColumn} / span ${item.span}`,
+          }}
+          data-projects-grid-item
+          data-project-slug={item.slug}
+        >
+          <a
+            href={getRelativeLocaleUrl(locale, `/projects/${item.slug}`)}
+            class="projects-grid-main"
+            data-projects-grid-main
+          >
+            {
+              item.coverImage.image && (
+                <img
+                  src={urlFor(item.coverImage.image).width(1200).fit('max').url()}
+                  alt={imageAlt(item.coverImage.alt, item.title)}
+                  loading="lazy"
+                  decoding="async"
+                />
+              )
+            }
+          </a>
+          <div class="projects-grid-caption">
+            <EntryCaption title={item.title} place={item.place} country={item.country} />
+          </div>
+        </article>
+        {
+          item.previews.map((preview) =>
+            preview.image.image ? (
+              <div
+                class="projects-grid-preview"
+                style={{
+                  gridRow: item.row,
+                  gridColumn: `${preview.column} / span 1`,
+                  '--preview-index': preview.imageIndex - 1,
+                }}
+                data-projects-grid-preview
+                data-project-slug={item.slug}
+                data-preview-index={preview.imageIndex}
+              >
+                <img
+                  src={urlFor(preview.image.image).width(600).fit('max').url()}
+                  alt={imageAlt(preview.image.alt, item.title, { index: preview.imageIndex })}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            ) : null,
+          )
+        }
+      </>
+    ))
+  }
+</div>

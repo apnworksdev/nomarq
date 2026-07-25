@@ -26,8 +26,14 @@
   column-gap: var(--columns-gap);
 }
 
-html:has(.home-grid) {
+html[data-page='home'] {
   scroll-snap-type: y mandatory;
+}
+
+/* Let the footer be a valid snap destination past the last section. */
+html[data-page='home'] .footer {
+  scroll-snap-align: end;
+  scroll-snap-stop: always;
 }
 
 .home-section {

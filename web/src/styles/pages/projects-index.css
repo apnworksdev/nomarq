@@ -1,0 +1,95 @@
+:root {
+  --projects-filters-offset: 0px;
+}
+
+.projects-grid {
+  --projects-grid-hover-delay: 180ms;
+  --projects-grid-fade-duration: 0.35s;
+  --projects-grid-preview-stagger: 60ms;
+
+  display: grid;
+  grid-template-columns: repeat(var(--columns), 1fr);
+  column-gap: var(--columns-gap);
+  row-gap: calc(var(--margin) * 3);
+  padding: var(--margin);
+  padding-top: calc(var(--header-offset) + var(--projects-filters-offset));
+  transition: padding-top var(--transition-duration) var(--transition-timing-function);
+}
+
+.projects-grid-item,
+.projects-grid-preview {
+  transition:
+    opacity var(--projects-grid-fade-duration) var(--transition-timing-function),
+    visibility var(--projects-grid-fade-duration) var(--transition-timing-function);
+}
+
+.projects-grid-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.projects-grid-item[hidden],
+.projects-grid-item.is-filtered-out,
+.projects-grid-preview[hidden],
+.projects-grid-preview.is-filtered-out {
+  display: none !important;
+}
+
+.projects-grid-main {
+  display: block;
+  width: 100%;
+}
+
+.projects-grid-main img,
+.projects-grid-preview img {
+  width: 100%;
+  height: auto;
+}
+
+.projects-grid-caption {
+  margin-top: calc(var(--margin) / 2);
+  width: 100%;
+}
+
+.projects-grid-caption .entry-caption-detail-location,
+.projects-grid-caption .entry-caption-detail-country {
+  display: block;
+  padding-left: 0;
+}
+
+.projects-grid-preview {
+  align-self: start;
+  min-width: 0;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.projects-grid.is-hovering .projects-grid-item:not(.is-hovered) {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.projects-grid.is-hovering .projects-grid-item.is-hovered,
+.projects-grid.is-hovering .projects-grid-preview.is-visible {
+  visibility: visible;
+  position: relative;
+  z-index: var(--z-index-grid-hover);
+}
+
+.projects-grid.is-hovering .projects-grid-preview.is-visible {
+  opacity: 1;
+  pointer-events: none;
+  transition-delay: calc(var(--preview-index, 0) * var(--projects-grid-preview-stagger));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projects-grid-item,
+  .projects-grid-preview {
+    transition-duration: 0.01ms;
+    transition-delay: 0ms;
+  }
+}

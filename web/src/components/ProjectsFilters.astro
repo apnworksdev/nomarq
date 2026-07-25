@@ -1,0 +1,119 @@
+---
+import type { Locale } from '../lib/i18n';
+import { groupUsesForFilter } from '../lib/projects-filter';
+import { normalizeProjectUseSlugs } from '../lib/project-uses';
+import type { Project, UseDocument } from '../lib/queries';
+import { getUseTitle } from '../lib/use';
+import { getUi } from '../lib/ui';
+import '../styles/components/projects-filters.css';
+
+interface Props {
+  projects: Project[];
+  uses: UseDocument[];
+  locale: Locale;
+}
+
+const { projects, uses, locale } = Astro.props;
+const copy = getUi(locale).projectsFilters;
+const useColumns = groupUsesForFilter(uses);
+
+const filterRecords = projects.flatMap((project, orderIndex) => {
+  const images = (project.images ?? []).filter((image) => image.image);
+
+  if (images.length === 0) {
+    return [];
+  }
+
+  const useSlugs = normalizeProjectUseSlugs(
+    (project.use ?? [])
+      .map((entry) => {
+        if (typeof entry.slug === 'string') {
+          return entry.slug;
+        }
+
+        return entry.slug?.current;
+      })
+      .filter((slug): slug is string => Boolean(slug)),
+  );
+  const place = project.location?.place?.trim() ?? '';
+  const country =
+    project.location?.country?.full?.trim() ||
+    project.location?.country?.short?.trim() ||
+    '';
+  const searchText = [project.title, place, country].join(' ').toLowerCase();
+
+  return [
+    {
+      slug: project.slug,
+      orderIndex,
+      imageCount: images.length,
+      useSlugs,
+      searchText,
+    },
+  ];
+});
+---
+
+<div
+  class="projects-filters"
+  data-projects-filters
+  data-projects-filter-records={JSON.stringify(filterRecords)}
+>
+  <div
+    id="projects-filters-panel"
+    class="projects-filters-panel"
+    data-projects-filters-panel
+  >
+    <div class="projects-filters-panel-inner">
+      <p class="projects-filters-label">{copy.typology}</p>
+
+      <div class="projects-filters-uses">
+        {
+          useColumns.map((column) => (
+            <ul class="projects-filters-use-column">
+              {
+                column.map((use) => (
+                  <li>
+                    <button
+                      type="button"
+                      class="projects-filter-use"
+                      data-projects-filter-use
+                      data-use-slug={use.slug}
+                    >
+                      <span class="projects-filter-use-marker" aria-hidden="true">
+                        <span class="projects-filter-use-marker-open">(</span>
+                        <span class="projects-filter-use-marker-slot"></span>
+                        <span class="projects-filter-use-marker-close">)</span>
+                      </span>
+                      {getUseTitle(use, locale)}
+                    </button>
+                  </li>
+                ))
+              }
+            </ul>
+          ))
+        }
+      </div>
+
+      <input
+        type="text"
+        class="projects-filter-search"
+        data-projects-filter-search
+        placeholder={copy.search}
+        aria-label={copy.search}
+        role="searchbox"
+        autocomplete="off"
+        spellcheck="false"
+      />
+
+      <div class="projects-filters-meta">
+        <button type="button" class="projects-filter-clear" data-projects-filter-clear>
+          {copy.clear} ( X )
+        </button>
+        <p class="projects-filters-count">
+          {copy.results} (<span data-projects-filter-count>{filterRecords.length}</span>)
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

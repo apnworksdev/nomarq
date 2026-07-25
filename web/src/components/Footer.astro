@@ -1,0 +1,97 @@
+---
+import { getRelativeLocaleUrl } from "astro:i18n";
+
+import { isExternalHref, type FooterDocument } from "../lib/footer";
+import { getLocaleFromPath, type Locale } from "../lib/i18n";
+import { footerQuery } from "../lib/queries/footer";
+import { sanity } from "../lib/sanity";
+import { getFooterLegalLinkLabel, getUi } from "../lib/ui";
+
+import "../styles/components/footer.css";
+
+const locale = getLocaleFromPath(Astro.url.pathname) as Locale;
+const copy = getUi(locale);
+
+const footer = await sanity.fetch<FooterDocument | null>(footerQuery, {
+  language: locale,
+});
+
+const legalLinks = footer?.legalLinks ?? [];
+const socialLinks = footer?.socialLinks ?? [];
+const copyrightYear = new Date().getFullYear();
+
+function resolveHref(href: string): string {
+  if (isExternalHref(href)) {
+    return href;
+  }
+
+  const path = href.startsWith("/") ? href.slice(1) : href;
+  return getRelativeLocaleUrl(locale, path);
+}
+---
+
+<footer class="footer">
+  <div class="footer-title">{copy.footer.foundationTitle}</div>
+
+  <div class="footer-content">
+    <p class="footer-brand-name">{copy.footer.brandName}</p>
+    <div class="footer-contact">
+      <p class="footer-copyright">
+        {copy.footer.copyright} {copyrightYear}
+      </p>
+      {footer?.phone && <p class="footer-phone">{footer.phone}</p>}
+
+      <div class="footer-contact-info">
+        {
+          footer?.email && (
+            <a class="footer-email" href={`mailto:${footer.email}`}>
+              {footer.email}
+            </a>
+          )
+        }
+
+        {footer?.address && <p class="footer-address">{footer.address}</p>}
+      </div>
+    </div>
+    {
+      legalLinks.length > 0 && (
+        <div class="footer-legal-links">
+          <nav class="footer-legal" aria-label={copy.footer.legalNav}>
+            <ul class="footer-legal-list">
+              {legalLinks.map((link) => (
+                <li class="footer-legal-item">
+                  <a href={resolveHref(link.href)}>
+                    {getFooterLegalLinkLabel(locale, link._key, link.label)}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+      )
+    }
+    {
+      socialLinks.length > 0 && (
+        <div class="footer-social">
+          <ul class="footer-social-list">
+            {socialLinks.map((link) => (
+              <li class="footer-social-item">
+                <a
+                  href={resolveHref(link.href)}
+                  target={isExternalHref(link.href) ? "_blank" : undefined}
+                  rel={
+                    isExternalHref(link.href)
+                      ? "noopener noreferrer"
+                      : undefined
+                  }
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )
+    }
+  </div>
+</footer>

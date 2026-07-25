@@ -23,7 +23,7 @@ const home = await sanity.fetch<HomeDocument | null>(homeQuery, {
 const sections = (home?.sections ?? []).filter((section) => getHomeSectionItem(section));
 ---
 
-<Layout title="Nomarq">
+<Layout title="Nomarq" page="home">
   {
     sections.length === 0 ? (
       <p class="home-empty">No home sections yet. Add some in Sanity Studio.</p>

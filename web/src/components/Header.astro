@@ -9,13 +9,15 @@ import {
   stripLocaleFromPath,
   type Locale,
 } from '../lib/i18n';
-import { getNavLabel } from '../lib/ui';
+import { getNavLabel, getUi } from '../lib/ui';
 import '../styles/components/header.css';
 
 const pathname = Astro.url.pathname;
 const locale = getLocaleFromPath(pathname) as Locale;
 const activeNavId = matchNavId(pathname);
 const pathWithoutLocale = stripLocaleFromPath(pathname);
+const isProjectsIndex = pathWithoutLocale === '/projects';
+const copy = getUi(locale);
 ---
 
 <header class="header" transition:persist="site-header">
@@ -35,6 +37,19 @@ const pathWithoutLocale = stripLocaleFromPath(pathname);
         ))
       }
     </menu>
+    <div class="header-nav-filter">
+      <button
+        type="button"
+        class="header-nav-filter-toggle"
+        data-projects-filter-toggle
+        aria-expanded="false"
+        aria-controls="projects-filters-panel"
+        hidden={!isProjectsIndex}
+      >
+        <span data-projects-filter-toggle-label>{copy.projectsFilters.toggle}</span>
+        <span data-projects-filter-toggle-sign aria-hidden="true">( + )</span>
+      </button>
+    </div>
     <menu class="header-nav-menu-right">
       {
         navItems.right.map((item) => (
@@ -53,7 +68,7 @@ const pathWithoutLocale = stripLocaleFromPath(pathname);
   </nav>
   <div class="header-logo">
     <h2 class="header-logo-text">
-      <a href={getRelativeLocaleUrl(locale, '/')}>Nomarq</a>
+      <a href={getRelativeLocaleUrl(locale, '/')} data-header-logo>Nomarq</a>
     </h2>
   </div>
   <div class="header-language-switcher">

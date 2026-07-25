@@ -4,7 +4,22 @@ import { resetActiveHomeSection, setActiveHomeSection } from './home-active-sect
 const SECTION_SELECTOR = '[data-home-section]';
 const NAV_SELECTOR = '[data-home-section-nav]';
 
+function isFooterInView(): boolean {
+  const footer = document.querySelector<HTMLElement>('.footer');
+
+  if (!footer || document.documentElement.dataset.page !== 'home') {
+    return false;
+  }
+
+  const rect = footer.getBoundingClientRect();
+  return rect.top < window.innerHeight && rect.bottom > 0;
+}
+
 function getMostCenteredSection(sections: HTMLElement[]): HTMLElement | null {
+  if (isFooterInView()) {
+    return null;
+  }
+
   const viewportCenter = window.innerHeight / 2;
   let bestSection: HTMLElement | null = null;
   let bestDistance = Number.POSITIVE_INFINITY;
@@ -56,6 +71,12 @@ export function initHomeScroll() {
     const bestSection = getMostCenteredSection(sections);
 
     if (!bestSection) {
+      if (isFooterInView()) {
+        collapseHomeExpanded();
+        resetActiveHomeSection();
+        setActiveNav(-1);
+      }
+
       return;
     }
 
