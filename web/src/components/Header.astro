@@ -5,6 +5,7 @@ import {
   getLocaleFromPath,
   locales,
   navItems,
+  isProjectsIndexPath,
   matchNavId,
   stripLocaleFromPath,
   type Locale,
@@ -16,7 +17,7 @@ const pathname = Astro.url.pathname;
 const locale = getLocaleFromPath(pathname) as Locale;
 const activeNavId = matchNavId(pathname);
 const pathWithoutLocale = stripLocaleFromPath(pathname);
-const isProjectsIndex = pathWithoutLocale === '/projects';
+const isProjectsIndex = isProjectsIndexPath(pathname);
 const copy = getUi(locale);
 ---
 
@@ -25,7 +26,12 @@ const copy = getUi(locale);
     <menu class="header-nav-menu-left">
       {
         navItems.left.map((item) => (
-          <li class="header-nav-menu-item">
+          <li
+            class:list={[
+              'header-nav-menu-item',
+              { 'header-nav-menu-item--projects': item.id === 'projects' },
+            ]}
+          >
             <a
               href={getRelativeLocaleUrl(locale, item.href)}
               data-nav={item.id}
@@ -33,6 +39,30 @@ const copy = getUi(locale);
             >
               {getNavLabel(locale, item.id)}
             </a>
+            {
+              item.id === 'projects' && (
+                <span
+                  class="header-nav-view-switch"
+                  data-projects-view-switch
+                  hidden={!isProjectsIndex}
+                >
+                  <button
+                    type="button"
+                    class="active-parens"
+                    data-projects-view="grid"
+                  >
+                    {copy.projectsView.grid}
+                  </button>
+                  <button
+                    type="button"
+                    class="active-parens"
+                    data-projects-view="list"
+                  >
+                    {copy.projectsView.list}
+                  </button>
+                </span>
+              )
+            }
           </li>
         ))
       }

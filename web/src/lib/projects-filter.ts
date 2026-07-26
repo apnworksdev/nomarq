@@ -9,6 +9,9 @@ const COUNT_SELECTOR = '[data-projects-filter-count]';
 const GRID_SELECTOR = '[data-projects-grid]';
 const ITEM_SELECTOR = '[data-projects-grid-item]';
 const PREVIEW_SELECTOR = '[data-projects-grid-preview]';
+const LIST_SELECTOR = '[data-projects-list]';
+const LIST_ITEM_SELECTOR = '[data-projects-list-item]';
+const LIST_INDEX_SELECTOR = '[data-projects-list-index]';
 
 type ProjectFilterRecord = {
   slug: string;
@@ -111,6 +114,32 @@ function applyLayout(grid: HTMLElement, visibleRecords: ProjectFilterRecord[]) {
   });
 }
 
+function applyListFilter(list: HTMLElement, visibleRecords: ProjectFilterRecord[]) {
+  const visibleSlugs = new Set(visibleRecords.map((record) => record.slug));
+  const visibleItems: HTMLElement[] = [];
+
+  list.querySelectorAll<HTMLElement>(LIST_ITEM_SELECTOR).forEach((item) => {
+    const slug = item.dataset.projectSlug ?? '';
+    const isVisible = visibleSlugs.has(slug);
+
+    item.toggleAttribute('hidden', !isVisible);
+    item.classList.toggle('is-filtered-out', !isVisible);
+    item.classList.remove('is-hovered');
+
+    if (isVisible) {
+      visibleItems.push(item);
+    }
+  });
+
+  visibleItems.forEach((item, index) => {
+    const indexLabel = item.querySelector<HTMLElement>(LIST_INDEX_SELECTOR);
+
+    if (indexLabel) {
+      indexLabel.textContent = `( ${index + 1} )`;
+    }
+  });
+}
+
 function updateResultsCount(root: HTMLElement, count: number) {
   const counter = root.querySelector<HTMLElement>(COUNT_SELECTOR);
 
@@ -149,25 +178,36 @@ function syncFilterToggleVisibility() {
 
 function applyFilters(root: HTMLElement) {
   const grid = document.querySelector<HTMLElement>(GRID_SELECTOR);
+  const list = document.querySelector<HTMLElement>(LIST_SELECTOR);
 
-  if (!grid) {
+  if (!grid && !list) {
     return;
   }
 
-  grid.classList.remove('is-hovering');
-  grid.querySelectorAll<HTMLElement>(ITEM_SELECTOR).forEach((item) => {
-    item.classList.remove('is-hovered');
-  });
-  grid.querySelectorAll<HTMLElement>(PREVIEW_SELECTOR).forEach((preview) => {
-    preview.classList.remove('is-visible');
-  });
+  if (grid) {
+    grid.classList.remove('is-hovering');
+    grid.querySelectorAll<HTMLElement>(ITEM_SELECTOR).forEach((item) => {
+      item.classList.remove('is-hovered');
+    });
+    grid.querySelectorAll<HTMLElement>(PREVIEW_SELECTOR).forEach((preview) => {
+      preview.classList.remove('is-visible');
+    });
+  }
 
   const records = readFilterRecords(root);
   const selectedUses = getSelectedUses(root);
   const query = getSearchQuery(root);
   const visibleRecords = records.filter((record) => matchesFilters(record, selectedUses, query));
 
-  applyLayout(grid, visibleRecords);
+  if (grid) {
+    applyLayout(grid, visibleRecords);
+  }
+
+  if (list) {
+    list.classList.remove('is-hovering');
+    applyListFilter(list, visibleRecords);
+  }
+
   updateResultsCount(root, visibleRecords.length);
 }
 

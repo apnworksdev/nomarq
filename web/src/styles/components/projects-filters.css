@@ -30,7 +30,7 @@
   grid-template-columns: repeat(var(--columns), 1fr);
   column-gap: var(--columns-gap);
   align-items: start;
-  padding: var(--margin) var(--margin) calc(var(--margin) * 2);
+  padding: 32px var(--margin) calc(var(--margin) * 2);
 }
 
 .projects-filters-label {

@@ -1,0 +1,146 @@
+.projects-list {
+  --projects-list-fade-duration: 0.35s;
+  --projects-list-col-width: calc(
+    (100% - (var(--columns) - 1) * var(--columns-gap)) / var(--columns)
+  );
+
+  list-style: none;
+  padding: var(--margin);
+  padding-top: calc(var(--header-offset) + var(--projects-filters-offset) + 37px);
+  transition: padding-top var(--transition-duration) var(--transition-timing-function);
+}
+
+.projects-list[hidden],
+html[data-projects-view='grid'] [data-projects-list] {
+  display: none !important;
+}
+
+html[data-projects-view='list'] [data-projects-list] {
+  display: block !important;
+}
+
+.projects-list-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--columns), 1fr);
+  column-gap: var(--columns-gap);
+  align-items: start;
+  transition:
+    opacity var(--projects-list-fade-duration) var(--transition-timing-function),
+    visibility var(--projects-list-fade-duration) var(--transition-timing-function);
+}
+
+.projects-list-item + .projects-list-item {
+  margin-top: calc(var(--margin) * 3);
+}
+
+.projects-list-item[hidden],
+.projects-list-item.is-filtered-out {
+  display: none !important;
+}
+
+.projects-list.is-hovering .projects-list-item:not(.is-hovered) {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.projects-list-item.is-hovered {
+  z-index: var(--z-index-grid-hover);
+}
+
+/* Row data — aligned with header: Filter (3), About (5), Logo (7), Lang (8) */
+.projects-list-index {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.projects-list-title {
+  grid-column: 4;
+  grid-row: 1;
+  text-decoration: none;
+  color: inherit;
+}
+
+.projects-list-location {
+  grid-column: 5;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.projects-list-location-place,
+.projects-list-location-country {
+  display: block;
+}
+
+.projects-list-uses {
+  grid-column: 7;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.projects-list-use {
+  display: block;
+}
+
+.projects-list-year {
+  grid-column: 8;
+  grid-row: 1;
+  justify-self: end;
+  text-align: right;
+}
+
+/* Hover overlays — out of document flow */
+.projects-list-thumb {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--projects-list-col-width);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--projects-list-fade-duration) var(--transition-timing-function),
+    visibility var(--projects-list-fade-duration) var(--transition-timing-function);
+}
+
+.projects-list-thumb img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.projects-list-description {
+  position: absolute;
+  top: calc(100% + var(--margin) * 3);
+  left: calc(4 * (var(--projects-list-col-width) + var(--columns-gap)));
+  width: calc(3 * var(--projects-list-col-width) + 2 * var(--columns-gap));
+  margin: 0;
+  text-align: justify;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--projects-list-fade-duration) var(--transition-timing-function),
+    visibility var(--projects-list-fade-duration) var(--transition-timing-function);
+}
+
+.projects-list-item.is-hovered .projects-list-thumb,
+.projects-list-item.is-hovered .projects-list-description {
+  opacity: 1;
+  visibility: visible;
+}
+
+.projects-list-item.is-hovered .projects-list-description {
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .projects-list-item,
+  .projects-list-thumb,
+  .projects-list-description {
+    transition-duration: 0.01ms;
+  }
+}

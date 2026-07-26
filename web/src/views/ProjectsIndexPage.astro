@@ -1,6 +1,7 @@
 ---
 import ProjectsFilters from '../components/ProjectsFilters.astro';
 import ProjectsGrid from '../components/ProjectsGrid.astro';
+import ProjectsList from '../components/ProjectsList.astro';
 import type { Locale } from '../lib/i18n';
 import Layout from '../layouts/Layout.astro';
 import { projectsQuery, usesQuery, type Project, type UseDocument } from '../lib/queries';
@@ -31,15 +32,20 @@ const gridProjects = projects.filter((project) =>
     gridProjects.length === 0 ? (
       <p class="projects-empty">{copy.noProjects}</p>
     ) : (
-      <ProjectsGrid projects={gridProjects} locale={locale} />
+      <>
+        <ProjectsGrid projects={gridProjects} locale={locale} />
+        <ProjectsList projects={gridProjects} locale={locale} />
+      </>
     )
   }
 </Layout>
 
 <script>
   import { initProjectsGridHoverState } from '../lib/projects-grid-hover';
+  import { initProjectsListHoverState } from '../lib/projects-list-hover';
 
   initProjectsGridHoverState();
+  initProjectsListHoverState();
 </script>
 
 <style>

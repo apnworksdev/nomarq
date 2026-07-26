@@ -38,6 +38,10 @@ type UiStrings = {
     clear: string;
     results: string;
   };
+  projectsView: {
+    grid: string;
+    list: string;
+  };
   footer: {
     foundationTitle: string;
     brandName: string;
@@ -88,6 +92,10 @@ export const ui = {
       search: 'Search...',
       clear: 'Clear',
       results: 'Results',
+    },
+    projectsView: {
+      grid: 'Grid',
+      list: 'List',
     },
     footer: {
       foundationTitle: 'fundación.nomarq',
@@ -141,6 +149,10 @@ export const ui = {
       search: 'Buscar...',
       clear: 'Limpiar',
       results: 'Resultados',
+    },
+    projectsView: {
+      grid: 'Grid',
+      list: 'List',
     },
     footer: {
       foundationTitle: 'fundación.nomarq',

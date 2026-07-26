@@ -41,6 +41,21 @@ export function stripLocaleFromPath(pathname: string): string {
   return pathname || '/';
 }
 
+/** Normalize `/projects/` → `/projects` for route checks. */
+export function normalizePath(pathname: string): string {
+  const path = stripLocaleFromPath(pathname);
+
+  if (path === '/') {
+    return '/';
+  }
+
+  return path.replace(/\/+$/, '') || '/';
+}
+
+export function isProjectsIndexPath(pathname: string): boolean {
+  return normalizePath(pathname) === '/projects';
+}
+
 /** Build a locale-aware path. Mirrors Astro i18n with `prefixDefaultLocale: false`. */
 export function getLocalizedPath(locale: Locale, path: string): string {
   const normalized = path === '/' ? '/' : path.startsWith('/') ? path : `/${path}`;

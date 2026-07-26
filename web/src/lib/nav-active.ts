@@ -42,6 +42,22 @@ export function updateNavActiveState(pathname: string) {
     filterLabel.textContent = copy.projectsFilters.toggle;
   }
 
+  document.querySelectorAll<HTMLButtonElement>('button[data-projects-view]').forEach((button) => {
+    const view = button.dataset.projectsView;
+
+    if (view === 'grid') {
+      button.textContent = copy.projectsView.grid;
+    }
+
+    if (view === 'list') {
+      button.textContent = copy.projectsView.list;
+    }
+  });
+
+  document.querySelectorAll<HTMLElement>('[data-projects-view-switch]').forEach((switcher) => {
+    switcher.toggleAttribute('hidden', document.documentElement.dataset.page !== 'projects');
+  });
+
   const nav = document.querySelector<HTMLElement>('.header-nav');
 
   if (nav) {

@@ -28,6 +28,43 @@
   gap: calc(var(--margin) * 2);
 }
 
+.header-nav-menu-item--projects {
+  display: inline-flex;
+  align-items: baseline;
+  gap: calc(var(--margin) * 2);
+}
+
+.header-nav-view-switch {
+  display: inline-flex;
+  align-items: baseline;
+  gap: calc(var(--margin) * 2);
+}
+
+.header-nav-view-switch[hidden] {
+  display: none;
+}
+
+.header-nav-view-switch button {
+  cursor: pointer;
+}
+
+/* Active state driven by html[data-projects-view] — avoids FOUC on refresh */
+html:not([data-projects-view]) .header-nav-view-switch button[data-projects-view='grid'],
+html[data-projects-view='grid'] .header-nav-view-switch button[data-projects-view='grid'],
+html[data-projects-view='list'] .header-nav-view-switch button[data-projects-view='list'] {
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+html:not([data-projects-view]) .header-nav-view-switch button[data-projects-view='grid']::before,
+html:not([data-projects-view]) .header-nav-view-switch button[data-projects-view='grid']::after,
+html[data-projects-view='grid'] .header-nav-view-switch button[data-projects-view='grid']::before,
+html[data-projects-view='grid'] .header-nav-view-switch button[data-projects-view='grid']::after,
+html[data-projects-view='list'] .header-nav-view-switch button[data-projects-view='list']::before,
+html[data-projects-view='list'] .header-nav-view-switch button[data-projects-view='list']::after {
+  opacity: 1;
+}
+
 .header-nav-filter {
   grid-column: 3 / 4;
   align-self: center;

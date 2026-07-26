@@ -22,7 +22,8 @@ export const localizedProjectListProjection = `
     titleEn,
     titleEs,
     "slug": slug.current
-  }
+  },
+  "year": coalesce(${translatedProjectRef}year, year)
 `;
 
 export const localizedProjectCardProjection = `

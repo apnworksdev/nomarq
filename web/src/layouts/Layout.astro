@@ -20,6 +20,17 @@ const locale = getLocaleFromPath(Astro.url.pathname);
 <html lang={locale} data-page={page}>
   <head>
     <meta charset="utf-8" />
+    <script is:inline>
+      try {
+        const view = localStorage.getItem('nomarq-projects-view');
+
+        if (view === 'grid' || view === 'list') {
+          document.documentElement.dataset.projectsView = view;
+        }
+      } catch {
+        // localStorage unavailable
+      }
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -38,6 +49,8 @@ const locale = getLocaleFromPath(Astro.url.pathname);
 
 <script>
   import { initProjectsFiltersState } from '../lib/projects-filter';
+  import { initProjectsViewState } from '../lib/projects-view';
 
   initProjectsFiltersState();
+  initProjectsViewState();
 </script>

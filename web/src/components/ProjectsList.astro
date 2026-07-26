@@ -1,0 +1,91 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+import type { Locale } from '../lib/i18n';
+import { urlFor } from '../lib/image';
+import type { Project } from '../lib/queries';
+import { getUseTitle } from '../lib/use';
+import '../styles/components/projects-list.css';
+
+interface Props {
+  projects: Project[];
+  locale: Locale;
+}
+
+const { projects, locale } = Astro.props;
+---
+
+<ol class="projects-list" data-projects-list hidden>
+  {
+    projects.map((project, index) => {
+      const coverImage = (project.images ?? []).find((image) => image.image);
+      const place = project.location?.place?.trim() ?? '';
+      const country =
+        project.location?.country?.full?.trim() ||
+        project.location?.country?.short?.trim() ||
+        '';
+      const uses = project.use ?? [];
+      const description = project.description?.trim() ?? '';
+
+      return (
+        <li
+          class="projects-list-item"
+          data-projects-list-item
+          data-project-slug={project.slug}
+        >
+          {
+            coverImage?.image && (
+              <div class="projects-list-thumb" aria-hidden="true">
+                <img
+                  src={urlFor(coverImage.image).width(400).fit('max').url()}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            )
+          }
+          <span class="projects-list-index" data-projects-list-index>
+            ( {index + 1} )
+          </span>
+          <a
+            href={getRelativeLocaleUrl(locale, `/projects/${project.slug}`)}
+            class="projects-list-title"
+            data-projects-list-title
+          >
+            {project.title}
+          </a>
+          <div class="projects-list-location">
+            {place && <span class="projects-list-location-place">{place}</span>}
+            {country && <span class="projects-list-location-country">{country}</span>}
+          </div>
+          {
+            uses.length > 0 ? (
+              <div class="projects-list-uses">
+                {
+                  uses.map((use) => (
+                    <span class="projects-list-use">{getUseTitle(use, locale)}</span>
+                  ))
+                }
+              </div>
+            ) : (
+              <div class="projects-list-uses" aria-hidden="true"></div>
+            )
+          }
+          {project.year ? (
+            <span class="projects-list-year">{project.year}</span>
+          ) : (
+            <span class="projects-list-year" aria-hidden="true"></span>
+          )}
+          {
+            description && (
+              <p class="projects-list-description" data-projects-list-description>
+                {description}
+              </p>
+            )
+          }
+        </li>
+      );
+    })
+  }
+</ol>

@@ -12,8 +12,13 @@
   column-gap: var(--columns-gap);
   row-gap: calc(var(--margin) * 3);
   padding: var(--margin);
-  padding-top: calc(var(--header-offset) + var(--projects-filters-offset));
+  padding-top: calc(var(--header-offset) + var(--projects-filters-offset) + 37px);
   transition: padding-top var(--transition-duration) var(--transition-timing-function);
+}
+
+.projects-grid[hidden],
+html[data-projects-view='list'] [data-projects-grid] {
+  display: none !important;
 }
 
 .projects-grid-item,
