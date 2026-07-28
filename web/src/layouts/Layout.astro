@@ -5,6 +5,7 @@ import '../styles/index.css';
 
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
+import { HOME_SCROLL_RESTORE_KEY } from '../lib/home-scroll';
 import { getLocaleFromPath } from '../lib/i18n';
 
 interface Props {
@@ -31,6 +32,28 @@ const locale = getLocaleFromPath(Astro.url.pathname);
         // localStorage unavailable
       }
     </script>
+    {
+      page === 'home' && (
+        <script is:inline define:vars={{ restoreKey: HOME_SCROLL_RESTORE_KEY }}>
+          try {
+            const raw = sessionStorage.getItem(restoreKey);
+
+            if (raw) {
+              const pending = JSON.parse(raw);
+              const root = document.documentElement;
+
+              root.dataset.homeScrollRestore = 'true';
+
+              if (typeof pending.scrollY === 'number') {
+                window.scrollTo(0, pending.scrollY);
+              }
+            }
+          } catch {
+            // sessionStorage unavailable
+          }
+        </script>
+      )
+    }
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -48,9 +71,13 @@ const locale = getLocaleFromPath(Astro.url.pathname);
 </html>
 
 <script>
+  import { initEntryCloseState } from '../lib/entry-close';
+  import { initJournalFiltersState } from '../lib/journal-filter';
   import { initProjectsFiltersState } from '../lib/projects-filter';
   import { initProjectsViewState } from '../lib/projects-view';
 
   initProjectsFiltersState();
+  initJournalFiltersState();
   initProjectsViewState();
+  initEntryCloseState();
 </script>

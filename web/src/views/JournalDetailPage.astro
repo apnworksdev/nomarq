@@ -1,0 +1,64 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+import EntryDetailPage from '../components/EntryDetailPage.astro';
+import type { Locale } from '../lib/i18n';
+import { defaultLocale } from '../lib/i18n';
+import { journalToRelatedEntry, mapRelatedEntries } from '../lib/entry-detail';
+import { journalBySlugQuery, type JournalEntry } from '../lib/queries';
+import { getRelatedJournals } from '../lib/related-journals';
+import { sanity } from '../lib/sanity';
+import { getJournalCategoryLabel, getUi } from '../lib/ui';
+import { formatYear } from '../lib/year';
+
+interface Props {
+  locale: Locale;
+  slug: string;
+}
+
+const { locale, slug } = Astro.props;
+const copy = getUi(locale);
+
+const entry = await sanity.fetch<JournalEntry | null>(journalBySlugQuery, {
+  slug,
+  language: locale,
+  defaultLanguage: defaultLocale,
+});
+
+if (!entry?.slug) {
+  return Astro.redirect(getRelativeLocaleUrl(locale, '/about/journal'));
+}
+
+if (entry.externalLink) {
+  return Astro.redirect(entry.externalLink);
+}
+
+const relatedEntries = await getRelatedJournals(entry, locale, defaultLocale);
+
+const categoryLabel = entry.category
+  ? getJournalCategoryLabel(locale, entry.category)
+  : undefined;
+const year = formatYear(entry.year);
+const images = (entry.images ?? []).filter((image) => image.image);
+
+const technicalRows = [
+  { label: copy.technicalInfo.category, value: categoryLabel },
+  { label: copy.technicalInfo.year, value: year },
+  { label: copy.technicalInfo.collaborators, value: entry.collaborators?.trim() },
+  { label: copy.technicalInfo.photography, value: entry.photography?.trim() },
+].filter((row) => Boolean(row.value));
+---
+
+<EntryDetailPage
+  pageTitle={`${entry.title} — Nomarq`}
+  images={images}
+  technicalRows={technicalRows}
+  technicalTitle={copy.technicalInfo.title}
+  entryTitle={entry.title}
+  captionPlace={categoryLabel}
+  captionCountry={year}
+  description={entry.description}
+  relatedEntries={mapRelatedEntries(relatedEntries, journalToRelatedEntry, locale)}
+  relatedHeading={copy.relatedJournals}
+  relatedTitleId="journal-related-title"
+/>

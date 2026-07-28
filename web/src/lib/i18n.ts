@@ -56,6 +56,26 @@ export function isProjectsIndexPath(pathname: string): boolean {
   return normalizePath(pathname) === '/projects';
 }
 
+export function isAboutJournalPath(pathname: string): boolean {
+  return normalizePath(pathname) === '/about/journal';
+}
+
+export function isProjectDetailPath(pathname: string): boolean {
+  const path = normalizePath(pathname);
+
+  return path.startsWith('/projects/') && path !== '/projects';
+}
+
+export function isJournalDetailPath(pathname: string): boolean {
+  const path = normalizePath(pathname);
+
+  return path.startsWith('/about/journal/') && path !== '/about/journal';
+}
+
+export function isEntryDetailPath(pathname: string): boolean {
+  return isProjectDetailPath(pathname) || isJournalDetailPath(pathname);
+}
+
 /** Build a locale-aware path. Mirrors Astro i18n with `prefixDefaultLocale: false`. */
 export function getLocalizedPath(locale: Locale, path: string): string {
   const normalized = path === '/' ? '/' : path.startsWith('/') ? path : `/${path}`;

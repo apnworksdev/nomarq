@@ -1,6 +1,8 @@
 import {
   getLocaleFromPath,
   getLocalizedPath,
+  isEntryDetailPath,
+  isJournalDetailPath,
   locales,
   matchNavId,
   navItems,
@@ -74,6 +76,24 @@ export function updateNavActiveState(pathname: string) {
     link.href = getLocalizedPath(locale, pathWithoutLocale);
     link.classList.toggle('active', locale === currentLocale);
     link.setAttribute('aria-current', locale === currentLocale ? 'true' : 'false');
+  });
+
+  const isDetail = isEntryDetailPath(pathname);
+  const detailType = isJournalDetailPath(pathname) ? 'journal' : 'project';
+
+  document.querySelectorAll<HTMLElement>('.header-language-switcher-locales').forEach((element) => {
+    element.toggleAttribute('hidden', isDetail);
+  });
+
+  document.querySelectorAll<HTMLAnchorElement>('[data-header-close]').forEach((link) => {
+    link.toggleAttribute('hidden', !isDetail);
+    link.dataset.entryDetailType = detailType;
+
+    const label = link.querySelector('[data-header-close-label]');
+
+    if (label) {
+      label.textContent = copy.close;
+    }
   });
 }
 

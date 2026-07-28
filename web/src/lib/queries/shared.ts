@@ -19,7 +19,7 @@ export type ProjectCard = {
 export type Project = ProjectCard & {
   description?: string;
   use?: LocalizedUse[];
-  year?: string;
+  year?: string | number;
   collaborators?: string;
   photography?: string;
   images?: ImageField[];
@@ -30,6 +30,11 @@ export type Project = ProjectCard & {
 export const imageProjection = `{
   alt,
   image
+}`;
+
+export const sanityImageProjection = `{
+  alt,
+  asset
 }`;
 
 export const locationProjection = `location {

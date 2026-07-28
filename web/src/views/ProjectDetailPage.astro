@@ -1,20 +1,15 @@
 ---
-import EntryCaption from '../components/EntryCaption.astro';
-import EntryGallery from '../components/EntryGallery.astro';
 import { getRelativeLocaleUrl } from 'astro:i18n';
 
+import EntryDetailPage from '../components/EntryDetailPage.astro';
 import type { Locale } from '../lib/i18n';
-import Layout from '../layouts/Layout.astro';
+import { mapRelatedEntries, projectToRelatedEntry } from '../lib/entry-detail';
 import { projectBySlugQuery, type Project } from '../lib/queries';
 import { getRelatedProjects } from '../lib/related-projects';
 import { sanity } from '../lib/sanity';
 import { getUi } from '../lib/ui';
 import { getUseTitle } from '../lib/use';
-import RelatedProjects from '../components/RelatedProjects.astro';
-import '../styles/components/entry-caption.css';
-import '../styles/components/entry-gallery.css';
-import '../styles/components/project-related.css';
-import '../styles/pages/project.css';
+import { formatYear } from '../lib/year';
 
 interface Props {
   locale: Locale;
@@ -52,79 +47,22 @@ const useLabel = (project.use ?? [])
 const technicalRows = [
   { label: copy.technicalInfo.location, value: locationLabel },
   { label: copy.technicalInfo.use, value: useLabel },
-  { label: copy.technicalInfo.year, value: project.year?.trim() },
+  { label: copy.technicalInfo.year, value: formatYear(project.year) },
   { label: copy.technicalInfo.collaborators, value: project.collaborators?.trim() },
   { label: copy.technicalInfo.photography, value: project.photography?.trim() },
 ].filter((row) => Boolean(row.value));
-
-const hasStrip = images.length > 1;
 ---
 
-<Layout title={`${project.title} — Nomarq`} page="project">
-  <article class="project-hero" data-entry-gallery-root>
-    {
-      images.length > 0 && (
-        <div class="project-media">
-          <EntryGallery
-            images={images}
-            title={project.title}
-            loading="eager"
-            mode="cover"
-            showCounter={hasStrip}
-          />
-        </div>
-      )
-    }
-
-    {
-      hasStrip && (
-        <div class="entry-gallery-overlay entry-gallery-overlay--anchored">
-          <EntryGallery images={images} title={project.title} mode="strip" interactive />
-        </div>
-      )
-    }
-
-    {
-      technicalRows.length > 0 && (
-        <section class="project-technical" aria-labelledby="project-technical-title">
-          <div class="project-technical-inner">
-            <h2 id="project-technical-title" class="project-technical-title">
-              {copy.technicalInfo.title}
-            </h2>
-            <dl class="project-technical-list">
-              {
-                technicalRows.map((row) => (
-                  <div class="project-technical-row">
-                    <dt>{row.label}</dt>
-                    <dd>{row.value}</dd>
-                  </div>
-                ))
-              }
-            </dl>
-          </div>
-        </section>
-      )
-    }
-
-    <div class="entry-overlay entry-layout-overlay entry-layout-overlay--anchored is-expanded project-detail">
-      <p class="entry-overlay-detail entry-layout-detail">
-        <span class="entry-overlay-detail-trigger">
-          <EntryCaption title={project.title} place={place} country={country} />
-        </span>
-        {
-          project.description && (
-            <span class="entry-overlay-description">{project.description}</span>
-          )
-        }
-      </p>
-    </div>
-  </article>
-
-  <RelatedProjects projects={relatedProjects} heading={copy.relatedProjects} locale={locale} />
-</Layout>
-
-<script>
-  import { initEntryGalleryState } from '../lib/entry-gallery';
-
-  initEntryGalleryState();
-</script>
+<EntryDetailPage
+  pageTitle={`${project.title} — Nomarq`}
+  images={images}
+  technicalRows={technicalRows}
+  technicalTitle={copy.technicalInfo.title}
+  entryTitle={project.title}
+  captionPlace={place}
+  captionCountry={country}
+  description={project.description}
+  relatedEntries={mapRelatedEntries(relatedProjects, projectToRelatedEntry, locale)}
+  relatedHeading={copy.relatedProjects}
+  relatedTitleId="project-related-title"
+/>

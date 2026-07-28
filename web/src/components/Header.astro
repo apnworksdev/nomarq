@@ -3,13 +3,18 @@ import { getRelativeLocaleUrl } from 'astro:i18n';
 
 import {
   getLocaleFromPath,
-  locales,
-  navItems,
+  getLocalizedPath,
+  isAboutJournalPath,
+  isEntryDetailPath,
+  isJournalDetailPath,
   isProjectsIndexPath,
+  locales,
   matchNavId,
+  navItems,
   stripLocaleFromPath,
   type Locale,
 } from '../lib/i18n';
+import { journalBasePath } from '../lib/journal';
 import { getNavLabel, getUi } from '../lib/ui';
 import '../styles/components/header.css';
 
@@ -18,7 +23,15 @@ const locale = getLocaleFromPath(pathname) as Locale;
 const activeNavId = matchNavId(pathname);
 const pathWithoutLocale = stripLocaleFromPath(pathname);
 const isProjectsIndex = isProjectsIndexPath(pathname);
+const isAboutJournal = isAboutJournalPath(pathname);
+const isEntryDetail = isEntryDetailPath(pathname);
+const entryDetailType = isJournalDetailPath(pathname) ? 'journal' : 'project';
+const showFilters = isProjectsIndex || isAboutJournal;
 const copy = getUi(locale);
+const closeHref = getLocalizedPath(
+  locale,
+  entryDetailType === 'journal' ? journalBasePath : '/projects',
+);
 ---
 
 <header class="header" transition:persist="site-header">
@@ -73,8 +86,8 @@ const copy = getUi(locale);
         class="header-nav-filter-toggle"
         data-projects-filter-toggle
         aria-expanded="false"
-        aria-controls="projects-filters-panel"
-        hidden={!isProjectsIndex}
+        aria-controls={isAboutJournal ? 'journal-filters-panel' : 'projects-filters-panel'}
+        hidden={!showFilters}
       >
         <span data-projects-filter-toggle-label>{copy.projectsFilters.toggle}</span>
         <span data-projects-filter-toggle-sign aria-hidden="true">( + )</span>
@@ -102,20 +115,32 @@ const copy = getUi(locale);
     </h2>
   </div>
   <div class="header-language-switcher">
-    {
-      locales.map((lang) => (
-        <a
-          href={getRelativeLocaleUrl(lang, pathWithoutLocale)}
-          data-locale-switcher={lang}
-          class:list={['active-parens', { active: locale === lang }]}
-          aria-current={locale === lang ? 'true' : undefined}
-          hreflang={lang}
-          lang={lang}
-        >
-          {lang.toUpperCase()}
-        </a>
-      ))
-    }
+    <a
+      href={closeHref}
+      class="header-close active-parens"
+      data-header-close
+      data-entry-detail-type={entryDetailType}
+      hidden={!isEntryDetail}
+      aria-label={copy.close}
+    >
+      <span data-header-close-label>{copy.close}</span><span aria-hidden="true"> ( X )</span>
+    </a>
+    <span class="header-language-switcher-locales" hidden={isEntryDetail}>
+      {
+        locales.map((lang) => (
+          <a
+            href={getRelativeLocaleUrl(lang, pathWithoutLocale)}
+            data-locale-switcher={lang}
+            class:list={['active-parens', { active: locale === lang }]}
+            aria-current={locale === lang ? 'true' : undefined}
+            hreflang={lang}
+            lang={lang}
+          >
+            {lang.toUpperCase()}
+          </a>
+        ))
+      }
+    </span>
   </div>
 </header>
 

@@ -1,0 +1,112 @@
+---
+import EntryCaption from './EntryCaption.astro';
+import EntryGallery from './EntryGallery.astro';
+import RelatedEntries from './RelatedEntries.astro';
+
+import type { RelatedEntryItem, TechnicalRow } from '../lib/entry-detail';
+import type { ImageField } from '../lib/queries/shared';
+import Layout from '../layouts/Layout.astro';
+import '../styles/components/entry-caption.css';
+import '../styles/components/entry-gallery.css';
+import '../styles/components/project-related.css';
+import '../styles/pages/project.css';
+
+interface Props {
+  pageTitle: string;
+  images: ImageField[];
+  technicalRows: TechnicalRow[];
+  technicalTitle: string;
+  entryTitle: string;
+  captionPlace?: string;
+  captionCountry?: string;
+  description?: string;
+  relatedEntries: RelatedEntryItem[];
+  relatedHeading: string;
+  relatedTitleId?: string;
+}
+
+const {
+  pageTitle,
+  images,
+  technicalRows,
+  technicalTitle,
+  entryTitle,
+  captionPlace,
+  captionCountry,
+  description,
+  relatedEntries,
+  relatedHeading,
+  relatedTitleId,
+} = Astro.props;
+
+const hasStrip = images.length > 1;
+---
+
+<Layout title={pageTitle} page="project">
+  <article class="project-hero" data-entry-gallery-root>
+    {
+      images.length > 0 && (
+        <div class="project-media">
+          <EntryGallery
+            images={images}
+            title={entryTitle}
+            loading="eager"
+            mode="cover"
+            showCounter={hasStrip}
+          />
+        </div>
+      )
+    }
+
+    {
+      hasStrip && (
+        <div class="entry-gallery-overlay entry-gallery-overlay--anchored">
+          <EntryGallery images={images} title={entryTitle} mode="strip" interactive />
+        </div>
+      )
+    }
+
+    {
+      technicalRows.length > 0 && (
+        <section class="project-technical" aria-labelledby="entry-technical-title">
+          <div class="project-technical-inner">
+            <h2 id="entry-technical-title" class="project-technical-title">
+              {technicalTitle}
+            </h2>
+            <dl class="project-technical-list">
+              {
+                technicalRows.map((row) => (
+                  <div class="project-technical-row">
+                    <dt>{row.label}</dt>
+                    <dd>{row.value}</dd>
+                  </div>
+                ))
+              }
+            </dl>
+          </div>
+        </section>
+      )
+    }
+
+    <div class="entry-overlay entry-layout-overlay entry-layout-overlay--anchored is-expanded project-detail">
+      <p class="entry-overlay-detail entry-layout-detail">
+        <span class="entry-overlay-detail-trigger">
+          <EntryCaption title={entryTitle} place={captionPlace} country={captionCountry} />
+        </span>
+        {description && <span class="entry-overlay-description">{description}</span>}
+      </p>
+    </div>
+  </article>
+
+  <RelatedEntries
+    entries={relatedEntries}
+    heading={relatedHeading}
+    titleId={relatedTitleId}
+  />
+</Layout>
+
+<script>
+  import { initEntryGalleryState } from '../lib/entry-gallery';
+
+  initEntryGalleryState();
+</script>

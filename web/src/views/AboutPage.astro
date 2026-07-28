@@ -1,7 +1,18 @@
 ---
-import type { Locale } from '../lib/i18n';
-import Layout from '../layouts/Layout.astro';
-import { getUi } from '../lib/ui';
+import { getRelativeLocaleUrl } from "astro:i18n";
+
+import AboutJournalListItem from "../components/AboutJournalListItem.astro";
+import type { AboutDocument, AboutTeamSection } from "../lib/about";
+import type { Locale } from "../lib/i18n";
+import Layout from "../layouts/Layout.astro";
+import { urlFor } from "../lib/image";
+import { getPersonPosition } from "../lib/person";
+import { aboutQuery } from "../lib/queries/about";
+import { sanity } from "../lib/sanity";
+import { getUi } from "../lib/ui";
+import { getVideoEmbed } from "../lib/video";
+
+import "../styles/pages/about.css";
 
 interface Props {
   locale: Locale;
@@ -9,9 +20,308 @@ interface Props {
 
 const { locale } = Astro.props;
 const copy = getUi(locale);
+
+const about = await sanity.fetch<AboutDocument | null>(aboutQuery, {
+  language: locale,
+});
+
+const videoEmbed = about?.videoUrl ? getVideoEmbed(about.videoUrl) : null;
+const recognitions = about?.recognitions ?? [];
+const initiatives = about?.initiatives ?? [];
+const teamSections = about?.teamSections ?? [];
+const galleryImages = about?.imageSwiper ?? [];
+const privacyHref = getRelativeLocaleUrl(locale, "privacy-policy");
+
+const teamSplitIndex = Math.ceil(teamSections.length / 2);
+const teamColumns: AboutTeamSection[][] =
+  teamSections.length > 0
+    ? [
+        teamSections.slice(0, teamSplitIndex),
+        teamSections.slice(teamSplitIndex),
+      ]
+    : [[], []];
 ---
 
 <Layout title={`${copy.nav.about} — Nomarq`} page="about">
-  <h1>{copy.nav.about}</h1>
-  <p>{copy.aboutEmpty}</p>
+  <div class="about-page">
+    <section class="about-hero" aria-label={copy.nav.about}>
+      <div class="about-hero-media">
+        {
+          videoEmbed ? (
+            <iframe
+              class="about-hero-embed"
+              src={videoEmbed.src}
+              title={copy.nav.about}
+              allow="autoplay; fullscreen; picture-in-picture"
+              referrerpolicy="strict-origin-when-cross-origin"
+            />
+          ) : (
+            <div class="about-hero-placeholder" aria-hidden="true" />
+          )
+        }
+      </div>
+    </section>
+
+    <section class="about-contact" aria-labelledby="about-contact-heading">
+      <div class="about-contact-media">
+        {
+          about?.contactImage?.asset ? (
+            <img
+              class="about-contact-image"
+              src={urlFor(about.contactImage).width(1200).fit("max").url()}
+              alt={about.contactImage.alt ?? ""}
+              loading="lazy"
+            />
+          ) : (
+            <div class="about-contact-image-placeholder" aria-hidden="true" />
+          )
+        }
+      </div>
+
+      <div class="about-contact-content">
+        <div class="about-contact-info">
+          <h2 class="about-section-heading" id="about-contact-heading">
+            {copy.about.contactInformation}
+          </h2>
+          <div class="about-contact-details">
+            {about?.direction && <p>{about.direction}</p>}
+            {
+              about?.phone && (
+                <p>
+                  <a href={`tel:${about.phone.replace(/\s/g, "")}`}>
+                    {about.phone}
+                  </a>
+                </p>
+              )
+            }
+            {
+              about?.email && (
+                <p>
+                  <a href={`mailto:${about.email}`}>{about.email}</a>
+                </p>
+              )
+            }
+          </div>
+        </div>
+
+        <div class="about-contact-form-wrap">
+          <h2 class="about-section-heading">{copy.about.contactForm}</h2>
+          <form class="about-contact-form">
+            <div class="about-form-row">
+              <div class="about-form-field">
+                <input
+                  id="about-name"
+                  name="name"
+                  type="text"
+                  autocomplete="given-name"
+                  placeholder=" "
+                />
+                <label for="about-name">{copy.about.form.name}</label>
+              </div>
+              <div class="about-form-field">
+                <input
+                  id="about-phone"
+                  name="phone"
+                  type="tel"
+                  autocomplete="tel"
+                  placeholder=" "
+                />
+                <label for="about-phone">{copy.about.form.phone}</label>
+              </div>
+            </div>
+
+            <div class="about-form-row">
+              <div class="about-form-field">
+                <input
+                  id="about-last-names"
+                  name="lastNames"
+                  type="text"
+                  autocomplete="family-name"
+                  placeholder=" "
+                />
+                <label for="about-last-names">{copy.about.form.lastNames}</label
+                >
+              </div>
+              <div class="about-form-field">
+                <input
+                  id="about-email"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  placeholder=" "
+                />
+                <label for="about-email">{copy.about.form.email}</label>
+              </div>
+            </div>
+
+            <div class="about-form-row">
+              <div class="about-form-field">
+                <input
+                  id="about-website"
+                  name="website"
+                  type="url"
+                  autocomplete="url"
+                  placeholder=" "
+                />
+                <label for="about-website">{copy.about.form.website}</label>
+              </div>
+              <div class="about-form-field">
+                <input
+                  id="about-subject"
+                  name="subject"
+                  type="text"
+                  placeholder=" "
+                />
+                <label for="about-subject">{copy.about.form.subject}</label>
+              </div>
+            </div>
+
+            <div class="about-form-field about-form-field--message">
+              <textarea
+                id="about-message"
+                name="message"
+                rows="1"
+                placeholder=" "></textarea>
+              <label for="about-message">{copy.about.form.message}</label>
+            </div>
+            <div class="about-form-submit-wrap">
+              <div class="about-form-consent">
+                <input
+                  id="about-privacy"
+                  name="privacy"
+                  type="checkbox"
+                  class="about-form-consent-input"
+                />
+                <label for="about-privacy">
+                  <span class="about-form-consent-marker" aria-hidden="true">
+                    <span class="about-form-consent-marker-open">(</span>
+                    <span class="about-form-consent-marker-slot"></span>
+                    <span class="about-form-consent-marker-close">)</span>
+                  </span>
+                  {copy.about.form.privacy}{" "}
+                  <a href={privacyHref}>{copy.about.form.privacyLink}</a>
+                </label>
+              </div>
+
+              <button class="about-form-submit" type="button">
+                {copy.about.form.submit}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {
+        about?.studioDescription && (
+          <p class="about-contact-description">{about.studioDescription}</p>
+        )
+      }
+    </section>
+
+    <section class="about-gallery" aria-label="Gallery">
+      <div class="about-gallery-track">
+        {
+          galleryImages.length > 0 ? (
+            galleryImages.map((slide) =>
+              slide.image ? (
+                <figure class="about-gallery-slide">
+                  <img
+                    src={urlFor(slide.image).width(1400).fit("max").url()}
+                    alt={slide.alt ?? ""}
+                    loading="lazy"
+                  />
+                </figure>
+              ) : null,
+            )
+          ) : (
+            <>
+              <figure class="about-gallery-slide">
+                <div class="about-gallery-placeholder" aria-hidden="true" />
+              </figure>
+              <figure class="about-gallery-slide">
+                <div class="about-gallery-placeholder" aria-hidden="true" />
+              </figure>
+              <figure class="about-gallery-slide">
+                <div class="about-gallery-placeholder" aria-hidden="true" />
+              </figure>
+            </>
+          )
+        }
+      </div>
+    </section>
+
+    <section class="about-lists" aria-label="Studio information">
+      <div class="about-lists-sidebar">
+        <div class="about-list-block">
+          <h2 class="about-section-heading">{copy.about.recognitions}</h2>
+          {
+            recognitions.length > 0 && (
+              <ul class="about-list">
+                {recognitions.map((entry) => (
+                  <AboutJournalListItem entry={entry} locale={locale} />
+                ))}
+                <li>
+                  <a
+                    href={getRelativeLocaleUrl(locale, "/about/journal")}
+                    class="about-list-all"
+                  >
+                    {copy.about.all}
+                  </a>
+                </li>
+              </ul>
+            )
+          }
+        </div>
+
+        <div class="about-list-block">
+          <h2 class="about-section-heading">{copy.about.initiatives}</h2>
+          {
+            initiatives.length > 0 && (
+              <ul class="about-list">
+                {initiatives.map((entry) => (
+                  <AboutJournalListItem entry={entry} locale={locale} />
+                ))}
+                <li>
+                  <a
+                    href={getRelativeLocaleUrl(locale, "/about/journal")}
+                    class="about-list-all"
+                  >
+                    {copy.about.all}
+                  </a>
+                </li>
+              </ul>
+            )
+          }
+        </div>
+      </div>
+
+      {
+        teamSections.length > 0 && (
+          <div class="about-lists-team">
+            {teamColumns.map((column) => (
+              <div class="about-team-column">
+                {column.map((section) => (
+                  <div class="about-team-section">
+                    <h2 class="about-section-heading">{section.title}</h2>
+                    <ul class="about-team-list">
+                      {section.members?.map((member) => (
+                        <li class="about-team-member">
+                          <span class="about-team-member-name">
+                            {member.name}
+                          </span>
+                          <span class="about-team-member-role">
+                            {getPersonPosition(member, locale)}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        )
+      }
+    </section>
+  </div>
 </Layout>

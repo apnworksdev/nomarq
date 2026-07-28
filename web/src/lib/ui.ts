@@ -19,6 +19,7 @@ type UiStrings = {
   journalCategories: Record<JournalCategory, string>;
   technicalInfo: {
     title: string;
+    category: string;
     location: string;
     use: string;
     year: string;
@@ -26,8 +27,30 @@ type UiStrings = {
     photography: string;
   };
   relatedProjects: string;
+  relatedJournals: string;
+  close: string;
   noProjects: string;
   aboutEmpty: string;
+  journalEmpty: string;
+  about: {
+    contactInformation: string;
+    contactForm: string;
+    recognitions: string;
+    initiatives: string;
+    all: string;
+    form: {
+      name: string;
+      phone: string;
+      lastNames: string;
+      email: string;
+      website: string;
+      subject: string;
+      message: string;
+      privacy: string;
+      privacyLink: string;
+      submit: string;
+    };
+  };
   backToProjects: string;
   fullProject: string;
   fullJournal: string;
@@ -74,6 +97,7 @@ export const ui = {
     },
     technicalInfo: {
       title: 'Technical Information',
+      category: 'Category',
       location: 'Location',
       use: 'Use',
       year: 'Year',
@@ -81,8 +105,30 @@ export const ui = {
       photography: 'Photography',
     },
     relatedProjects: 'Related Projects',
+    relatedJournals: 'Related Journal',
+    close: 'Close',
     noProjects: 'No projects yet. Add some in Sanity Studio.',
     aboutEmpty: 'About page content coming soon.',
+    journalEmpty: 'No journal entries yet. Add some in Sanity Studio.',
+    about: {
+      contactInformation: 'Contact Information',
+      contactForm: 'Contact Form',
+      recognitions: 'Recognition',
+      initiatives: 'Initiatives',
+      all: 'All',
+      form: {
+        name: 'Name',
+        phone: 'Phone',
+        lastNames: 'Last Names',
+        email: 'Email',
+        website: 'Website',
+        subject: 'Subject',
+        message: 'Message',
+        privacy: 'I have read and accept the',
+        privacyLink: 'privacy policy',
+        submit: 'Submit',
+      },
+    },
     backToProjects: '← All projects',
     fullProject: 'Full Project',
     fullJournal: 'Full entry',
@@ -131,6 +177,7 @@ export const ui = {
     },
     technicalInfo: {
       title: 'Información Técnica',
+      category: 'Categoría',
       location: 'Localización',
       use: 'Uso',
       year: 'Año',
@@ -138,8 +185,30 @@ export const ui = {
       photography: 'Fotografía',
     },
     relatedProjects: 'Proyectos Relacionados',
+    relatedJournals: 'Diario Relacionado',
+    close: 'Cerrar',
     noProjects: 'Todavía no hay proyectos. Añade algunos en Sanity Studio.',
     aboutEmpty: 'El contenido de la página Nosotros llegará pronto.',
+    journalEmpty: 'Todavía no hay entradas del diario. Añade algunas en Sanity Studio.',
+    about: {
+      contactInformation: 'Información de contacto',
+      contactForm: 'Formulario de contacto',
+      recognitions: 'Reconocimientos',
+      initiatives: 'Iniciativas',
+      all: 'Todos',
+      form: {
+        name: 'Nombre',
+        phone: 'Teléfono',
+        lastNames: 'Apellidos',
+        email: 'Email',
+        website: 'Web',
+        subject: 'Asunto',
+        message: 'Mensaje',
+        privacy: 'He leído y acepto la',
+        privacyLink: 'política de privacidad',
+        submit: 'Enviar',
+      },
+    },
     backToProjects: '← Todos los proyectos',
     fullProject: 'Proyecto completo',
     fullJournal: 'Entrada completa',

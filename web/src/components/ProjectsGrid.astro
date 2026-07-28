@@ -34,6 +34,8 @@ const items = buildProjectsGridLayout(projects);
             href={getRelativeLocaleUrl(locale, `/projects/${item.slug}`)}
             class="projects-grid-main"
             data-projects-grid-main
+            data-entry-close-link
+            data-entry-close-origin="projects"
           >
             {
               item.coverImage.image && (

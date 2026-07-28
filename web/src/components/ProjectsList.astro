@@ -52,6 +52,8 @@ const { projects, locale } = Astro.props;
             href={getRelativeLocaleUrl(locale, `/projects/${project.slug}`)}
             class="projects-list-title"
             data-projects-list-title
+            data-entry-close-link
+            data-entry-close-origin="projects"
           >
             {project.title}
           </a>

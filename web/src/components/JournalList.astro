@@ -1,0 +1,88 @@
+---
+import type { JournalEntry } from '../lib/journal';
+import { getJournalEntryHref, isExternalJournalLink } from '../lib/journal';
+import type { Locale } from '../lib/i18n';
+import { urlFor } from '../lib/image';
+import { getJournalCategoryLabel } from '../lib/ui';
+import '../styles/components/projects-list.css';
+
+interface Props {
+  entries: JournalEntry[];
+  locale: Locale;
+}
+
+const { entries, locale } = Astro.props;
+---
+
+<ol class="projects-list" data-journal-list>
+  {
+    entries.map((entry, index) => {
+      const coverImage = (entry.images ?? []).find((image) => image.image);
+      const description = entry.description?.trim() ?? '';
+      const categoryLabel = getJournalCategoryLabel(locale, entry.category);
+      const entryId = entry._id;
+      const href = getJournalEntryHref(locale, entry);
+      const external = href ? isExternalJournalLink(href) : false;
+
+      return (
+        <li
+          class="projects-list-item"
+          data-journal-list-item
+          data-journal-id={entryId}
+        >
+          {
+            coverImage?.image && (
+              <div class="projects-list-thumb" aria-hidden="true">
+                <img
+                  src={urlFor(coverImage.image).width(400).fit('max').url()}
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+            )
+          }
+          <span class="projects-list-index" data-journal-list-index>
+            ( {index + 1} )
+          </span>
+          {
+            href ? (
+              <a
+                href={href}
+                class="projects-list-title"
+                data-journal-list-title
+                {...(!external
+                  ? {
+                      'data-entry-close-link': true,
+                      'data-entry-close-origin': 'journal',
+                    }
+                  : { target: '_blank', rel: 'noopener noreferrer' })}
+              >
+                {entry.title}
+              </a>
+            ) : (
+              <span class="projects-list-title" data-journal-list-title>
+                {entry.title}
+              </span>
+            )
+          }
+          <div class="projects-list-location">
+            <span class="projects-list-location-place">( {categoryLabel} )</span>
+          </div>
+          {entry.year ? (
+            <span class="projects-list-year">{entry.year}</span>
+          ) : (
+            <span class="projects-list-year" aria-hidden="true"></span>
+          )}
+          {
+            description && (
+              <p class="projects-list-description" data-journal-list-description>
+                {description}
+              </p>
+            )
+          }
+        </li>
+      );
+    })
+  }
+</ol>

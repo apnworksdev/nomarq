@@ -30,6 +30,10 @@ html[data-page='home'] {
   scroll-snap-type: y mandatory;
 }
 
+html[data-home-scroll-restore] {
+  scroll-behavior: auto !important;
+}
+
 /* Let the footer be a valid snap destination past the last section. */
 html[data-page='home'] .footer {
   scroll-snap-align: end;

@@ -1,0 +1,93 @@
+---
+import type { JournalEntry } from '../lib/journal';
+import { groupJournalCategoriesForFilter } from '../lib/journal-filter';
+import type { Locale } from '../lib/i18n';
+import { getJournalCategoryLabel, getUi } from '../lib/ui';
+import '../styles/components/projects-filters.css';
+
+interface Props {
+  entries: JournalEntry[];
+  locale: Locale;
+  label: string;
+}
+
+const { entries, locale, label } = Astro.props;
+const copy = getUi(locale).projectsFilters;
+
+const categoryColumns = groupJournalCategoriesForFilter([
+  ...new Set(entries.map((entry) => entry.category).filter(Boolean)),
+]);
+
+const filterRecords = entries.map((entry, orderIndex) => ({
+  id: entry._id,
+  orderIndex,
+  category: entry.category,
+  searchText: [entry.title, entry.year ?? '', getJournalCategoryLabel(locale, entry.category)]
+    .join(' ')
+    .toLowerCase(),
+}));
+---
+
+<div
+  class="projects-filters"
+  data-journal-filters
+  data-journal-filter-records={JSON.stringify(filterRecords)}
+>
+  <div
+    id="journal-filters-panel"
+    class="projects-filters-panel"
+    data-journal-filters-panel
+  >
+    <div class="projects-filters-panel-inner">
+      <p class="projects-filters-label">{label}</p>
+
+      <div class="projects-filters-uses">
+        {
+          categoryColumns.map((column) => (
+            <ul class="projects-filters-use-column">
+              {
+                column.map((category) => (
+                  <li>
+                    <button
+                      type="button"
+                      class="projects-filter-use"
+                      data-journal-filter-category
+                      data-journal-category={category}
+                    >
+                      <span class="projects-filter-use-marker" aria-hidden="true">
+                        <span class="projects-filter-use-marker-open">(</span>
+                        <span class="projects-filter-use-marker-slot"></span>
+                        <span class="projects-filter-use-marker-close">)</span>
+                      </span>
+                      {getJournalCategoryLabel(locale, category)}
+                    </button>
+                  </li>
+                ))
+              }
+            </ul>
+          ))
+        }
+      </div>
+
+      <input
+        type="text"
+        class="projects-filter-search"
+        data-journal-filter-search
+        placeholder={copy.search}
+        aria-label={copy.search}
+        role="searchbox"
+        autocomplete="off"
+        spellcheck="false"
+      />
+
+      <div class="projects-filters-meta">
+        <button type="button" class="projects-filter-clear" data-journal-filter-clear>
+          {copy.clear} ( X )
+        </button>
+        <p class="projects-filters-count">
+          {copy.results} (<span data-journal-filter-count>{filterRecords.length}</span>)
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

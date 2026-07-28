@@ -100,7 +100,8 @@ html[data-projects-view='list'] .header-nav-view-switch button[data-projects-vie
 }
 
 .header-nav-menu-item a,
-.header-language-switcher a {
+.header-language-switcher a,
+.header-close {
   display: inline-block;
   text-decoration: none;
   color: inherit;
@@ -111,4 +112,20 @@ html[data-projects-view='list'] .header-nav-view-switch button[data-projects-vie
   justify-self: end;
   display: flex;
   gap: var(--margin);
+}
+
+.header-language-switcher-locales {
+  display: flex;
+  gap: var(--margin);
+}
+
+.header-language-switcher-locales[hidden],
+.header-close[hidden] {
+  display: none;
+}
+
+.header-close {
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
 }

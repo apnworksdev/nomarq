@@ -1,0 +1,47 @@
+---
+import JournalFilters from '../components/JournalFilters.astro';
+import JournalList from '../components/JournalList.astro';
+import type { Locale } from '../lib/i18n';
+import { defaultLocale } from '../lib/i18n';
+import Layout from '../layouts/Layout.astro';
+import { journalsQuery, type JournalEntry } from '../lib/queries/journal';
+import { sanity } from '../lib/sanity';
+import { getUi } from '../lib/ui';
+import '../styles/pages/projects-index.css';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const copy = getUi(locale);
+
+const entries = await sanity.fetch<JournalEntry[]>(journalsQuery, {
+  language: locale,
+  defaultLanguage: defaultLocale,
+});
+---
+
+<Layout title={`${copy.sectionTypes.journal} — Nomarq`} page="about">
+  <JournalFilters entries={entries} locale={locale} label={copy.sectionTypes.journal} />
+  {
+    entries.length === 0 ? (
+      <p class="about-journal-empty">{copy.journalEmpty}</p>
+    ) : (
+      <JournalList entries={entries} locale={locale} />
+    )
+  }
+</Layout>
+
+<script>
+  import { initJournalListHoverState } from '../lib/journal-list-hover';
+
+  initJournalListHoverState();
+</script>
+
+<style>
+  .about-journal-empty {
+    padding: var(--margin);
+    padding-top: var(--header-offset);
+  }
+</style>

@@ -1,0 +1,44 @@
+---
+import type { AboutJournalEntry } from '../lib/about';
+import type { Locale } from '../lib/i18n';
+import { getJournalEntryHref, isExternalJournalLink } from '../lib/journal';
+import { getJournalCategoryLabel } from '../lib/ui';
+
+interface Props {
+  entry: AboutJournalEntry;
+  locale: Locale;
+}
+
+const { entry, locale } = Astro.props;
+const href = getJournalEntryHref(locale, entry);
+const external = href ? isExternalJournalLink(href) : false;
+const linkProps = external
+  ? { target: '_blank', rel: 'noopener noreferrer' }
+  : { 'data-entry-close-link': true, 'data-entry-close-origin': 'about' };
+---
+
+<li class="about-list-item">
+  {
+    href ? (
+      <a class="about-list-item-link" href={href} {...linkProps}>
+        <span class="about-list-item-label">
+          <span class="about-list-item-category">
+            {getJournalCategoryLabel(locale, entry.category)}
+          </span>
+          <span class="about-list-item-title">{entry.title}</span>
+        </span>
+        {entry.year && <span class="about-list-item-meta">{entry.year}</span>}
+      </a>
+    ) : (
+      <>
+        <span class="about-list-item-label">
+          <span class="about-list-item-category">
+            {getJournalCategoryLabel(locale, entry.category)}
+          </span>
+          <span class="about-list-item-title">{entry.title}</span>
+        </span>
+        {entry.year && <span class="about-list-item-meta">{entry.year}</span>}
+      </>
+    )
+  }
+</li>

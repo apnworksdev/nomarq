@@ -1,6 +1,7 @@
 ---
 import HomeSection from '../components/HomeSection.astro';
 import { getHomeSectionHref, getHomeSectionItem } from '../lib/home';
+import { HOME_SCROLL_RESTORE_KEY } from '../lib/home-scroll';
 import { defaultLocale, type Locale } from '../lib/i18n';
 import { getLocalizedPath } from '../lib/i18n';
 import Layout from '../layouts/Layout.astro';
@@ -62,6 +63,38 @@ const sections = (home?.sections ?? []).filter((section) => getHomeSectionItem(s
             ))
           }
         </div>
+        <script is:inline define:vars={{ restoreKey: HOME_SCROLL_RESTORE_KEY }}>
+          try {
+            const raw = sessionStorage.getItem(restoreKey);
+
+            if (raw) {
+              const pending = JSON.parse(raw);
+
+              if (typeof pending.homeSectionIndex === 'number') {
+                const index = pending.homeSectionIndex;
+                const section = document.querySelector('[data-home-section="' + index + '"]');
+
+                if (section) {
+                  document.querySelectorAll('[data-home-section]').forEach((entry) => {
+                    entry.classList.toggle('is-active', entry === section);
+                  });
+
+                  document.querySelectorAll('[data-home-section-nav]').forEach((button) => {
+                    const navIndex = Number(button.getAttribute('data-home-section-nav'));
+                    const isActive = navIndex === index;
+
+                    button.classList.toggle('is-active', isActive);
+                    button.setAttribute('aria-current', isActive ? 'true' : 'false');
+                  });
+
+                  section.scrollIntoView({ block: 'center', behavior: 'instant' });
+                }
+              }
+            }
+          } catch {
+            // sessionStorage unavailable
+          }
+        </script>
       </>
     )
   }

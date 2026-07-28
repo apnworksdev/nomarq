@@ -1,8 +1,84 @@
 import { collapseHomeExpanded } from './home-hover';
 import { resetActiveHomeSection, setActiveHomeSection } from './home-active-section';
 
+export const HOME_SCROLL_RESTORE_KEY = 'nomarq-home-scroll-restore';
+
 const SECTION_SELECTOR = '[data-home-section]';
 const NAV_SELECTOR = '[data-home-section-nav]';
+
+type HomeScrollRestore = {
+  homeSectionIndex?: number;
+  scrollY?: number;
+};
+
+function readHomeScrollRestore(): HomeScrollRestore | null {
+  try {
+    const raw = sessionStorage.getItem(HOME_SCROLL_RESTORE_KEY);
+
+    if (!raw) {
+      return null;
+    }
+
+    sessionStorage.removeItem(HOME_SCROLL_RESTORE_KEY);
+    return JSON.parse(raw) as HomeScrollRestore;
+  } catch {
+    return null;
+  }
+}
+
+function setActiveNav(index: number) {
+  document.querySelectorAll<HTMLButtonElement>(NAV_SELECTOR).forEach((button) => {
+    const navIndex = Number(button.dataset.homeSectionNav);
+    const isActive = navIndex === index;
+
+    button.classList.toggle('is-active', isActive);
+    button.setAttribute('aria-current', isActive ? 'true' : 'false');
+  });
+}
+
+function instantScrollToSection(section: HTMLElement) {
+  section.scrollIntoView({ block: 'center', behavior: 'instant' });
+}
+
+function instantScrollToY(scrollY: number) {
+  window.scrollTo({ top: scrollY, left: 0, behavior: 'instant' });
+}
+
+export function applyHomeScrollRestore(sections: HTMLElement[]): boolean {
+  if (document.documentElement.dataset.page !== 'home') {
+    return false;
+  }
+
+  const pending = readHomeScrollRestore();
+
+  if (!pending) {
+    return false;
+  }
+
+  document.documentElement.dataset.homeScrollRestore = 'true';
+
+  if (pending.homeSectionIndex != null) {
+    const section = sections.find(
+      (entry) => Number(entry.dataset.homeSection) === pending.homeSectionIndex,
+    );
+
+    if (section) {
+      instantScrollToSection(section);
+      collapseHomeExpanded();
+      setActiveHomeSection(section);
+      setActiveNav(pending.homeSectionIndex);
+      delete document.documentElement.dataset.homeScrollRestore;
+      return true;
+    }
+  }
+
+  if (pending.scrollY != null) {
+    instantScrollToY(pending.scrollY);
+  }
+
+  delete document.documentElement.dataset.homeScrollRestore;
+  return pending.scrollY != null;
+}
 
 function isFooterInView(): boolean {
   const footer = document.querySelector<HTMLElement>('.footer');
@@ -38,16 +114,6 @@ function getMostCenteredSection(sections: HTMLElement[]): HTMLElement | null {
   return bestSection;
 }
 
-function setActiveNav(index: number) {
-  document.querySelectorAll<HTMLButtonElement>(NAV_SELECTOR).forEach((button) => {
-    const navIndex = Number(button.dataset.homeSectionNav);
-    const isActive = navIndex === index;
-
-    button.classList.toggle('is-active', isActive);
-    button.setAttribute('aria-current', isActive ? 'true' : 'false');
-  });
-}
-
 function setActiveSection(section: HTMLElement) {
   const index = Number(section.dataset.homeSection);
 
@@ -62,6 +128,8 @@ export function initHomeScroll() {
   if (sections.length === 0) {
     return;
   }
+
+  const restored = applyHomeScrollRestore(sections);
 
   let frame = 0;
 
@@ -103,7 +171,9 @@ export function initHomeScroll() {
     });
   });
 
-  updateActiveSection();
+  if (!restored) {
+    updateActiveSection();
+  }
 
   return () => {
     window.removeEventListener('scroll', scheduleUpdate);
@@ -120,10 +190,20 @@ export function initHomeScrollState() {
 
   const run = () => {
     cleanup?.();
-    resetActiveHomeSection();
     cleanup = initHomeScroll();
   };
 
+  const restoreAfterSwap = () => {
+    const sections = Array.from(document.querySelectorAll<HTMLElement>(SECTION_SELECTOR));
+
+    if (sections.length === 0) {
+      return;
+    }
+
+    applyHomeScrollRestore(sections);
+  };
+
   run();
+  document.addEventListener('astro:after-swap', restoreAfterSwap);
   document.addEventListener('astro:page-load', run);
 }

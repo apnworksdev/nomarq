@@ -1,4 +1,6 @@
 import { buildProjectsGridPlacements } from './projects-grid';
+import { closeFiltersPanel, initFiltersPanelMetrics, setFiltersPanelOpen } from './filters-panel';
+import { isAboutJournalPath } from './i18n';
 
 const ROOT_SELECTOR = '[data-projects-filters]';
 const TOGGLE_SELECTOR = '[data-projects-filter-toggle]';
@@ -149,30 +151,49 @@ function updateResultsCount(root: HTMLElement, count: number) {
 }
 
 function setPanelOpen(root: HTMLElement, open: boolean) {
-  root.classList.toggle('is-open', open);
-  document.documentElement.classList.toggle('projects-filters-open', open);
-
-  const toggle = document.querySelector<HTMLButtonElement>(TOGGLE_SELECTOR);
-  const sign = document.querySelector<HTMLElement>('[data-projects-filter-toggle-sign]');
-
-  if (toggle) {
-    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-  }
-
-  if (sign) {
-    sign.textContent = open ? '( - )' : '( + )';
-  }
+  setFiltersPanelOpen(root, open);
 }
 
 function syncFilterToggleVisibility() {
   const isProjects = document.documentElement.dataset.page === 'projects';
+  const isAboutJournal = isAboutJournalPath(window.location.pathname);
+  const showFilters = isProjects || isAboutJournal;
   const toggle = document.querySelector<HTMLButtonElement>(TOGGLE_SELECTOR);
-  const root = document.querySelector<HTMLElement>(ROOT_SELECTOR);
+  const sign = document.querySelector<HTMLElement>('[data-projects-filter-toggle-sign]');
+  const projectsRoot = document.querySelector<HTMLElement>(ROOT_SELECTOR);
+  const journalRoot = document.querySelector<HTMLElement>('[data-journal-filters]');
+  const openRoot =
+    (projectsRoot?.classList.contains('is-open') ? projectsRoot : null) ??
+    (journalRoot?.classList.contains('is-open') ? journalRoot : null);
 
-  toggle?.toggleAttribute('hidden', !isProjects);
+  toggle?.toggleAttribute('hidden', !showFilters);
 
-  if (!isProjects && root) {
-    setPanelOpen(root, false);
+  if (toggle) {
+    toggle.setAttribute(
+      'aria-controls',
+      isAboutJournal ? 'journal-filters-panel' : 'projects-filters-panel',
+    );
+  }
+
+  // Clear leaked open state when the previous page's panel is gone.
+  if (!openRoot) {
+    document.documentElement.classList.remove('projects-filters-open');
+    document.documentElement.style.setProperty('--projects-filters-offset', '0px');
+    toggle?.setAttribute('aria-expanded', 'false');
+
+    if (sign) {
+      sign.textContent = '( + )';
+    }
+  }
+
+  if (!showFilters) {
+    if (projectsRoot) {
+      setPanelOpen(projectsRoot, false);
+    }
+
+    if (journalRoot) {
+      closeFiltersPanel(journalRoot);
+    }
   }
 }
 
@@ -270,6 +291,9 @@ export function initProjectsFilters() {
   cleanups.push(() => clear?.removeEventListener('click', onClear));
 
   updateResultsCount(root, readFilterRecords(root).length);
+
+  const stopObservingPanel = initFiltersPanelMetrics(root);
+  cleanups.push(stopObservingPanel);
 
   return () => {
     for (const cleanup of cleanups) {

@@ -20,7 +20,7 @@
 }
 
 .projects-filters.is-open .projects-filters-panel {
-  max-height: 200px;
+  max-height: none;
   opacity: 1;
   pointer-events: auto;
 }
@@ -111,7 +111,7 @@
 }
 
 html.projects-filters-open {
-  --projects-filters-offset: 100px;
+  --projects-filters-offset: 0px;
 }
 
 @media (prefers-reduced-motion: reduce) {

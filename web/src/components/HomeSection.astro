@@ -31,10 +31,12 @@ if (!item) {
 const caption = formatHomeSectionCaption(section, locale);
 const linkLabel = getHomeSectionLinkLabel(section, locale);
 const external = isExternalHomeLink(href);
+const closeLinkProps =
+  href && !external ? { 'data-entry-close-link': true, 'data-entry-close-origin': 'home' } : {};
 const linkProps = href
   ? external
     ? { target: '_blank', rel: 'noopener noreferrer' }
-    : {}
+    : closeLinkProps
   : {};
 const startingColumn = resolveStartingColumn(section);
 const layoutClass =

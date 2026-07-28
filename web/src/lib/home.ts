@@ -2,6 +2,8 @@ import type { SanityImageSource } from '@sanity/image-url';
 
 import type { ImageWithAlt } from './alt';
 import type { Locale } from './i18n';
+import { getLocalizedPath } from './i18n';
+import { getJournalEntryHref } from './journal';
 import type { Location } from './location';
 import { getJournalCategoryLabel, getNavLabel, getUi } from './ui';
 
@@ -122,14 +124,8 @@ export function getHomeSectionHref(
     return getLocalizedPath(locale, `/projects/${section.project.slug}`);
   }
 
-  if (section.sectionType === 'journal') {
-    if (section.journal?.externalLink) {
-      return section.journal.externalLink;
-    }
-
-    if (section.journal?.slug) {
-      return getLocalizedPath(locale, `/journal/${section.journal.slug}`);
-    }
+  if (section.sectionType === 'journal' && section.journal) {
+    return getJournalEntryHref(locale, section.journal);
   }
 
   return undefined;
