@@ -110,7 +110,8 @@
     grid-row: 3;
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 10px;
+    margin-top: 10px;
   }
 
   .footer-email,
@@ -130,7 +131,7 @@
 
   .footer-legal-list {
     flex-direction: column;
-    gap: 0;
+    gap: 10px;
   }
 
   .footer-social {

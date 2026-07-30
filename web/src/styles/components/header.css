@@ -229,6 +229,12 @@ html[data-projects-view='list'] .header-nav-view-switch button[data-projects-vie
     z-index: calc(var(--z-index-mobile-menu) + 2);
   }
 
+  html.mobile-menu-open,
+  html.mobile-menu-open body {
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
   /* Open menu overlay */
   html.mobile-menu-open .header {
     mix-blend-mode: normal;

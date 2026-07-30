@@ -30,6 +30,10 @@ html[data-page='home'] {
   scroll-snap-type: y mandatory;
 }
 
+html.mobile-menu-open[data-page='home'] {
+  scroll-snap-type: none;
+}
+
 html[data-home-scroll-restore] {
   scroll-behavior: auto !important;
 }
@@ -41,7 +45,9 @@ html[data-page='home'] .footer {
 }
 
 .home-section {
-  height: 100dvh;
+  /* svh keeps section height stable when mobile browser chrome shows/hides,
+     so scroll-snap + active-section detection stay reliable. */
+  height: 100svh;
   grid-column: var(--home-start-column, 1) / span var(--home-span, 5);
   scroll-snap-align: center;
   scroll-snap-stop: always;
