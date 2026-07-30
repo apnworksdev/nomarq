@@ -73,9 +73,11 @@ const locale = getLocaleFromPath(Astro.url.pathname);
 <script>
   import { initEntryCloseState } from '../lib/entry-close';
   import { initJournalFiltersState } from '../lib/journal-filter';
+  import { initMobileMenu } from '../lib/mobile-menu';
   import { initProjectsFiltersState } from '../lib/projects-filter';
   import { initProjectsViewState } from '../lib/projects-view';
 
+  initMobileMenu();
   initProjectsFiltersState();
   initJournalFiltersState();
   initProjectsViewState();

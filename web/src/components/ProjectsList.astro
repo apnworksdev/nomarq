@@ -57,23 +57,23 @@ const { projects, locale } = Astro.props;
           >
             {project.title}
           </a>
-          <div class="projects-list-location">
-            {place && <span class="projects-list-location-place">{place}</span>}
-            {country && <span class="projects-list-location-country">{country}</span>}
+          <div class="projects-list-mid">
+            <div class="projects-list-location">
+              {place && <span class="projects-list-location-place">{place}</span>}
+              {country && <span class="projects-list-location-country">{country}</span>}
+            </div>
+            {
+              uses.length > 0 ? (
+                <div class="projects-list-uses">
+                  {
+                    uses.map((use) => (
+                      <span class="projects-list-use">{getUseTitle(use, locale)}</span>
+                    ))
+                  }
+                </div>
+              ) : null
+            }
           </div>
-          {
-            uses.length > 0 ? (
-              <div class="projects-list-uses">
-                {
-                  uses.map((use) => (
-                    <span class="projects-list-use">{getUseTitle(use, locale)}</span>
-                  ))
-                }
-              </div>
-            ) : (
-              <div class="projects-list-uses" aria-hidden="true"></div>
-            )
-          }
           {project.year ? (
             <span class="projects-list-year">{project.year}</span>
           ) : (

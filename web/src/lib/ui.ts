@@ -28,7 +28,9 @@ type UiStrings = {
   };
   relatedProjects: string;
   relatedJournals: string;
+  menu: string;
   close: string;
+  information: string;
   noProjects: string;
   aboutEmpty: string;
   journalEmpty: string;
@@ -106,7 +108,9 @@ export const ui = {
     },
     relatedProjects: 'Related Projects',
     relatedJournals: 'Related Journal',
+    menu: 'Menu',
     close: 'Close',
+    information: 'Information',
     noProjects: 'No projects yet. Add some in Sanity Studio.',
     aboutEmpty: 'About page content coming soon.',
     journalEmpty: 'No journal entries yet. Add some in Sanity Studio.',
@@ -133,7 +137,7 @@ export const ui = {
     fullProject: 'Full Project',
     fullJournal: 'Full entry',
     projectsFilters: {
-      toggle: 'Filter',
+      toggle: 'Filters',
       typology: 'Typology',
       search: 'Search...',
       clear: 'Clear',
@@ -186,7 +190,9 @@ export const ui = {
     },
     relatedProjects: 'Proyectos Relacionados',
     relatedJournals: 'Diario Relacionado',
+    menu: 'Menu',
     close: 'Cerrar',
+    information: 'Información',
     noProjects: 'Todavía no hay proyectos. Añade algunos en Sanity Studio.',
     aboutEmpty: 'El contenido de la página Nosotros llegará pronto.',
     journalEmpty: 'Todavía no hay entradas del diario. Añade algunas en Sanity Studio.',
@@ -213,8 +219,8 @@ export const ui = {
     fullProject: 'Proyecto completo',
     fullJournal: 'Entrada completa',
     projectsFilters: {
-      toggle: 'Filtrar',
-      typology: 'Tipologia',
+      toggle: 'Filtros',
+      typology: 'Tipología',
       search: 'Buscar...',
       clear: 'Limpiar',
       results: 'Resultados',

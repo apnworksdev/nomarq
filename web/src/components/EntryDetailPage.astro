@@ -4,6 +4,7 @@ import EntryGallery from './EntryGallery.astro';
 import RelatedEntries from './RelatedEntries.astro';
 
 import type { RelatedEntryItem, TechnicalRow } from '../lib/entry-detail';
+import { splitParagraphs } from '../lib/entry-detail';
 import type { ImageField } from '../lib/queries/shared';
 import Layout from '../layouts/Layout.astro';
 import '../styles/components/entry-caption.css';
@@ -17,6 +18,9 @@ interface Props {
   technicalRows: TechnicalRow[];
   technicalTitle: string;
   entryTitle: string;
+  entryKind?: 'project' | 'journal';
+  sectionTypeLabel?: string;
+  informationLabel: string;
   captionPlace?: string;
   captionCountry?: string;
   description?: string;
@@ -31,6 +35,9 @@ const {
   technicalRows,
   technicalTitle,
   entryTitle,
+  entryKind = 'project',
+  sectionTypeLabel,
+  informationLabel,
   captionPlace,
   captionCountry,
   description,
@@ -40,10 +47,17 @@ const {
 } = Astro.props;
 
 const hasStrip = images.length > 1;
+const hasInfo = technicalRows.length > 0 || Boolean(description);
+const descriptionParagraphs = description ? splitParagraphs(description) : [];
 ---
 
 <Layout title={pageTitle} page="project">
-  <article class="project-hero" data-entry-gallery-root>
+  <article
+    class="project-hero"
+    data-entry-detail
+    data-entry-gallery-root
+    data-entry-kind={entryKind}
+  >
     {
       images.length > 0 && (
         <div class="project-media">
@@ -89,12 +103,44 @@ const hasStrip = images.length > 1;
     }
 
     <div class="entry-overlay entry-layout-overlay entry-layout-overlay--anchored is-expanded project-detail">
-      <p class="entry-overlay-detail entry-layout-detail">
+      {
+        sectionTypeLabel && (
+          <div class="entry-overlay-type">
+            <p class="entry-overlay-type-label">{sectionTypeLabel}</p>
+          </div>
+        )
+      }
+
+      <div class="entry-overlay-detail entry-layout-detail">
         <span class="entry-overlay-detail-trigger">
           <EntryCaption title={entryTitle} place={captionPlace} country={captionCountry} />
         </span>
-        {description && <span class="entry-overlay-description">{description}</span>}
-      </p>
+        {
+          descriptionParagraphs.length > 0 && (
+            <div class="entry-overlay-description">
+              {
+                descriptionParagraphs.map((paragraph) => (
+                  <p class="entry-overlay-description-paragraph">{paragraph}</p>
+                ))
+              }
+            </div>
+          )
+        }
+      </div>
+
+      {
+        hasInfo && (
+          <button
+            type="button"
+            class="entry-info-toggle"
+            data-entry-info-toggle
+            aria-expanded="false"
+          >
+            <span data-entry-info-toggle-label>{informationLabel}</span>
+            <span data-entry-info-toggle-sign aria-hidden="true">( + )</span>
+          </button>
+        )
+      }
     </div>
   </article>
 
@@ -107,6 +153,8 @@ const hasStrip = images.length > 1;
 
 <script>
   import { initEntryGalleryState } from '../lib/entry-gallery';
+  import { initEntryInfoState } from '../lib/entry-info';
 
   initEntryGalleryState();
+  initEntryInfoState();
 </script>

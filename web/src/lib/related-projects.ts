@@ -1,4 +1,5 @@
 import type { Locale } from './i18n';
+import { defaultLocale } from './i18n';
 import { relatedProjectsQuery, type ProjectCard } from './queries';
 import { sanity } from './sanity';
 
@@ -64,6 +65,7 @@ export async function getRelatedProjects(
 
   const automatic = await sanity.fetch<ProjectCard[]>(relatedProjectsQuery, {
     language: locale,
+    defaultLanguage: defaultLocale,
     slug: project.slug,
     excludeSlugs: [...excludeSlugs],
     useIds: project.useRefIds ?? [],

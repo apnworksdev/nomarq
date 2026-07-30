@@ -91,6 +91,38 @@ html[data-projects-view='list'] [data-projects-grid] {
   transition-delay: calc(var(--preview-index, 0) * var(--projects-grid-preview-stagger));
 }
 
+@media (max-width: 820px) {
+  .projects-grid {
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--margin);
+    row-gap: calc(var(--margin) * 3);
+    padding-top: calc(var(--header-offset) + var(--projects-filters-offset) + 7px);
+  }
+
+  .projects-grid-item {
+    grid-column: auto !important;
+    grid-row: auto !important;
+  }
+
+  .projects-grid-caption {
+    margin-top: var(--margin);
+  }
+
+  .entry-caption-detail-location {
+    margin-top: 6px;
+  }
+
+  .projects-grid-preview {
+    display: none !important;
+  }
+
+  .projects-grid.is-hovering .projects-grid-item:not(.is-hovered) {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .projects-grid-item,
   .projects-grid-preview {

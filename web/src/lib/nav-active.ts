@@ -44,6 +44,18 @@ export function updateNavActiveState(pathname: string) {
     filterLabel.textContent = copy.projectsFilters.toggle;
   }
 
+  const menuToggleLabel = document.querySelector<HTMLElement>('[data-mobile-menu-toggle-label]');
+
+  if (menuToggleLabel) {
+    menuToggleLabel.textContent = copy.menu;
+  }
+
+  const menuCloseLabel = document.querySelector<HTMLElement>('[data-mobile-menu-close-label]');
+
+  if (menuCloseLabel) {
+    menuCloseLabel.textContent = copy.close;
+  }
+
   document.querySelectorAll<HTMLButtonElement>('button[data-projects-view]').forEach((button) => {
     const view = button.dataset.projectsView;
 

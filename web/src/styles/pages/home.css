@@ -45,6 +45,7 @@ html[data-page='home'] .footer {
   grid-column: var(--home-start-column, 1) / span var(--home-span, 5);
   scroll-snap-align: center;
   scroll-snap-stop: always;
+  position: relative;
 }
 
 .home-section--vertical {
@@ -94,6 +95,110 @@ html[data-page='home'] .footer {
 
 .home-section.is-expanded .entry-media {
   opacity: 0;
+}
+
+@media (max-width: 820px) {
+  .home-grid {
+    display: block;
+  }
+
+  .home-section {
+    grid-column: auto;
+    width: 100%;
+  }
+
+  .home-section--journal {
+    display: flex;
+    align-items: center;
+  }
+
+  .home-section--journal [data-home-section-cover],
+  .home-section--journal .entry-media {
+    height: auto;
+    width: 100%;
+  }
+
+  .home-section--journal .entry-media img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    display: block;
+  }
+
+  /* Stack section nav + caption as one left-aligned block, vertically centered.
+     Keep overlays fixed so text fades in/out with the active section (same as desktop). */
+  .home-section-nav {
+    top: 50%;
+    transform: translateY(calc(-50% - var(--line-height) - 16px));
+  }
+
+  .home-section .entry-overlay.entry-layout-overlay {
+    top: 50%;
+    left: 0;
+    right: auto;
+    bottom: auto;
+    width: auto;
+    max-width: calc(100% - (var(--margin) * 2));
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 0 var(--margin);
+    grid-template-columns: none;
+    grid-template-rows: none;
+    column-gap: 0;
+    row-gap: 6px;
+  }
+
+  .home-section .entry-overlay-type {
+    grid-column: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--margin);
+  }
+
+  .home-section .entry-layout-detail {
+    grid-column: auto;
+  }
+
+  .home-section .entry-caption-detail-location,
+  .home-section .entry-caption-detail-country {
+    padding-left: var(--margin);
+  }
+
+  /* No hover expand on mobile — keep cover + caption only. */
+  .home-section.is-expanded .home-section-overlay--media {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .home-section.is-expanded .entry-media {
+    opacity: 1;
+  }
+
+  .home-section.is-expanded .entry-overlay-description,
+  .home-section.is-expanded .entry-overlay-link {
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    padding: 0;
+    pointer-events: none;
+  }
+
+  .home-section.is-expanded .entry-overlay {
+    mix-blend-mode: difference;
+    color: var(--background-color);
+    pointer-events: none;
+  }
+
+  .home-section .entry-overlay-detail-trigger {
+    pointer-events: auto;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

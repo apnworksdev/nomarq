@@ -4,6 +4,11 @@ const TITLE_SELECTOR = '[data-projects-list-title]';
 const DESCRIPTION_SELECTOR = '[data-projects-list-description]';
 
 const HOVER_ENTER_DELAY_MS = 180;
+const MOBILE_MQ = '(max-width: 820px)';
+
+function isMobileViewport() {
+  return window.matchMedia(MOBILE_MQ).matches;
+}
 
 function isInHoverZone(node: EventTarget | null, item: HTMLElement): boolean {
   if (!(node instanceof Node)) {
@@ -60,6 +65,10 @@ export function initProjectsListHover() {
       };
 
       const onTitleEnter = () => {
+        if (isMobileViewport()) {
+          return;
+        }
+
         clearEnterTimeout();
         deactivateAll(list);
 

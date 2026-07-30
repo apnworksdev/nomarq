@@ -35,51 +35,63 @@ const closeHref = getLocalizedPath(
 ---
 
 <header class="header" transition:persist="site-header">
-  <nav class="header-nav" aria-label={locale === 'es' ? 'Principal' : 'Main'}>
-    <menu class="header-nav-menu-left">
-      {
-        navItems.left.map((item) => (
-          <li
-            class:list={[
-              'header-nav-menu-item',
-              { 'header-nav-menu-item--projects': item.id === 'projects' },
-            ]}
-          >
-            <a
-              href={getRelativeLocaleUrl(locale, item.href)}
-              data-nav={item.id}
-              class:list={['active-parens', { active: activeNavId === item.id }]}
-            >
-              {getNavLabel(locale, item.id)}
-            </a>
-            {
-              item.id === 'projects' && (
-                <span
-                  class="header-nav-view-switch"
-                  data-projects-view-switch
-                  hidden={!isProjectsIndex}
-                >
-                  <button
-                    type="button"
-                    class="active-parens"
-                    data-projects-view="grid"
-                  >
-                    {copy.projectsView.grid}
-                  </button>
-                  <button
-                    type="button"
-                    class="active-parens"
-                    data-projects-view="list"
-                  >
-                    {copy.projectsView.list}
-                  </button>
-                </span>
-              )
-            }
-          </li>
-        ))
-      }
-    </menu>
+  <button
+    type="button"
+    class="header-menu-toggle"
+    data-mobile-menu-toggle
+    aria-expanded="false"
+    aria-controls="mobile-menu"
+  >
+    <span data-mobile-menu-toggle-label>{copy.menu}</span>
+  </button>
+
+  <nav class="header-nav" id="mobile-menu" data-mobile-menu aria-label={locale === 'es' ? 'Principal' : 'Main'}>
+    <button
+      type="button"
+      class="header-menu-close"
+      data-mobile-menu-close
+    >
+      <span data-mobile-menu-close-label>{copy.close}</span><span aria-hidden="true"> ( X )</span>
+    </button>
+
+    <div class="header-nav-start">
+      <menu class="header-nav-menu-left">
+        {
+          navItems.left.map((item) => (
+            <li class="header-nav-menu-item">
+              <a
+                href={getRelativeLocaleUrl(locale, item.href)}
+                data-nav={item.id}
+                class:list={['active-parens', { active: activeNavId === item.id }]}
+              >
+                {getNavLabel(locale, item.id)}
+              </a>
+            </li>
+          ))
+        }
+      </menu>
+      <span
+        class="header-nav-view-switch"
+        data-projects-view-switch
+        hidden={!isProjectsIndex}
+      >
+        <button
+          type="button"
+          class="active-parens"
+          data-projects-view="grid"
+        >
+          {copy.projectsView.grid}
+        </button>
+        <button
+          type="button"
+          class="active-parens"
+          data-projects-view="list"
+        >
+          {copy.projectsView.list}
+        </button>
+      </span>
+    </div>
+
     <div class="header-nav-filter">
       <button
         type="button"
@@ -93,6 +105,7 @@ const closeHref = getLocalizedPath(
         <span data-projects-filter-toggle-sign aria-hidden="true">( + )</span>
       </button>
     </div>
+
     <menu class="header-nav-menu-right">
       {
         navItems.right.map((item) => (
@@ -109,11 +122,13 @@ const closeHref = getLocalizedPath(
       }
     </menu>
   </nav>
+
   <div class="header-logo">
     <h2 class="header-logo-text">
-      <a href={getRelativeLocaleUrl(locale, '/')} data-header-logo>Nomarq</a>
+      <a href={getRelativeLocaleUrl(locale, '/')} data-header-logo>nomarq</a>
     </h2>
   </div>
+
   <div class="header-language-switcher">
     <a
       href={closeHref}

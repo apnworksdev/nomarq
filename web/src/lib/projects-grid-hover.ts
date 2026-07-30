@@ -4,6 +4,11 @@ const MAIN_SELECTOR = '[data-projects-grid-main]';
 const PREVIEW_SELECTOR = '[data-projects-grid-preview]';
 
 const HOVER_ENTER_DELAY_MS = 180;
+const MOBILE_MQ = '(max-width: 820px)';
+
+function isMobileViewport() {
+  return window.matchMedia(MOBILE_MQ).matches;
+}
 
 function showPreviews(slug: string) {
   document.querySelectorAll<HTMLElement>(`${PREVIEW_SELECTOR}[data-project-slug="${slug}"]`).forEach(
@@ -54,6 +59,10 @@ export function initProjectsGridHover() {
       }
 
       const onEnter = () => {
+        if (isMobileViewport()) {
+          return;
+        }
+
         clearEnterTimeout();
         deactivateAll(grid);
 

@@ -4,6 +4,16 @@
   --header-offset: calc(12px + 27px + var(--margin));
 }
 
+@media (max-width: 820px) {
+  :root {
+    --header-offset: calc(12px + 27px + var(--margin));
+  }
+
+  html[data-page='projects'] {
+    --header-offset: calc(12px + 27px + 14px + var(--line-height) + var(--margin));
+  }
+}
+
 .entry-layout-overlay {
   display: grid;
   width: 100%;

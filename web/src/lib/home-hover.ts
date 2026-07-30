@@ -2,6 +2,11 @@ import { onHomeActiveSectionChange } from './home-active-section';
 
 const DETAIL_TRIGGER_SELECTOR = '.entry-overlay-detail-trigger';
 const TEXT_OVERLAY_SELECTOR = '[data-home-section-overlay-text]';
+const MOBILE_MQ = '(max-width: 820px)';
+
+function isMobileViewport() {
+  return window.matchMedia(MOBILE_MQ).matches;
+}
 
 function expandSection(section: HTMLElement) {
   if (section.dataset.homeSectionExpandable !== 'true') {
@@ -23,6 +28,7 @@ export function collapseHomeExpanded() {
 
 export function initHomeHover() {
   const cleanups: Array<() => void> = [];
+  const mediaQuery = window.matchMedia(MOBILE_MQ);
 
   document.querySelectorAll<HTMLElement>('[data-home-section]').forEach((section) => {
     const detailTrigger = section.querySelector<HTMLElement>(DETAIL_TRIGGER_SELECTOR);
@@ -33,6 +39,10 @@ export function initHomeHover() {
     }
 
     const onTriggerEnter = () => {
+      if (isMobileViewport()) {
+        return;
+      }
+
       if (!section.classList.contains('is-active')) {
         return;
       }
@@ -58,6 +68,15 @@ export function initHomeHover() {
       textOverlay.removeEventListener('mouseleave', onTextLeave);
     });
   });
+
+  const onViewportChange = () => {
+    if (mediaQuery.matches) {
+      collapseHomeExpanded();
+    }
+  };
+
+  mediaQuery.addEventListener('change', onViewportChange);
+  cleanups.push(() => mediaQuery.removeEventListener('change', onViewportChange));
 
   const unsubscribe = onHomeActiveSectionChange(() => {
     collapseHomeExpanded();

@@ -28,4 +28,5 @@ export {
 export type ProjectQueryParams = {
   slug?: string;
   language: import('../i18n').Locale;
+  defaultLanguage: import('../i18n').Locale;
 };

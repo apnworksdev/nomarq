@@ -12,6 +12,7 @@ import {
   resolveStartingColumn,
   type HomeSection,
 } from '../lib/home';
+import { splitParagraphs } from '../lib/entry-detail';
 import type { Locale } from '../lib/i18n';
 
 interface Props {
@@ -49,6 +50,9 @@ const cover = getHomeSectionCover(item);
 const allImages = getHomeSectionImages(item).filter((image) => image.image);
 const expandable = isHomeSectionExpandable(item);
 const galleryImages = cover?.image ? allImages : [];
+const shortDescriptionParagraphs = item.shortDescription
+  ? splitParagraphs(item.shortDescription)
+  : [];
 ---
 
 <article
@@ -82,7 +86,7 @@ const galleryImages = cover?.image ? allImages : [];
       )
     }
 
-    <p class="entry-overlay-detail entry-layout-detail">
+    <div class="entry-overlay-detail entry-layout-detail">
       {
         href ? (
           <a class="entry-overlay-detail-link entry-overlay-detail-trigger" href={href} {...linkProps}>
@@ -95,11 +99,17 @@ const galleryImages = cover?.image ? allImages : [];
         )
       }
       {
-        item.shortDescription && (
-          <span class="entry-overlay-description">{item.shortDescription}</span>
+        shortDescriptionParagraphs.length > 0 && (
+          <div class="entry-overlay-description">
+            {
+              shortDescriptionParagraphs.map((paragraph) => (
+                <p class="entry-overlay-description-paragraph">{paragraph}</p>
+              ))
+            }
+          </div>
         )
       }
-    </p>
+    </div>
 
     {
       href && (

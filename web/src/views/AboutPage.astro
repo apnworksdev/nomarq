@@ -2,7 +2,7 @@
 import { getRelativeLocaleUrl } from "astro:i18n";
 
 import AboutJournalListItem from "../components/AboutJournalListItem.astro";
-import type { AboutDocument, AboutTeamSection } from "../lib/about";
+import type { AboutDocument } from "../lib/about";
 import type { Locale } from "../lib/i18n";
 import Layout from "../layouts/Layout.astro";
 import { urlFor } from "../lib/image";
@@ -31,15 +31,6 @@ const initiatives = about?.initiatives ?? [];
 const teamSections = about?.teamSections ?? [];
 const galleryImages = about?.imageSwiper ?? [];
 const privacyHref = getRelativeLocaleUrl(locale, "privacy-policy");
-
-const teamSplitIndex = Math.ceil(teamSections.length / 2);
-const teamColumns: AboutTeamSection[][] =
-  teamSections.length > 0
-    ? [
-        teamSections.slice(0, teamSplitIndex),
-        teamSections.slice(teamSplitIndex),
-      ]
-    : [[], []];
 ---
 
 <Layout title={`${copy.nav.about} — Nomarq`} page="about">
@@ -108,7 +99,7 @@ const teamColumns: AboutTeamSection[][] =
           <h2 class="about-section-heading">{copy.about.contactForm}</h2>
           <form class="about-contact-form">
             <div class="about-form-row">
-              <div class="about-form-field">
+              <div class="about-form-field" data-about-form-field="name">
                 <input
                   id="about-name"
                   name="name"
@@ -118,7 +109,7 @@ const teamColumns: AboutTeamSection[][] =
                 />
                 <label for="about-name">{copy.about.form.name}</label>
               </div>
-              <div class="about-form-field">
+              <div class="about-form-field" data-about-form-field="phone">
                 <input
                   id="about-phone"
                   name="phone"
@@ -131,7 +122,7 @@ const teamColumns: AboutTeamSection[][] =
             </div>
 
             <div class="about-form-row">
-              <div class="about-form-field">
+              <div class="about-form-field" data-about-form-field="last-names">
                 <input
                   id="about-last-names"
                   name="lastNames"
@@ -139,10 +130,9 @@ const teamColumns: AboutTeamSection[][] =
                   autocomplete="family-name"
                   placeholder=" "
                 />
-                <label for="about-last-names">{copy.about.form.lastNames}</label
-                >
+                <label for="about-last-names">{copy.about.form.lastNames}</label>
               </div>
-              <div class="about-form-field">
+              <div class="about-form-field" data-about-form-field="email">
                 <input
                   id="about-email"
                   name="email"
@@ -155,7 +145,7 @@ const teamColumns: AboutTeamSection[][] =
             </div>
 
             <div class="about-form-row">
-              <div class="about-form-field">
+              <div class="about-form-field" data-about-form-field="website">
                 <input
                   id="about-website"
                   name="website"
@@ -165,7 +155,7 @@ const teamColumns: AboutTeamSection[][] =
                 />
                 <label for="about-website">{copy.about.form.website}</label>
               </div>
-              <div class="about-form-field">
+              <div class="about-form-field" data-about-form-field="subject">
                 <input
                   id="about-subject"
                   name="subject"
@@ -176,7 +166,10 @@ const teamColumns: AboutTeamSection[][] =
               </div>
             </div>
 
-            <div class="about-form-field about-form-field--message">
+            <div
+              class="about-form-field about-form-field--message"
+              data-about-form-field="message"
+            >
               <textarea
                 id="about-message"
                 name="message"
@@ -184,7 +177,7 @@ const teamColumns: AboutTeamSection[][] =
                 placeholder=" "></textarea>
               <label for="about-message">{copy.about.form.message}</label>
             </div>
-            <div class="about-form-submit-wrap">
+            <div class="about-form-submit-wrap" data-about-form-field="submit">
               <div class="about-form-consent">
                 <input
                   id="about-privacy"
@@ -213,7 +206,9 @@ const teamColumns: AboutTeamSection[][] =
 
       {
         about?.studioDescription && (
-          <p class="about-contact-description">{about.studioDescription}</p>
+          <p class="about-contact-description">
+            {about.studioDescription}
+          </p>
         )
       }
     </section>
@@ -222,17 +217,19 @@ const teamColumns: AboutTeamSection[][] =
       <div class="about-gallery-track">
         {
           galleryImages.length > 0 ? (
-            galleryImages.map((slide) =>
-              slide.image ? (
-                <figure class="about-gallery-slide">
-                  <img
-                    src={urlFor(slide.image).width(1400).fit("max").url()}
-                    alt={slide.alt ?? ""}
-                    loading="lazy"
-                  />
-                </figure>
-              ) : null,
-            )
+            galleryImages.map((slide, index) => (
+              <>
+                {slide.image ? (
+                  <figure class="about-gallery-slide">
+                    <img
+                      src={urlFor(slide.image).width(1400).fit("max").url()}
+                      alt={slide.alt ?? ""}
+                      loading="lazy"
+                    />
+                  </figure>
+                ) : null}
+              </>
+            ))
           ) : (
             <>
               <figure class="about-gallery-slide">
@@ -298,25 +295,21 @@ const teamColumns: AboutTeamSection[][] =
       {
         teamSections.length > 0 && (
           <div class="about-lists-team">
-            {teamColumns.map((column) => (
-              <div class="about-team-column">
-                {column.map((section) => (
-                  <div class="about-team-section">
-                    <h2 class="about-section-heading">{section.title}</h2>
-                    <ul class="about-team-list">
-                      {section.members?.map((member) => (
-                        <li class="about-team-member">
-                          <span class="about-team-member-name">
-                            {member.name}
-                          </span>
-                          <span class="about-team-member-role">
-                            {getPersonPosition(member, locale)}
-                          </span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
+            {teamSections.map((section) => (
+              <div class="about-team-section">
+                <h2 class="about-section-heading">{section.title}</h2>
+                <ul class="about-team-list">
+                  {section.members?.map((member) => (
+                    <li class="about-team-member">
+                      <span class="about-team-member-name">
+                        {member.name}
+                      </span>
+                      <span class="about-team-member-role">
+                        {getPersonPosition(member, locale)}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>

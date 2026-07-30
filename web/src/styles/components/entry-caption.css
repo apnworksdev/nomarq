@@ -24,7 +24,26 @@
 .entry-overlay-description {
   display: inline;
   padding-left: var(--entry-description-indent);
-  white-space: pre-line;
+}
+
+/* Run in after the caption on the same line; wraps flush left. */
+.entry-overlay-description-paragraph:first-child {
+  display: inline;
+  margin: 0;
+  text-indent: 0;
+}
+
+@media (max-width: 820px) {
+  .entry-overlay-description-paragraph:first-child {
+    text-indent: 50px;
+    display: block;
+  }
+}
+
+/* Later paragraphs break and get a first-line indent. */
+.entry-overlay-description-paragraph:not(:first-child) {
+  display: block;
+  text-indent: 50px;
 }
 
 .entry-overlay-description,

@@ -66,12 +66,27 @@
   white-space: pre-line;
 }
 
+.entry-info-toggle {
+  display: none;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  gap: 3px;
+}
+
 .project-hero .entry-overlay.project-detail {
   opacity: 1;
   visibility: visible;
   color: var(--foreground-color);
   mix-blend-mode: normal;
   pointer-events: auto;
+}
+
+.project-hero .entry-overlay.project-detail .entry-overlay-type {
+  display: none;
 }
 
 .project-hero .entry-overlay.project-detail .entry-overlay-description {
@@ -81,4 +96,201 @@
   width: auto;
   height: auto;
   overflow: visible;
+}
+
+@media (max-width: 820px) {
+  .project-hero {
+    display: block;
+  }
+
+  .project-media {
+    grid-column: auto;
+    width: 100%;
+    height: 100dvh;
+  }
+
+  .project-hero .entry-gallery-overlay {
+    z-index: 42;
+  }
+
+  .entry-info-toggle {
+    display: inline-flex;
+    align-items: baseline;
+  }
+
+  .project-hero .entry-overlay.project-detail {
+    top: calc(50% - 17px);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 0 var(--margin);
+    width: 100%;
+    max-width: none;
+    grid-template-columns: none;
+    grid-template-rows: none;
+    column-gap: 0;
+    row-gap: 6px;
+    color: var(--background-color);
+    mix-blend-mode: difference;
+    pointer-events: none;
+  }
+
+  .project-hero[data-entry-kind='journal'] .entry-overlay.project-detail {
+    top: 50%;
+  }
+
+  .project-hero .entry-overlay.project-detail .entry-overlay-type {
+    display: flex;
+    grid-column: auto;
+  }
+
+  .project-hero[data-entry-kind='journal'] .entry-overlay-type {
+    display: none;
+  }
+
+  .project-hero .entry-overlay.project-detail .entry-layout-detail {
+    grid-column: auto;
+  }
+
+  .project-hero .entry-overlay.project-detail .entry-overlay-description {
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    padding: 0;
+    pointer-events: none;
+  }
+
+  .project-hero .entry-overlay.project-detail .entry-overlay-detail-trigger {
+    pointer-events: auto;
+  }
+
+  .project-hero .entry-info-toggle {
+    position: absolute;
+    left: calc(50% + var(--columns-gap) / 2);
+    top: 50%;
+    transform: translateY(calc(-50% - 10px));
+    pointer-events: auto;
+  }
+
+  .project-hero[data-entry-kind='journal'] .entry-info-toggle {
+    top: calc(50% + 10px);
+  }
+
+  .project-technical {
+    display: none;
+  }
+
+  /* Open information panel */
+  .project-hero.is-info-open .project-media,
+  .project-hero.is-info-open .entry-gallery-overlay {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+  }
+
+  .project-hero.is-info-open {
+    min-height: 100dvh;
+    background: var(--background-color);
+    padding-top: calc(var(--header-offset) + 40px);
+    padding-bottom: 40px;
+    box-sizing: border-box;
+  }
+
+  .project-hero.is-info-open .project-technical {
+    display: block;
+    position: relative;
+    top: auto;
+    left: auto;
+    z-index: auto;
+    padding: 0 var(--margin) 40px;
+    pointer-events: auto;
+    color: var(--foreground-color);
+    font-size: var(--font-size-small-mobile);
+    line-height: var(--line-height-small-mobile);
+  }
+
+  .project-hero.is-info-open .project-technical-inner {
+    grid-column: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    column-gap: var(--columns-gap);
+    align-items: start;
+  }
+
+  .project-hero.is-info-open .project-technical-title {
+    margin: 0;
+  }
+
+  .project-hero.is-info-open .project-technical-list {
+    grid-column: 2 / 5;
+    display: grid;
+    grid-template-columns: subgrid;
+    row-gap: 10px;
+  }
+
+  .project-hero.is-info-open .project-technical-row dd {
+    grid-column: 2 / 4;
+  }
+
+  .project-hero.is-info-open .entry-overlay.project-detail {
+    position: absolute;
+    top: 50%;
+    bottom: 40px;
+    height: auto;
+    max-height: none;
+    transform: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+      'caption toggle'
+      'description description';
+    align-items: start;
+    row-gap: 0;
+    column-gap: var(--margin);
+    padding: 0 var(--margin);
+    color: var(--foreground-color);
+    mix-blend-mode: normal;
+    pointer-events: auto;
+    overflow: hidden;
+  }
+
+  .project-hero.is-info-open .entry-overlay.project-detail .entry-overlay-type {
+    display: none;
+  }
+
+  .project-hero.is-info-open .entry-overlay.project-detail .entry-layout-detail {
+    display: contents;
+  }
+
+  .project-hero.is-info-open .entry-overlay.project-detail .entry-overlay-detail-trigger {
+    grid-area: caption;
+  }
+
+  .project-hero.is-info-open .entry-info-toggle {
+    position: static;
+    transform: none;
+    grid-area: toggle;
+    justify-self: start;
+  }
+
+  .project-hero.is-info-open .entry-overlay.project-detail .entry-overlay-description {
+    grid-area: description;
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    position: static;
+    width: auto;
+    min-height: 0;
+    height: 100%;
+    max-height: 100%;
+    overflow: auto;
+    padding: 0;
+  }
 }

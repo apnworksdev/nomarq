@@ -90,6 +90,42 @@
   opacity: 1;
 }
 
+@media (max-width: 820px) {
+  .entry-gallery-overlay {
+    overflow: hidden;
+  }
+
+  .entry-gallery {
+    display: flex;
+    width: max-content;
+    max-width: none;
+    gap: 78px;
+    overflow: visible;
+    grid-template-columns: none;
+  }
+
+  .entry-gallery-item {
+    flex: 0 0 auto;
+  }
+
+  .entry-gallery-item:nth-child(n) {
+    grid-column: auto;
+  }
+
+  .entry-gallery-overlay .entry-gallery {
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 100%;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .entry-gallery-overlay .entry-gallery::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .entry-media,
   .entry-gallery--interactive .entry-gallery-item {

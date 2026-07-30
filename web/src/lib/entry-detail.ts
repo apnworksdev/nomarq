@@ -82,3 +82,11 @@ export function mapRelatedEntries<T>(
 
   return result;
 }
+
+/** Split CMS plain-text descriptions into paragraphs on blank lines / newlines. */
+export function splitParagraphs(text: string): string[] {
+  return text
+    .split(/\n+/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+}

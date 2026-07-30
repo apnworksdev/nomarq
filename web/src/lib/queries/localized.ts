@@ -3,8 +3,9 @@ import { imageProjection, locationProjection } from './shared';
 /** GROQ path to the translated project document for the requested language. */
 export const translatedProjectRef = `*[_type == "translation.metadata" && references(^._id)][0].translations[language == $language][0].value->`;
 
-/** Published projects with real content (excludes empty i18n stubs). */
-export const validProjectFilter = `_type == "project" && defined(slug.current) && defined(title) && count(images[defined(image.asset)]) > 0`;
+/** Published projects with real content (excludes empty i18n stubs).
+ * One base document per project; translations resolve via coalesce. */
+export const validProjectFilter = `_type == "project" && defined(slug.current) && defined(title) && count(images[defined(image.asset)]) > 0 && (!defined(language) || language == $defaultLanguage)`;
 
 export const localizedProjectListProjection = `
   "title": coalesce(${translatedProjectRef}title, title),

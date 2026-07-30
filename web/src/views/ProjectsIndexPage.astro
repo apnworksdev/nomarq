@@ -3,6 +3,7 @@ import ProjectsFilters from '../components/ProjectsFilters.astro';
 import ProjectsGrid from '../components/ProjectsGrid.astro';
 import ProjectsList from '../components/ProjectsList.astro';
 import type { Locale } from '../lib/i18n';
+import { defaultLocale } from '../lib/i18n';
 import Layout from '../layouts/Layout.astro';
 import { projectsQuery, usesQuery, type Project, type UseDocument } from '../lib/queries';
 import { sanity } from '../lib/sanity';
@@ -17,7 +18,7 @@ const { locale } = Astro.props;
 const copy = getUi(locale);
 
 const [projects, uses] = await Promise.all([
-  sanity.fetch<Project[]>(projectsQuery, { language: locale }),
+  sanity.fetch<Project[]>(projectsQuery, { language: locale, defaultLanguage: defaultLocale }),
   sanity.fetch<UseDocument[]>(usesQuery),
 ]);
 
