@@ -60,7 +60,8 @@ function getAvailableSideColumns(
 
 function resolvePreviewSide(startColumn: number, span: number): 'left' | 'right' {
   const { left, right } = getAvailableSideColumns(startColumn, span);
-  return left > right ? 'left' : 'right';
+  // Prefer left when both sides have the same space.
+  return left >= right ? 'left' : 'right';
 }
 
 function buildPreviewColumns(
