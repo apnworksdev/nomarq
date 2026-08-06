@@ -4,31 +4,40 @@ import JournalList from '../components/JournalList.astro';
 import type { Locale } from '../lib/i18n';
 import { defaultLocale } from '../lib/i18n';
 import Layout from '../layouts/Layout.astro';
-import { journalsQuery, type JournalEntry } from '../lib/queries/journal';
+import {
+  JOURNAL_SECTIONS,
+  type JournalSection,
+} from '../lib/journal';
+import { journalsByCategoriesQuery, type JournalEntry } from '../lib/queries/journal';
 import { sanity } from '../lib/sanity';
 import { getUi } from '../lib/ui';
 import '../styles/pages/projects-index.css';
 
 interface Props {
   locale: Locale;
+  section: JournalSection;
 }
 
-const { locale } = Astro.props;
+const { locale, section } = Astro.props;
 const copy = getUi(locale);
+const sectionLabel =
+  section === 'recognition' ? copy.about.recognitions : copy.about.initiatives;
+const categories = [...JOURNAL_SECTIONS[section].categories];
 
-const entries = await sanity.fetch<JournalEntry[]>(journalsQuery, {
+const entries = await sanity.fetch<JournalEntry[]>(journalsByCategoriesQuery, {
   language: locale,
   defaultLanguage: defaultLocale,
+  categories,
 });
 ---
 
-<Layout title={`${copy.sectionTypes.journal} — Nomarq`} page="about">
-  <JournalFilters entries={entries} locale={locale} label={copy.sectionTypes.journal} />
+<Layout title={`${sectionLabel} — Nomarq`} page="about">
+  <JournalFilters entries={entries} locale={locale} label={sectionLabel} />
   {
     entries.length === 0 ? (
       <p class="about-journal-empty">{copy.journalEmpty}</p>
     ) : (
-      <JournalList entries={entries} locale={locale} />
+      <JournalList entries={entries} locale={locale} section={section} />
     )
   }
 </Layout>

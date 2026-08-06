@@ -1,15 +1,5 @@
 import type { Locale, NavId } from './i18n';
-
-type JournalCategory =
-  | 'interview'
-  | 'news'
-  | 'press'
-  | 'event'
-  | 'prize'
-  | 'recognition'
-  | 'publication'
-  | 'exhibition'
-  | 'initiative';
+import type { JournalCategory } from './journal';
 
 type UiStrings = {
   nav: Record<NavId, string>;
@@ -87,15 +77,12 @@ export const ui = {
       journal: 'Journal',
     },
     journalCategories: {
-      interview: 'Interview',
-      news: 'News',
-      press: 'Press',
-      event: 'Event',
       prize: 'Prize',
-      recognition: 'Recognition',
-      publication: 'Publication',
+      press: 'Press',
+      conferences: 'Conferences',
+      editorial: 'Editorial',
       exhibition: 'Exhibition',
-      initiative: 'Initiative',
+      events: 'Events',
     },
     technicalInfo: {
       title: 'Technical Information',
@@ -113,7 +100,7 @@ export const ui = {
     information: 'Information',
     noProjects: 'No projects yet. Add some in Sanity Studio.',
     aboutEmpty: 'About page content coming soon.',
-    journalEmpty: 'No journal entries yet. Add some in Sanity Studio.',
+    journalEmpty: 'No entries yet. Add some in Sanity Studio.',
     about: {
       contactInformation: 'Contact Information',
       contactForm: 'Contact Form',
@@ -169,15 +156,12 @@ export const ui = {
       journal: 'Diario',
     },
     journalCategories: {
-      interview: 'Entrevista',
-      news: 'Noticia',
-      press: 'Prensa',
-      event: 'Evento',
       prize: 'Premio',
-      recognition: 'Reconocimiento',
-      publication: 'Publicación',
+      press: 'Prensa',
+      conferences: 'Conferencias',
+      editorial: 'Editorial',
       exhibition: 'Exposición',
-      initiative: 'Iniciativa',
+      events: 'Eventos',
     },
     technicalInfo: {
       title: 'Información Técnica',
@@ -195,7 +179,7 @@ export const ui = {
     information: 'Información',
     noProjects: 'Todavía no hay proyectos. Añade algunos en Sanity Studio.',
     aboutEmpty: 'El contenido de la página Nosotros llegará pronto.',
-    journalEmpty: 'Todavía no hay entradas del diario. Añade algunas en Sanity Studio.',
+    journalEmpty: 'Todavía no hay entradas. Añade algunas en Sanity Studio.',
     about: {
       contactInformation: 'Información de contacto',
       contactForm: 'Formulario de contacto',

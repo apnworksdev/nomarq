@@ -57,7 +57,9 @@ export function isProjectsIndexPath(pathname: string): boolean {
 }
 
 export function isAboutJournalPath(pathname: string): boolean {
-  return normalizePath(pathname) === '/about/journal';
+  const path = normalizePath(pathname);
+
+  return path === '/about/recognition' || path === '/about/initiatives';
 }
 
 export function isProjectDetailPath(pathname: string): boolean {
@@ -69,7 +71,10 @@ export function isProjectDetailPath(pathname: string): boolean {
 export function isJournalDetailPath(pathname: string): boolean {
   const path = normalizePath(pathname);
 
-  return path.startsWith('/about/journal/') && path !== '/about/journal';
+  return (
+    (path.startsWith('/about/recognition/') && path !== '/about/recognition') ||
+    (path.startsWith('/about/initiatives/') && path !== '/about/initiatives')
+  );
 }
 
 export function isEntryDetailPath(pathname: string): boolean {

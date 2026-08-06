@@ -1,4 +1,7 @@
 import { initFiltersPanelMetrics, setFiltersPanelOpen } from './filters-panel';
+import { JOURNAL_CATEGORY_ORDER } from './journal';
+
+export { JOURNAL_CATEGORY_ORDER };
 
 const ROOT_SELECTOR = '[data-journal-filters]';
 const TOGGLE_SELECTOR = '[data-projects-filter-toggle]';
@@ -198,18 +201,6 @@ export function initJournalFiltersState() {
   document.addEventListener('astro:page-load', run);
 }
 
-export const JOURNAL_CATEGORY_ORDER = [
-  'prize',
-  'press',
-  'event',
-  'interview',
-  'news',
-  'recognition',
-  'publication',
-  'exhibition',
-  'initiative',
-] as const;
-
 export function sortJournalCategories(categories: string[]): string[] {
   const order = new Map<string, number>(
     JOURNAL_CATEGORY_ORDER.map((category, index) => [category, index]),
@@ -223,7 +214,7 @@ export function sortJournalCategories(categories: string[]): string[] {
   });
 }
 
-const FILTER_CATEGORY_COLUMN_COUNT = 5;
+const FILTER_CATEGORY_COLUMN_COUNT = 3;
 
 export function groupJournalCategoriesForFilter(categories: string[]): string[][] {
   const sorted = sortJournalCategories(categories);

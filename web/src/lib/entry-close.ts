@@ -6,11 +6,14 @@ import {
   type Locale,
 } from './i18n';
 import { HOME_SCROLL_RESTORE_KEY } from './home-scroll';
-import { journalBasePath } from './journal';
+import {
+  getJournalSectionFromPath,
+  getJournalSectionPath,
+} from './journal';
 
 const RETURN_KEY = 'nomarq-entry-close-return';
 
-export type EntryCloseOrigin = 'home' | 'projects' | 'journal' | 'about';
+export type EntryCloseOrigin = 'home' | 'projects' | 'recognition' | 'initiatives' | 'about';
 
 export type EntryCloseReturn = {
   origin: EntryCloseOrigin;
@@ -64,7 +67,17 @@ function captureReturnFromLink(link: HTMLAnchorElement) {
   saveEntryCloseReturn(data);
 }
 
-function getCloseHref(detailType: EntryDetailType, locale: Locale): string {
+function getJournalClosePath(pathname: string): string {
+  const sectionFromPath = getJournalSectionFromPath(pathname);
+
+  if (sectionFromPath) {
+    return getJournalSectionPath(sectionFromPath);
+  }
+
+  return getJournalSectionPath('recognition');
+}
+
+function getCloseHref(detailType: EntryDetailType, locale: Locale, pathname: string): string {
   const stored = readEntryCloseReturn();
 
   if (stored?.origin === 'home') {
@@ -75,8 +88,8 @@ function getCloseHref(detailType: EntryDetailType, locale: Locale): string {
     return getLocalizedPath(locale, '/projects');
   }
 
-  if (stored?.origin === 'journal') {
-    return getLocalizedPath(locale, journalBasePath);
+  if (stored?.origin === 'recognition' || stored?.origin === 'initiatives') {
+    return getLocalizedPath(locale, getJournalSectionPath(stored.origin));
   }
 
   if (stored?.origin === 'about') {
@@ -85,7 +98,7 @@ function getCloseHref(detailType: EntryDetailType, locale: Locale): string {
 
   return getLocalizedPath(
     locale,
-    detailType === 'journal' ? journalBasePath : '/projects',
+    detailType === 'journal' ? getJournalClosePath(pathname) : '/projects',
   );
 }
 
@@ -108,7 +121,7 @@ function updateHeaderCloseState() {
   const isDetail = isEntryDetailPath(pathname);
   const detailType: EntryDetailType = isJournalDetailPath(pathname) ? 'journal' : 'project';
   const locale = getLocaleFromPath(pathname);
-  const href = getCloseHref(detailType, locale);
+  const href = getCloseHref(detailType, locale, pathname);
 
   document.querySelectorAll<HTMLElement>('.header-language-switcher-locales').forEach((element) => {
     element.toggleAttribute('hidden', isDetail);

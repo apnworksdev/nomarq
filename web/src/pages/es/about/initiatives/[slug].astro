@@ -3,14 +3,14 @@ import { getJournalStaticPaths } from '../../../../lib/static-paths';
 import JournalDetailPage from '../../../../views/JournalDetailPage.astro';
 
 export async function getStaticPaths() {
-  return getJournalStaticPaths('es');
+  return getJournalStaticPaths('es', 'initiatives');
 }
 
 const { slug } = Astro.params;
 
 if (!slug) {
-  return Astro.redirect('/es/about/journal');
+  return Astro.redirect('/es/about/initiatives');
 }
 ---
 
-<JournalDetailPage locale="es" slug={slug} />
+<JournalDetailPage locale="es" slug={slug} section="initiatives" />

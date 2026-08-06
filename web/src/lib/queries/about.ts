@@ -5,11 +5,13 @@ import { imageProjection, sanityImageProjection } from './shared';
 const translatedJournalRef = `*[_type == "translation.metadata" && references(^._id)][0].translations[language == $language][0].value->`;
 
 const journalEntryFields = `
+  _id,
   "title": coalesce(${translatedJournalRef}title, title),
   category,
   year,
   "slug": coalesce(${translatedJournalRef}slug.current, slug.current),
-  externalLink
+  externalLink,
+  "coverImage": coalesce(${translatedJournalRef}images, images)[0] ${imageProjection}
 `;
 
 const journalListProjection = (fields: string) => `select(

@@ -1,5 +1,5 @@
 ---
-import type { JournalEntry } from '../lib/journal';
+import type { JournalEntry, JournalSection } from '../lib/journal';
 import { getJournalEntryHref, isExternalJournalLink } from '../lib/journal';
 import type { Locale } from '../lib/i18n';
 import { urlFor } from '../lib/image';
@@ -9,9 +9,10 @@ import '../styles/components/projects-list.css';
 interface Props {
   entries: JournalEntry[];
   locale: Locale;
+  section: JournalSection;
 }
 
-const { entries, locale } = Astro.props;
+const { entries, locale, section } = Astro.props;
 ---
 
 <ol class="projects-list" data-journal-list>
@@ -54,7 +55,7 @@ const { entries, locale } = Astro.props;
                 {...(!external
                   ? {
                       'data-entry-close-link': true,
-                      'data-entry-close-origin': 'journal',
+                      'data-entry-close-origin': section,
                     }
                   : { target: '_blank', rel: 'noopener noreferrer' })}
               >

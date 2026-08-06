@@ -20,8 +20,8 @@ export { aboutQuery } from './about';
 export type { JournalCard, JournalEntry, JournalsQueryParams } from './journal';
 export {
   journalBySlugQuery,
-  journalSlugsQuery,
-  journalsQuery,
+  journalSlugsByCategoriesQuery,
+  journalsByCategoriesQuery,
   relatedJournalsQuery,
 } from './journal';
 

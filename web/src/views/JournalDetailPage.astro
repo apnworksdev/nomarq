@@ -5,6 +5,11 @@ import EntryDetailPage from '../components/EntryDetailPage.astro';
 import type { Locale } from '../lib/i18n';
 import { defaultLocale } from '../lib/i18n';
 import { journalToRelatedEntry, mapRelatedEntries } from '../lib/entry-detail';
+import {
+  getJournalSection,
+  getJournalSectionPath,
+  type JournalSection,
+} from '../lib/journal';
 import { journalBySlugQuery, type JournalEntry } from '../lib/queries';
 import { getRelatedJournals } from '../lib/related-journals';
 import { sanity } from '../lib/sanity';
@@ -14,10 +19,12 @@ import { formatYear } from '../lib/year';
 interface Props {
   locale: Locale;
   slug: string;
+  section: JournalSection;
 }
 
-const { locale, slug } = Astro.props;
+const { locale, slug, section } = Astro.props;
 const copy = getUi(locale);
+const sectionPath = getJournalSectionPath(section);
 
 const entry = await sanity.fetch<JournalEntry | null>(journalBySlugQuery, {
   slug,
@@ -26,7 +33,15 @@ const entry = await sanity.fetch<JournalEntry | null>(journalBySlugQuery, {
 });
 
 if (!entry?.slug) {
-  return Astro.redirect(getRelativeLocaleUrl(locale, '/about/journal'));
+  return Astro.redirect(getRelativeLocaleUrl(locale, sectionPath));
+}
+
+const entrySection = getJournalSection(entry.category);
+
+if (entrySection && entrySection !== section) {
+  return Astro.redirect(
+    getRelativeLocaleUrl(locale, `${getJournalSectionPath(entrySection)}/${entry.slug}`),
+  );
 }
 
 if (entry.externalLink) {

@@ -14,7 +14,10 @@ import {
   stripLocaleFromPath,
   type Locale,
 } from '../lib/i18n';
-import { journalBasePath } from '../lib/journal';
+import {
+  getJournalSectionFromPath,
+  getJournalSectionPath,
+} from '../lib/journal';
 import { getNavLabel, getUi } from '../lib/ui';
 import '../styles/components/header.css';
 
@@ -28,9 +31,12 @@ const isEntryDetail = isEntryDetailPath(pathname);
 const entryDetailType = isJournalDetailPath(pathname) ? 'journal' : 'project';
 const showFilters = isProjectsIndex || isAboutJournal;
 const copy = getUi(locale);
+const journalClosePath = getJournalSectionPath(
+  getJournalSectionFromPath(pathname) ?? 'recognition',
+);
 const closeHref = getLocalizedPath(
   locale,
-  entryDetailType === 'journal' ? journalBasePath : '/projects',
+  entryDetailType === 'journal' ? journalClosePath : '/projects',
 );
 ---
 

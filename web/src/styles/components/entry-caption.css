@@ -84,6 +84,7 @@
   overflow: visible;
   padding: 0;
   padding-left: var(--entry-description-indent);
+  pointer-events: auto;
 }
 
 .entry-overlay.is-expanded .entry-overlay-link {

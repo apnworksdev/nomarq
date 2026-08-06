@@ -253,13 +253,13 @@ const privacyHref = getRelativeLocaleUrl(locale, "privacy-policy");
           <h2 class="about-section-heading">{copy.about.recognitions}</h2>
           {
             recognitions.length > 0 && (
-              <ul class="about-list">
+              <ul class="about-list" data-about-list>
                 {recognitions.map((entry) => (
                   <AboutJournalListItem entry={entry} locale={locale} />
                 ))}
                 <li>
                   <a
-                    href={getRelativeLocaleUrl(locale, "/about/journal")}
+                    href={getRelativeLocaleUrl(locale, "/about/recognition")}
                     class="about-list-all"
                   >
                     {copy.about.all}
@@ -274,13 +274,13 @@ const privacyHref = getRelativeLocaleUrl(locale, "privacy-policy");
           <h2 class="about-section-heading">{copy.about.initiatives}</h2>
           {
             initiatives.length > 0 && (
-              <ul class="about-list">
+              <ul class="about-list" data-about-list>
                 {initiatives.map((entry) => (
                   <AboutJournalListItem entry={entry} locale={locale} />
                 ))}
                 <li>
                   <a
-                    href={getRelativeLocaleUrl(locale, "/about/journal")}
+                    href={getRelativeLocaleUrl(locale, "/about/initiatives")}
                     class="about-list-all"
                   >
                     {copy.about.all}
@@ -318,3 +318,9 @@ const privacyHref = getRelativeLocaleUrl(locale, "privacy-policy");
     </section>
   </div>
 </Layout>
+
+<script>
+  import { initAboutListHoverState } from '../lib/about-list-hover';
+
+  initAboutListHoverState();
+</script>

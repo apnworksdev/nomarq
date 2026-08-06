@@ -30,7 +30,10 @@ const localizedJournalDetailProjection = `
   "photography": coalesce(${translatedJournalRef}photography, photography)
 `;
 
-export const journalsQuery = `*[${validJournalFilter}] | order(year desc, title asc) {
+export const journalsByCategoriesQuery = `*[
+  ${validJournalFilter}
+  && coalesce(${translatedJournalRef}category, category) in $categories
+] | order(year desc, title asc) {
   ${localizedJournalListProjection}
 }`;
 
@@ -57,8 +60,9 @@ export const relatedJournalsQuery = `*[
 | order(score desc, title asc)
 [0...$limit]`;
 
-export const journalSlugsQuery = `*[
+export const journalSlugsByCategoriesQuery = `*[
   ${validJournalFilter}
+  && coalesce(${translatedJournalRef}category, category) in $categories
   && !defined(coalesce(${translatedJournalRef}externalLink, externalLink))
 ] {
   "slug": coalesce(${translatedJournalRef}slug.current, slug.current)
@@ -67,6 +71,7 @@ export const journalSlugsQuery = `*[
 export type JournalsQueryParams = {
   language: Locale;
   defaultLanguage: Locale;
+  categories?: string[];
 };
 
 export type { JournalCard, JournalEntry };

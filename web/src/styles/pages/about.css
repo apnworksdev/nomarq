@@ -245,6 +245,7 @@
   align-self: end;
   text-align: right;
   white-space: pre-line;
+  padding-bottom: var(--margin);
 }
 
 /* —— Gallery slider —— */
@@ -282,6 +283,10 @@
 /* —— Lists —— */
 
 .about-lists {
+  --about-list-col-width: calc(
+    (100% - 2 * var(--columns-gap)) / 3
+  );
+
   display: grid;
   grid-template-columns: repeat(var(--columns), 1fr);
   column-gap: var(--columns-gap);
@@ -306,6 +311,8 @@
 }
 
 .about-list {
+  --about-list-fade-duration: 0.35s;
+
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -316,10 +323,23 @@
 }
 
 .about-list-item {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   column-gap: var(--margin);
   align-items: baseline;
+  transition:
+    opacity var(--about-list-fade-duration) var(--transition-timing-function),
+    visibility var(--about-list-fade-duration) var(--transition-timing-function);
+}
+
+.about-list.is-hovering .about-list-item:not(.is-hovered) {
+  opacity: 0.1;
+  pointer-events: none;
+}
+
+.about-list-item.is-hovered {
+  z-index: var(--z-index-grid-hover);
 }
 
 .about-list-item-label {
@@ -348,6 +368,8 @@
 }
 
 .about-list-item-link {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: var(--margin);
@@ -358,6 +380,30 @@
 
 .about-lists-sidebar .about-list-item-link {
   grid-template-columns: 1fr 1fr 1fr;
+}
+
+.about-list-thumb {
+  position: absolute;
+  top: calc(100% + 7px);
+  left: 0;
+  width: var(--about-list-col-width);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity var(--about-list-fade-duration) var(--transition-timing-function),
+    visibility var(--about-list-fade-duration) var(--transition-timing-function);
+}
+
+.about-list-thumb img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.about-list-item.is-hovered .about-list-thumb {
+  opacity: 1;
+  visibility: visible;
 }
 
 .about-list-all {
@@ -572,6 +618,16 @@
 
   .about-lists-sidebar .about-list-item {
     display: block;
+  }
+
+  .about-list-thumb {
+    display: none;
+  }
+
+  .about-list.is-hovering .about-list-item:not(.is-hovered) {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
   }
 
   .about-lists-sidebar .about-list-item-label {

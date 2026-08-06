@@ -1,7 +1,7 @@
 import type { Locale } from './i18n';
 import { getLocalizedPath } from './i18n';
 import type { JournalCard } from './journal';
-import { journalBasePath } from './journal';
+import { getJournalBasePath } from './journal';
 import type { ProjectCard } from './queries';
 import type { ImageField } from './queries/shared';
 import { getJournalCategoryLabel } from './ui';
@@ -55,10 +55,11 @@ export function journalToRelatedEntry(
     ? getJournalCategoryLabel(locale, entry.category)
     : undefined;
   const country = formatYear(entry.year);
+  const basePath = getJournalBasePath(entry.category);
 
   return {
     title: entry.title,
-    href: getLocalizedPath(locale, `${journalBasePath}/${entry.slug}`),
+    href: getLocalizedPath(locale, `${basePath}/${entry.slug}`),
     place,
     country,
     coverImage: entry.coverImage,
