@@ -153,7 +153,7 @@ export const ui = {
       about: 'Nosotros',
     },
     sectionTypes: {
-      journal: 'Diario',
+      journal: 'Actualidad',
     },
     journalCategories: {
       prize: 'Premio',
@@ -173,7 +173,7 @@ export const ui = {
       photography: 'Fotografía',
     },
     relatedProjects: 'Proyectos Relacionados',
-    relatedJournals: 'Diario Relacionado',
+    relatedJournals: 'Actualidad Relacionada',
     menu: 'Menu',
     close: 'Cerrar',
     information: 'Información',
