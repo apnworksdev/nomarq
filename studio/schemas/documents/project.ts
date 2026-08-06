@@ -61,10 +61,10 @@ export default defineType({
     defineField({
       name: 'images',
       title: 'Images',
-      description: 'The first image is used for grids and home sections.',
+      description:
+        'The first image is used for grids and home sections. Detail pages show up to 6 thumbnails at a time; clicking one brings it to the front.',
       type: 'array',
       of: [{ type: 'imageWithAlt' }],
-      validation: (Rule) => Rule.max(6),
     }),
     defineField({
       name: 'relatedProjects',

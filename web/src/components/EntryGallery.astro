@@ -13,6 +13,8 @@ interface Props {
   showCounter?: boolean;
 }
 
+const VISIBLE_THUMB_MAX = 6;
+
 const {
   images,
   title,
@@ -27,6 +29,23 @@ const cover = validImages[0];
 const total = validImages.length;
 const showCover = mode === 'cover' || mode === 'full';
 const showStrip = (mode === 'strip' || mode === 'full') && validImages.length > 1;
+
+const galleryImages = validImages.flatMap((image, imageIndex) => {
+  if (!image.image) {
+    return [];
+  }
+
+  return [
+    {
+      src: urlFor(image.image).width(1600).fit('max').url(),
+      thumbSrc: urlFor(image.image).height(200).url(),
+      alt: imageAlt(image.alt, title, { index: imageIndex }),
+      originalIndex: imageIndex,
+    },
+  ];
+});
+
+const stripImages = galleryImages.slice(0, VISIBLE_THUMB_MAX);
 ---
 
 {
@@ -56,25 +75,25 @@ const showStrip = (mode === 'strip' || mode === 'full') && validImages.length > 
     <ul
       class:list={['entry-gallery', { 'entry-gallery--interactive': interactive }]}
       data-entry-gallery={interactive ? '' : undefined}
+      data-entry-gallery-images={interactive ? JSON.stringify(galleryImages) : undefined}
     >
       {
-        validImages.map((image, imageIndex) =>
-          image.image ? (
-            <li
-              class:list={['entry-gallery-item', { 'is-active': interactive && imageIndex === 0 }]}
-              data-entry-thumb={interactive ? '' : undefined}
-              data-entry-src={interactive ? urlFor(image.image).width(1600).fit('max').url() : undefined}
-              data-entry-alt={interactive ? imageAlt(image.alt, title, { index: imageIndex }) : undefined}
-              data-entry-index={interactive ? imageIndex : undefined}
-            >
-              <img
-                src={urlFor(image.image).height(200).url()}
-                alt={imageAlt(image.alt, title, { index: imageIndex })}
-                loading="lazy"
-              />
-            </li>
-          ) : null,
-        )
+        stripImages.map((image, imageIndex) => (
+          <li
+            class:list={['entry-gallery-item', { 'is-active': interactive && imageIndex === 0 }]}
+            data-entry-thumb={interactive ? '' : undefined}
+            data-entry-src={interactive ? image.src : undefined}
+            data-entry-alt={interactive ? image.alt : undefined}
+            data-entry-index={interactive ? imageIndex : undefined}
+            data-entry-original-index={interactive ? image.originalIndex : undefined}
+          >
+            <img
+              src={image.thumbSrc}
+              alt={image.alt}
+              loading="lazy"
+            />
+          </li>
+        ))
       }
     </ul>
   )

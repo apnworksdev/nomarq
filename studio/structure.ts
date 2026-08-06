@@ -35,6 +35,7 @@ export const structure: StructureResolver = (S) =>
     .items([
       singletonListItem(S, 'home', 'Home'),
       singletonListItem(S, 'about', 'About'),
+      singletonListItem(S, 'footer', 'Footer'),
       S.divider(),
       localizedDocumentList(S, 'project', 'Projects', [{ field: 'year', direction: 'desc' }]),
       localizedDocumentList(S, 'journal', 'Journal', [{ field: 'year', direction: 'desc' }]),

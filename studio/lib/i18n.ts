@@ -13,6 +13,7 @@ export const localizedSchemaTypes = [
   'journal',
   'home',
   'about',
+  'footer',
 ] as const;
 
 export type LocalizedSchemaType = (typeof localizedSchemaTypes)[number];

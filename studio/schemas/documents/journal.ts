@@ -1,18 +1,17 @@
 import { defineField, defineType } from 'sanity';
 
+import { englishDocumentReferenceFilter } from '../../lib/referenceFilters';
 import { languageField } from '../fields/language';
 import { localizedSlugField } from '../fields/localizedSlug';
 
+/** Recognition: prize, press, conferences. Initiatives: editorial, exhibition, events. */
 const journalCategories = [
-  { title: 'Interview', value: 'interview' },
-  { title: 'News', value: 'news' },
-  { title: 'Press', value: 'press' },
-  { title: 'Event', value: 'event' },
   { title: 'Prize', value: 'prize' },
-  { title: 'Recognition', value: 'recognition' },
-  { title: 'Publication', value: 'publication' },
+  { title: 'Press', value: 'press' },
+  { title: 'Conferences', value: 'conferences' },
+  { title: 'Editorial', value: 'editorial' },
   { title: 'Exhibition', value: 'exhibition' },
-  { title: 'Initiative', value: 'initiative' },
+  { title: 'Events', value: 'events' },
 ] as const;
 
 export default defineType({
@@ -31,6 +30,8 @@ export default defineType({
     defineField({
       name: 'category',
       title: 'Category',
+      description:
+        'Prize, press, and conferences appear under Recognition. Editorial, exhibition, and events appear under Initiatives.',
       type: 'string',
       options: {
         list: [...journalCategories],
@@ -77,10 +78,25 @@ export default defineType({
     defineField({
       name: 'images',
       title: 'Images',
-      description: 'The first image is used for grids and home sections.',
+      description:
+        'The first image is used for grids and home sections. Detail pages show up to 6 thumbnails at a time; clicking one brings it to the front.',
       type: 'array',
       of: [{ type: 'imageWithAlt' }],
-      validation: (Rule) => Rule.max(6),
+    }),
+    defineField({
+      name: 'relatedJournals',
+      title: 'Related journal entries',
+      description:
+        'Pick up to 3 related entries. Any empty slots are filled automatically from the same category.',
+      type: 'array',
+      of: [
+        {
+          type: 'reference',
+          to: [{ type: 'journal' }],
+          options: englishDocumentReferenceFilter,
+        },
+      ],
+      validation: (Rule) => Rule.max(3),
     }),
   ],
   preview: {
