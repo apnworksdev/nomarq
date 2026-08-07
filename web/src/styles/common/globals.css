@@ -35,6 +35,13 @@
   color: var(--selection-foreground-color);
 }
 
+/* Form controls don't inherit *::selection in WebKit/Blink. */
+input::selection,
+textarea::selection {
+  background: var(--selection-background-color);
+  color: var(--selection-foreground-color);
+}
+
 html {
   background-color: var(--background-color);
   color: var(--foreground-color);

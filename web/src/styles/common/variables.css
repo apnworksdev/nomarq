@@ -1,6 +1,7 @@
 :root {
   --background-color: #fff;
   --foreground-color: #000;
+  --gray-color: #999;
 
   --selection-background-color: transparent;
   --selection-foreground-color: var(--gray-color);
