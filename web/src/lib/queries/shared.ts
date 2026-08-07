@@ -8,6 +8,11 @@ export type ImageField = ImageWithAlt & {
   image?: SanityImageSource;
 };
 
+export type DeeperSection = {
+  name: string;
+  images: ImageField[];
+};
+
 export type ProjectCard = {
   title: string;
   slug: string;
@@ -18,11 +23,13 @@ export type ProjectCard = {
 
 export type Project = ProjectCard & {
   description?: string;
+  deeperDescription?: string;
   use?: LocalizedUse[];
   year?: string | number;
   collaborators?: string;
   photography?: string;
   images?: ImageField[];
+  deeperSections?: DeeperSection[];
   relatedProjects?: ProjectCard[];
   useRefIds?: string[];
 };

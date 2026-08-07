@@ -1,0 +1,165 @@
+---
+import { imageAlt } from '../lib/alt';
+import type { DeeperSection } from '../lib/queries';
+import { urlFor } from '../lib/image';
+import type { UiCopy } from '../lib/ui';
+
+type PreparedSection = {
+  id: string;
+  name: string;
+  indexLabel: string;
+  images: { src: string; alt: string }[];
+};
+
+interface Props {
+  sections: DeeperSection[];
+  entryTitle: string;
+  copy: UiCopy['deeper'];
+  mode: 'media' | 'access' | 'sections';
+  privHref?: string;
+  locale?: 'en' | 'es';
+  publicHref?: string;
+}
+
+const { sections, entryTitle, copy, mode, privHref, locale = 'en', publicHref } = Astro.props;
+
+const prepared: PreparedSection[] = sections
+  .map((section, sectionIndex) => {
+    const images = (section.images ?? [])
+      .map((image, imageIndex) => {
+        if (!image.image) {
+          return null;
+        }
+
+        return {
+          src: urlFor(image.image).width(1600).fit('max').url(),
+          alt: imageAlt(image.alt, entryTitle, { index: imageIndex }),
+        };
+      })
+      .filter((image): image is { src: string; alt: string } => Boolean(image));
+
+    return {
+      id: `section-${sectionIndex}`,
+      name: section.name,
+      indexLabel: String(sectionIndex + 1).padStart(2, '0'),
+      images,
+    };
+  })
+  .filter((section) => section.images.length > 0);
+---
+
+{
+  prepared.length > 0 && mode === 'media' && (
+    <div class="project-media project-media--deeper" data-project-deeper-media>
+      <div class="project-deeper-scroll" data-project-deeper-scroll>
+        {
+          prepared.flatMap((section, sectionIndex) =>
+            section.images.map((image, imageIndex) => (
+              <figure
+                class="project-deeper-slide"
+                data-project-deeper-slide={section.id}
+              >
+                <img
+                  src={image.src}
+                  alt={image.alt}
+                  loading={sectionIndex === 0 && imageIndex === 0 ? 'eager' : 'lazy'}
+                />
+              </figure>
+            ))
+          )
+        }
+      </div>
+    </div>
+  )
+}
+
+{
+  prepared.length > 0 && mode === 'access' && privHref && (
+    <div class="project-deeper" data-project-deeper-access>
+      <div class="project-deeper-panel">
+        <h2 class="project-deeper-title">{copy.moreInformation}</h2>
+        <div class="project-deeper-content">
+          <form
+            class="project-deeper-form"
+            data-project-deeper-form
+            data-project-deeper-priv-href={privHref}
+            data-project-title={entryTitle}
+            data-project-locale={locale}
+          >
+            <div class="project-deeper-fields">
+              <label class="project-deeper-field">
+                <input type="text" name="name" required autocomplete="name" placeholder=" " />
+                <span class="project-deeper-field-label">{copy.name}</span>
+              </label>
+              <label class="project-deeper-field">
+                <input type="text" name="profile" required autocomplete="organization-title" placeholder=" " />
+                <span class="project-deeper-field-label">{copy.profile}</span>
+              </label>
+              <label class="project-deeper-field">
+                <input type="tel" name="phone" required autocomplete="tel" placeholder=" " />
+                <span class="project-deeper-field-label">{copy.phone}</span>
+              </label>
+              <label class="project-deeper-field">
+                <input type="text" name="location" required autocomplete="address-level2" placeholder=" " />
+                <span class="project-deeper-field-label">{copy.location}</span>
+              </label>
+              <label class="project-deeper-field">
+                <input type="email" name="email" required autocomplete="email" placeholder=" " />
+                <span class="project-deeper-field-label">{copy.email}</span>
+              </label>
+            </div>
+            <button type="submit" class="project-deeper-access">
+              {copy.access}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+{
+  prepared.length > 0 && mode === 'sections' && (
+    <div
+      class="project-deeper"
+      data-project-deeper-sections
+      data-project-title={entryTitle}
+      data-project-public-href={publicHref}
+      data-project-priv-href={privHref}
+    >
+      <div class="project-deeper-panel">
+        <h2 class="project-deeper-title">{copy.moreInformation}</h2>
+        <div class="project-deeper-content">
+          <nav class="project-deeper-sections" aria-label={copy.moreInformation}>
+            <ul class="project-deeper-section-list">
+              {
+                prepared.map((section, sectionIndex) => (
+                  <li>
+                    <button
+                      type="button"
+                      class:list={['project-deeper-section', { 'is-active': sectionIndex === 0 }]}
+                      data-project-deeper-section={section.id}
+                      aria-current={sectionIndex === 0 ? 'true' : 'false'}
+                    >
+                      <span class="project-deeper-section-index">{section.indexLabel}</span>
+                      {' '}
+                      <span class="project-deeper-section-name">{section.name}</span>
+                    </button>
+                  </li>
+                ))
+              }
+            </ul>
+          </nav>
+          <button
+            type="button"
+            class="project-deeper-request"
+            data-project-deeper-request
+            data-project-deeper-request-sent={copy.requestSent}
+          >
+            {copy.requestFiles}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}

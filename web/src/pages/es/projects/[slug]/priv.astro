@@ -1,0 +1,16 @@
+---
+import { getProjectPrivStaticPaths } from '../../../../lib/static-paths';
+import ProjectPrivPage from '../../../../views/ProjectPrivPage.astro';
+
+export async function getStaticPaths() {
+  return getProjectPrivStaticPaths('es');
+}
+
+const { slug } = Astro.params;
+
+if (!slug) {
+  return Astro.redirect('/es/projects');
+}
+---
+
+<ProjectPrivPage locale="es" slug={slug} />

@@ -4,9 +4,11 @@ import { getRelativeLocaleUrl } from 'astro:i18n';
 import {
   getLocaleFromPath,
   getLocalizedPath,
+  getPublicProjectPathFromPriv,
   isAboutJournalPath,
   isEntryDetailPath,
   isJournalDetailPath,
+  isProjectPrivPath,
   isProjectsIndexPath,
   locales,
   matchNavId,
@@ -34,9 +36,13 @@ const copy = getUi(locale);
 const journalClosePath = getJournalSectionPath(
   getJournalSectionFromPath(pathname) ?? 'recognition',
 );
+const privPublicPath = isProjectPrivPath(pathname)
+  ? getPublicProjectPathFromPriv(pathname)
+  : null;
 const closeHref = getLocalizedPath(
   locale,
-  entryDetailType === 'journal' ? journalClosePath : '/projects',
+  privPublicPath
+    ?? (entryDetailType === 'journal' ? journalClosePath : '/projects'),
 );
 ---
 

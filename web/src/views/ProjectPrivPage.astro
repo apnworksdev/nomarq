@@ -4,9 +4,7 @@ import { getRelativeLocaleUrl } from 'astro:i18n';
 import EntryDetailPage from '../components/EntryDetailPage.astro';
 import type { Locale } from '../lib/i18n';
 import { defaultLocale } from '../lib/i18n';
-import { mapRelatedEntries, projectToRelatedEntry } from '../lib/entry-detail';
 import { projectBySlugQuery, type Project } from '../lib/queries';
-import { getRelatedProjects } from '../lib/related-projects';
 import { sanity } from '../lib/sanity';
 import { getUi } from '../lib/ui';
 import { getUseTitle } from '../lib/use';
@@ -30,7 +28,16 @@ if (!project) {
   return Astro.redirect(getRelativeLocaleUrl(locale, '/projects'));
 }
 
-const relatedProjects = await getRelatedProjects(project, locale);
+const deeperSections = (project.deeperSections ?? [])
+  .map((section) => ({
+    name: section.name?.trim() ?? '',
+    images: (section.images ?? []).filter((image) => image.image),
+  }))
+  .filter((section) => section.name && section.images.length > 0);
+
+if (deeperSections.length === 0) {
+  return Astro.redirect(getRelativeLocaleUrl(locale, `/projects/${slug}`));
+}
 
 const place = project.location?.place?.trim() || undefined;
 const country =
@@ -38,17 +45,6 @@ const country =
   project.location?.country?.full?.trim() ||
   undefined;
 const images = (project.images ?? []).filter((image) => image.image);
-const deeperSections = (project.deeperSections ?? [])
-  .map((section) => ({
-    name: section.name?.trim() ?? '',
-    images: (section.images ?? []).filter((image) => image.image),
-  }))
-  .filter((section) => section.name && section.images.length > 0);
-const hasDeeper = deeperSections.length > 0;
-const privHref = hasDeeper
-  ? getRelativeLocaleUrl(locale, `/projects/${slug}/priv`)
-  : undefined;
-const publicHref = getRelativeLocaleUrl(locale, `/projects/${slug}`);
 const locationLabel = [place, project.location?.country?.full?.trim()]
   .filter(Boolean)
   .join('\n');
@@ -64,10 +60,16 @@ const technicalRows = [
   { label: copy.technicalInfo.collaborators, value: project.collaborators?.trim() },
   { label: copy.technicalInfo.photography, value: project.photography?.trim() },
 ].filter((row) => Boolean(row.value));
+
+const privDescription =
+  project.deeperDescription?.trim() || project.description?.trim() || undefined;
+const publicHref = getRelativeLocaleUrl(locale, `/projects/${slug}`);
+const privHref = getRelativeLocaleUrl(locale, `/projects/${slug}/priv`);
 ---
 
 <EntryDetailPage
   pageTitle={`${project.title} — Nomarq`}
+  variant="priv"
   images={images}
   technicalRows={technicalRows}
   technicalTitle={copy.technicalInfo.title}
@@ -76,10 +78,9 @@ const technicalRows = [
   informationLabel={copy.information}
   captionPlace={place}
   captionCountry={country}
-  description={project.description}
-  relatedEntries={mapRelatedEntries(relatedProjects, projectToRelatedEntry, locale)}
+  description={privDescription}
+  relatedEntries={[]}
   relatedHeading={copy.relatedProjects}
-  relatedTitleId="project-related-title"
   deeperSections={deeperSections}
   deeperCopy={copy.deeper}
   privHref={privHref}

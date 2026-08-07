@@ -97,7 +97,11 @@ const privacyHref = getRelativeLocaleUrl(locale, "privacy-policy");
 
         <div class="about-contact-form-wrap">
           <h2 class="about-section-heading">{copy.about.contactForm}</h2>
-          <form class="about-contact-form">
+          <form
+            class="about-contact-form"
+            data-about-contact-form
+            data-about-form-sent={copy.about.form.sent}
+          >
             <div class="about-form-row">
               <div class="about-form-field" data-about-form-field="name">
                 <input
@@ -106,6 +110,7 @@ const privacyHref = getRelativeLocaleUrl(locale, "privacy-policy");
                   type="text"
                   autocomplete="given-name"
                   placeholder=" "
+                  required
                 />
                 <label for="about-name">{copy.about.form.name}</label>
               </div>
@@ -139,6 +144,7 @@ const privacyHref = getRelativeLocaleUrl(locale, "privacy-policy");
                   type="email"
                   autocomplete="email"
                   placeholder=" "
+                  required
                 />
                 <label for="about-email">{copy.about.form.email}</label>
               </div>
@@ -149,7 +155,8 @@ const privacyHref = getRelativeLocaleUrl(locale, "privacy-policy");
                 <input
                   id="about-website"
                   name="website"
-                  type="url"
+                  type="text"
+                  inputmode="url"
                   autocomplete="url"
                   placeholder=" "
                 />
@@ -174,7 +181,8 @@ const privacyHref = getRelativeLocaleUrl(locale, "privacy-policy");
                 id="about-message"
                 name="message"
                 rows="1"
-                placeholder=" "></textarea>
+                placeholder=" "
+                required></textarea>
               <label for="about-message">{copy.about.form.message}</label>
             </div>
             <div class="about-form-submit-wrap" data-about-form-field="submit">
@@ -184,6 +192,7 @@ const privacyHref = getRelativeLocaleUrl(locale, "privacy-policy");
                   name="privacy"
                   type="checkbox"
                   class="about-form-consent-input"
+                  required
                 />
                 <label for="about-privacy">
                   <span class="about-form-consent-marker" aria-hidden="true">
@@ -196,7 +205,7 @@ const privacyHref = getRelativeLocaleUrl(locale, "privacy-policy");
                 </label>
               </div>
 
-              <button class="about-form-submit" type="button">
+              <button class="about-form-submit" type="submit">
                 {copy.about.form.submit}
               </button>
             </div>
@@ -320,7 +329,9 @@ const privacyHref = getRelativeLocaleUrl(locale, "privacy-policy");
 </Layout>
 
 <script>
+  import { initAboutContactFormState } from '../lib/about-contact-form';
   import { initAboutListHoverState } from '../lib/about-list-hover';
 
   initAboutListHoverState();
+  initAboutContactFormState();
 </script>

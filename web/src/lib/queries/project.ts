@@ -36,3 +36,15 @@ export const relatedProjectsQuery = `*[
 export const projectSlugsQuery = `*[${validProjectFilter}] {
   "slug": coalesce(${translatedProjectRef}slug.current, slug.current)
 }`;
+
+/** Projects that have at least one deeper section with images (for /priv static paths). */
+export const projectPrivSlugsQuery = `*[
+  ${validProjectFilter} &&
+  count(
+    coalesce(${translatedProjectRef}deeperSections, deeperSections)[
+      defined(name) && name != "" && count(images[defined(image.asset)]) > 0
+    ]
+  ) > 0
+] {
+  "slug": coalesce(${translatedProjectRef}slug.current, slug.current)
+}`;

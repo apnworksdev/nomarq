@@ -1,42 +1,32 @@
-# Project deeper level
+# Project priv level (separate URL)
 
 ## Goal
 
-Project detail pages can expose a gated “deeper level”: extra images grouped into named sections. Visitors fill a short form once (saved in localStorage), click Acceder on each project visit, then browse a scroll-snap image stack driven by section navigation and can request files (UI-only until Resend).
+Priv/deeper content lives on a public sibling URL. The normal project page keeps the public gallery + access form. Acceder navigates to `/priv` (email via Resend later). Same visual design as the previous same-page unlock.
 
-## Approach
+## URLs
 
-Extend the existing project detail page (Approach 1). No new route. Unlock is page-session only; form fields persist globally in localStorage.
+- `/projects/[slug]/priv`
+- `/es/projects/[slug]/priv`
+- Public; no unlock gate. Missing priv content → redirect to normal project page.
+
+## Pages
+
+**Normal project:** public images + thumbs; Más Información form when priv sections exist. Acceder validates, saves fields to `localStorage`, navigates to `/priv`.
+
+**Priv page:** scroll-snap priv images; section nav + Solicitar archivos; technical info + related; description from `deeperDescription`.
 
 ## CMS
 
-- Project document tabs: **Main** (existing fields) and **Deeper Level**
-- `deeperSections[]` of `{ name: string, images: imageWithAlt[] }`
-- Section `name` is written per language document (document-level i18n)
-- Frontend only shows deeper UI when ≥1 section has ≥1 image
+Deeper Level tab: `deeperDescription` (text) + `deeperSections[]` `{ name, images[] }`.
 
-## UI states
+## Close
 
-**Locked (default):** public gallery unchanged; “More information” form with name, profile, phone, location, email + Acceder. Prefill from localStorage. All five required.
+On `/priv`, Close returns to the public project page (`/projects/[slug]`), not the projects index.
 
-**Unlocked (after Acceder):** public gallery replaced by vertical scroll-snap stack of all deeper images (section order). Form replaced by numbered section links + “Solicitar archivos”. No exit control — leave the page to reset.
+## Email (Resend)
 
-**Section sync:** click section → scroll to that section’s first image; scroll → active section updates via intersection / snap position.
+- Acceder → `POST /api/project-access` emails the visitor the priv URL, then navigates to `/priv`
+- Solicitar archivos → `POST /api/project-request-files` emails the owner with the visitor lead + project links
 
-**Request files:** click swaps button text to “tu peticion ha sido enviada correctamente” (no backend yet).
-
-## Architecture
-
-- Studio: `deeperSection` object + project field/group
-- GROQ/types: coalesce translated `deeperSections`
-- `EntryDetailPage` optional deeper props (projects only)
-- `project-deeper.ts`: localStorage, validation, unlock, scroll sync, request UI
-- Copy in `ui.ts` (EN/ES)
-- Storage key: `nomarq-deeper-access` → `{ name, profile, phone, location, email }`
-
-## Out of scope
-
-- Resend / email delivery
-- Exit-deeper control
-- Cookies (localStorage only)
-- Auto-unlock across projects
+Env: `RESEND_API_KEY`, `RESEND_FROM_EMAIL`, `RESEND_OWNER_EMAIL`

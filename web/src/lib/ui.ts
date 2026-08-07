@@ -21,6 +21,17 @@ type UiStrings = {
   menu: string;
   close: string;
   information: string;
+  deeper: {
+    moreInformation: string;
+    name: string;
+    profile: string;
+    phone: string;
+    location: string;
+    email: string;
+    access: string;
+    requestFiles: string;
+    requestSent: string;
+  };
   noProjects: string;
   aboutEmpty: string;
   journalEmpty: string;
@@ -41,6 +52,7 @@ type UiStrings = {
       privacy: string;
       privacyLink: string;
       submit: string;
+      sent: string;
     };
   };
   backToProjects: string;
@@ -98,6 +110,17 @@ export const ui = {
     menu: 'Menu',
     close: 'Close',
     information: 'Information',
+    deeper: {
+      moreInformation: 'More Information',
+      name: 'Name',
+      profile: 'Profile',
+      phone: 'Phone',
+      location: 'Location',
+      email: 'Email',
+      access: 'Access',
+      requestFiles: 'Request files',
+      requestSent: 'Your request has been sent successfully',
+    },
     noProjects: 'No projects yet. Add some in Sanity Studio.',
     aboutEmpty: 'About page content coming soon.',
     journalEmpty: 'No entries yet. Add some in Sanity Studio.',
@@ -118,6 +141,7 @@ export const ui = {
         privacy: 'I have read and accept the',
         privacyLink: 'privacy policy',
         submit: 'Submit',
+        sent: 'Your request has been sent successfully',
       },
     },
     backToProjects: '← All projects',
@@ -177,6 +201,17 @@ export const ui = {
     menu: 'Menu',
     close: 'Cerrar',
     information: 'Información',
+    deeper: {
+      moreInformation: 'Más Información',
+      name: 'Nombre',
+      profile: 'Perfil',
+      phone: 'Teléfono',
+      location: 'Ubicación',
+      email: 'Email',
+      access: 'Acceder',
+      requestFiles: 'Solicitar archivos',
+      requestSent: 'Tu petición ha sido enviada correctamente',
+    },
     noProjects: 'Todavía no hay proyectos. Añade algunos en Sanity Studio.',
     aboutEmpty: 'El contenido de la página Nosotros llegará pronto.',
     journalEmpty: 'Todavía no hay entradas. Añade algunas en Sanity Studio.',
@@ -197,6 +232,7 @@ export const ui = {
         privacy: 'He leído y acepto la',
         privacyLink: 'política de privacidad',
         submit: 'Enviar',
+        sent: 'Tu petición ha sido enviada correctamente',
       },
     },
     backToProjects: '← Todos los proyectos',

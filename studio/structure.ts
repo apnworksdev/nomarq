@@ -36,6 +36,17 @@ export const structure: StructureResolver = (S) =>
       singletonListItem(S, 'home', 'Home'),
       singletonListItem(S, 'about', 'About'),
       singletonListItem(S, 'footer', 'Footer'),
+      S.listItem()
+        .title('Legal')
+        .child(
+          S.list()
+            .title('Legal')
+            .items([
+              singletonListItem(S, 'privacyPolicy', 'Privacy Policy'),
+              singletonListItem(S, 'legalNotice', 'Legal Notice'),
+              singletonListItem(S, 'cookiesPolicy', 'Cookies Policy'),
+            ]),
+        ),
       S.divider(),
       localizedDocumentList(S, 'project', 'Projects', [{ field: 'year', direction: 'desc' }]),
       localizedDocumentList(S, 'journal', 'Journal', [{ field: 'year', direction: 'desc' }]),

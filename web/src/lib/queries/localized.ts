@@ -45,5 +45,10 @@ export const localizedProjectDetailProjection = `
   "useRefIds": coalesce(${translatedProjectRef}use, use[]._ref),
   "year": coalesce(${translatedProjectRef}year, year),
   "collaborators": coalesce(${translatedProjectRef}collaborators, collaborators),
-  "photography": coalesce(${translatedProjectRef}photography, photography)
+  "photography": coalesce(${translatedProjectRef}photography, photography),
+  "deeperDescription": coalesce(${translatedProjectRef}deeperDescription, deeperDescription),
+  "deeperSections": coalesce(${translatedProjectRef}deeperSections, deeperSections)[] {
+    name,
+    "images": images[] ${imageProjection}
+  }
 `;

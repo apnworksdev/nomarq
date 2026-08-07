@@ -1,6 +1,6 @@
-export type { ImageField, Project, ProjectCard } from './shared';
+export type { DeeperSection, ImageField, Project, ProjectCard } from './shared';
 
-export { projectsQuery, projectBySlugQuery, projectSlugsQuery, relatedProjectsQuery } from './project';
+export { projectsQuery, projectBySlugQuery, projectSlugsQuery, projectPrivSlugsQuery, relatedProjectsQuery } from './project';
 
 export type { HomeDocument, HomeQueryParams } from './home';
 export { homeQuery } from './home';

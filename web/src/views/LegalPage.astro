@@ -1,0 +1,49 @@
+---
+import Layout from "../layouts/Layout.astro";
+import type { Locale } from "../lib/i18n";
+import {
+  legalPageBySlug,
+  type LegalPageDocument,
+  type LegalPageSlug,
+} from "../lib/legal";
+import { renderLegalBody } from "../lib/portable-text";
+import { legalPageQuery } from "../lib/queries/legal";
+import { sanity } from "../lib/sanity";
+import { getFooterLegalLinkLabel } from "../lib/ui";
+
+import "../styles/pages/legal.css";
+
+interface Props {
+  locale: Locale;
+  slug: LegalPageSlug;
+}
+
+const { locale, slug } = Astro.props;
+const pageMeta = legalPageBySlug[slug];
+const titleLabel = getFooterLegalLinkLabel(
+  locale,
+  pageMeta.labelKey,
+  pageMeta.labelKey,
+);
+
+const document = await sanity.fetch<LegalPageDocument | null>(
+  legalPageQuery(pageMeta.id),
+  {
+    language: locale,
+  },
+);
+
+const bodyHtml = renderLegalBody(document?.body);
+---
+
+<Layout title={`${titleLabel} — Nomarq`} page="legal">
+  <article class="legal-page">
+    <div class="legal-page-content">
+      {
+        bodyHtml ? (
+          <div class="legal-body" set:html={bodyHtml} />
+        ) : null
+      }
+    </div>
+  </article>
+</Layout>

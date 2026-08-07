@@ -1,8 +1,10 @@
 import {
   getLocaleFromPath,
   getLocalizedPath,
+  getPublicProjectPathFromPriv,
   isEntryDetailPath,
   isJournalDetailPath,
+  isProjectPrivPath,
   type Locale,
 } from './i18n';
 import { HOME_SCROLL_RESTORE_KEY } from './home-scroll';
@@ -78,6 +80,11 @@ function getJournalClosePath(pathname: string): string {
 }
 
 function getCloseHref(detailType: EntryDetailType, locale: Locale, pathname: string): string {
+  if (isProjectPrivPath(pathname)) {
+    const publicPath = getPublicProjectPathFromPriv(pathname);
+    return getLocalizedPath(locale, publicPath ?? '/projects');
+  }
+
   const stored = readEntryCloseReturn();
 
   if (stored?.origin === 'home') {

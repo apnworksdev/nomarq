@@ -8,6 +8,10 @@ export default defineType({
   name: 'project',
   title: 'Project',
   type: 'document',
+  groups: [
+    { name: 'main', title: 'Main', default: true },
+    { name: 'deeper', title: 'Deeper Level' },
+  ],
   fields: [
     languageField,
     defineField({
@@ -15,41 +19,48 @@ export default defineType({
       title: 'Title',
       type: 'string',
       validation: (Rule) => Rule.required(),
+      group: 'main',
     }),
-    localizedSlugField(),
+    localizedSlugField({ group: 'main' }),
     defineField({
       name: 'location',
       title: 'Location',
       type: 'location',
+      group: 'main',
     }),
     defineField({
       name: 'use',
       title: 'Use',
       type: 'array',
       of: [{ type: 'reference', to: [{ type: 'use' }] }],
+      group: 'main',
     }),
     defineField({
       name: 'year',
       title: 'Year',
       description: 'e.g. 2021 or April 2026',
       type: 'string',
+      group: 'main',
     }),
     defineField({
       name: 'collaborators',
       title: 'Collaborators',
       type: 'text',
       rows: 3,
+      group: 'main',
     }),
     defineField({
       name: 'photography',
       title: 'Photography',
       type: 'string',
+      group: 'main',
     }),
     defineField({
       name: 'description',
       title: 'Description',
       type: 'text',
       rows: 5,
+      group: 'main',
     }),
     defineField({
       name: 'shortDescription',
@@ -57,6 +68,7 @@ export default defineType({
       description: 'Shown on the home page. Usually the first paragraph of the full description.',
       type: 'text',
       rows: 3,
+      group: 'main',
     }),
     defineField({
       name: 'images',
@@ -65,6 +77,7 @@ export default defineType({
         'The first image is used for grids and home sections. Detail pages show up to 6 thumbnails at a time; clicking one brings it to the front.',
       type: 'array',
       of: [{ type: 'imageWithAlt' }],
+      group: 'main',
     }),
     defineField({
       name: 'relatedProjects',
@@ -80,6 +93,24 @@ export default defineType({
         },
       ],
       validation: (Rule) => Rule.max(3),
+      group: 'main',
+    }),
+    defineField({
+      name: 'deeperDescription',
+      title: 'Description',
+      description: 'Shown on the priv page. If empty, the public description is used.',
+      type: 'text',
+      rows: 5,
+      group: 'deeper',
+    }),
+    defineField({
+      name: 'deeperSections',
+      title: 'Deeper sections',
+      description:
+        'Sections and images for the priv page (/projects/[slug]/priv). The access form on the public project page links here.',
+      type: 'array',
+      of: [{ type: 'deeperSection' }],
+      group: 'deeper',
     }),
   ],
   preview: {

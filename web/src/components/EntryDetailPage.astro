@@ -1,11 +1,13 @@
 ---
 import EntryCaption from './EntryCaption.astro';
 import EntryGallery from './EntryGallery.astro';
+import ProjectDeeper from './ProjectDeeper.astro';
 import RelatedEntries from './RelatedEntries.astro';
 
 import type { RelatedEntryItem, TechnicalRow } from '../lib/entry-detail';
 import { splitParagraphs } from '../lib/entry-detail';
-import type { ImageField } from '../lib/queries/shared';
+import type { DeeperSection, ImageField } from '../lib/queries/shared';
+import type { UiCopy } from '../lib/ui';
 import Layout from '../layouts/Layout.astro';
 import '../styles/components/entry-caption.css';
 import '../styles/components/entry-gallery.css';
@@ -19,6 +21,7 @@ interface Props {
   technicalTitle: string;
   entryTitle: string;
   entryKind?: 'project' | 'journal';
+  variant?: 'public' | 'priv';
   sectionTypeLabel?: string;
   informationLabel: string;
   captionPlace?: string;
@@ -27,6 +30,11 @@ interface Props {
   relatedEntries: RelatedEntryItem[];
   relatedHeading: string;
   relatedTitleId?: string;
+  deeperSections?: DeeperSection[];
+  deeperCopy?: UiCopy['deeper'];
+  privHref?: string;
+  publicHref?: string;
+  locale?: 'en' | 'es';
 }
 
 const {
@@ -36,6 +44,7 @@ const {
   technicalTitle,
   entryTitle,
   entryKind = 'project',
+  variant = 'public',
   sectionTypeLabel,
   informationLabel,
   captionPlace,
@@ -44,23 +53,39 @@ const {
   relatedEntries,
   relatedHeading,
   relatedTitleId,
+  deeperSections = [],
+  deeperCopy,
+  privHref,
+  publicHref,
+  locale = 'en',
 } = Astro.props;
 
-const hasStrip = images.length > 1;
-const hasInfo = technicalRows.length > 0 || Boolean(description);
+const isPriv = variant === 'priv';
+const hasStrip = !isPriv && images.length > 1;
 const descriptionParagraphs = description ? splitParagraphs(description) : [];
+const preparedDeeperSections = deeperSections
+  .map((section) => ({
+    ...section,
+    images: (section.images ?? []).filter((image) => image.image),
+  }))
+  .filter((section) => section.name.trim() && section.images.length > 0);
+const hasDeeper = preparedDeeperSections.length > 0 && Boolean(deeperCopy);
+const showAccessForm = !isPriv && hasDeeper && Boolean(privHref);
+const showPrivPanel = isPriv && hasDeeper;
+const hasInfo = technicalRows.length > 0 || Boolean(description) || showAccessForm || showPrivPanel;
 ---
 
 <Layout title={pageTitle} page="project">
   <article
-    class="project-hero"
+    class:list={['project-hero', { 'is-priv': isPriv }]}
     data-entry-detail
-    data-entry-gallery-root
+    data-entry-gallery-root={!isPriv ? '' : undefined}
     data-entry-kind={entryKind}
+    data-project-variant={variant}
   >
     {
-      images.length > 0 && (
-        <div class="project-media">
+      !isPriv && images.length > 0 && (
+        <div class="project-media project-media--public">
           <EntryGallery
             images={images}
             title={entryTitle}
@@ -73,6 +98,17 @@ const descriptionParagraphs = description ? splitParagraphs(description) : [];
     }
 
     {
+      isPriv && hasDeeper && deeperCopy && (
+        <ProjectDeeper
+          sections={preparedDeeperSections}
+          entryTitle={entryTitle}
+          copy={deeperCopy}
+          mode="media"
+        />
+      )
+    }
+
+    {
       hasStrip && (
         <div class="entry-gallery-overlay entry-gallery-overlay--anchored">
           <EntryGallery images={images} title={entryTitle} mode="strip" interactive />
@@ -81,22 +117,55 @@ const descriptionParagraphs = description ? splitParagraphs(description) : [];
     }
 
     {
-      technicalRows.length > 0 && (
-        <section class="project-technical" aria-labelledby="entry-technical-title">
+      (technicalRows.length > 0 || showAccessForm || showPrivPanel) && (
+        <section class="project-technical" aria-label={technicalTitle}>
           <div class="project-technical-inner">
-            <h2 id="entry-technical-title" class="project-technical-title">
-              {technicalTitle}
-            </h2>
-            <dl class="project-technical-list">
-              {
-                technicalRows.map((row) => (
-                  <div class="project-technical-row">
-                    <dt>{row.label}</dt>
-                    <dd>{row.value}</dd>
-                  </div>
-                ))
-              }
-            </dl>
+            {
+              technicalRows.length > 0 && (
+                <div class="project-technical-main">
+                  <h2 id="entry-technical-title" class="project-technical-title">
+                    {technicalTitle}
+                  </h2>
+                  <dl class="project-technical-list">
+                    {
+                      technicalRows.map((row) => (
+                        <div class="project-technical-row">
+                          <dt>{row.label}</dt>
+                          <dd>{row.value}</dd>
+                        </div>
+                      ))
+                    }
+                  </dl>
+                </div>
+              )
+            }
+
+            {
+              showAccessForm && deeperCopy && privHref && (
+                <ProjectDeeper
+                  sections={preparedDeeperSections}
+                  entryTitle={entryTitle}
+                  copy={deeperCopy}
+                  mode="access"
+                  privHref={privHref}
+                  locale={locale}
+                />
+              )
+            }
+
+            {
+              showPrivPanel && deeperCopy && (
+                <ProjectDeeper
+                  sections={preparedDeeperSections}
+                  entryTitle={entryTitle}
+                  copy={deeperCopy}
+                  mode="sections"
+                  privHref={privHref}
+                  publicHref={publicHref}
+                  locale={locale}
+                />
+              )
+            }
           </div>
         </section>
       )
@@ -144,17 +213,23 @@ const descriptionParagraphs = description ? splitParagraphs(description) : [];
     </div>
   </article>
 
-  <RelatedEntries
-    entries={relatedEntries}
-    heading={relatedHeading}
-    titleId={relatedTitleId}
-  />
+  {
+    !isPriv && (
+      <RelatedEntries
+        entries={relatedEntries}
+        heading={relatedHeading}
+        titleId={relatedTitleId}
+      />
+    )
+  }
 </Layout>
 
 <script>
   import { initEntryGalleryState } from '../lib/entry-gallery';
   import { initEntryInfoState } from '../lib/entry-info';
+  import { initProjectDeeperState } from '../lib/project-deeper';
 
   initEntryGalleryState();
   initEntryInfoState();
+  initProjectDeeperState();
 </script>

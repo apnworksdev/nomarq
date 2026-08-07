@@ -68,6 +68,21 @@ export function isProjectDetailPath(pathname: string): boolean {
   return path.startsWith('/projects/') && path !== '/projects';
 }
 
+/** `/projects/[slug]/priv` (with or without locale prefix). */
+export function isProjectPrivPath(pathname: string): boolean {
+  const path = normalizePath(pathname);
+
+  return /^\/projects\/[^/]+\/priv$/.test(path);
+}
+
+/** Public project path for a priv URL, or null if not a priv path. */
+export function getPublicProjectPathFromPriv(pathname: string): string | null {
+  const path = normalizePath(pathname);
+  const match = path.match(/^(\/projects\/[^/]+)\/priv$/);
+
+  return match?.[1] ?? null;
+}
+
 export function isJournalDetailPath(pathname: string): boolean {
   const path = normalizePath(pathname);
 

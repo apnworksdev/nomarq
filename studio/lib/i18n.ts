@@ -14,6 +14,9 @@ export const localizedSchemaTypes = [
   'home',
   'about',
   'footer',
+  'privacyPolicy',
+  'legalNotice',
+  'cookiesPolicy',
 ] as const;
 
 export type LocalizedSchemaType = (typeof localizedSchemaTypes)[number];

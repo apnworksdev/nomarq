@@ -32,6 +32,7 @@ const isUniquePerLanguage: SlugIsUniqueValidator = async (slug, context) => {
 type LocalizedSlugFieldOptions = {
   source?: string;
   maxLength?: number;
+  group?: string;
 };
 
 export const localizedSlugField = (options: LocalizedSlugFieldOptions = {}) =>
@@ -47,4 +48,5 @@ export const localizedSlugField = (options: LocalizedSlugFieldOptions = {}) =>
       isUnique: isUniquePerLanguage,
     },
     validation: (Rule) => Rule.required(),
+    group: options.group,
   });
