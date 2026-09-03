@@ -86,7 +86,7 @@ export const ui = {
       about: 'About',
     },
     sectionTypes: {
-      journal: 'Journal',
+      journal: 'Expanded Practice',
     },
     journalCategories: {
       prize: 'Prize',
@@ -106,7 +106,7 @@ export const ui = {
       photography: 'Photography',
     },
     relatedProjects: 'Related Projects',
-    relatedJournals: 'Related Journal',
+    relatedJournals: 'Related Expanded Practice',
     menu: 'Menu',
     close: 'Close',
     information: 'Information',
@@ -177,7 +177,7 @@ export const ui = {
       about: 'Nosotros',
     },
     sectionTypes: {
-      journal: 'Actualidad',
+      journal: 'Práctica expandida',
     },
     journalCategories: {
       prize: 'Premio',
@@ -197,7 +197,7 @@ export const ui = {
       photography: 'Fotografía',
     },
     relatedProjects: 'Proyectos Relacionados',
-    relatedJournals: 'Actualidad Relacionada',
+    relatedJournals: 'Práctica expandida relacionada',
     menu: 'Menu',
     close: 'Cerrar',
     information: 'Información',

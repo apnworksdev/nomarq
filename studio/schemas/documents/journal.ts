@@ -16,7 +16,7 @@ const journalCategories = [
 
 export default defineType({
   name: 'journal',
-  title: 'Journal',
+  title: 'Expanded Practice',
   type: 'document',
   fields: [
     languageField,
@@ -72,7 +72,7 @@ export default defineType({
     defineField({
       name: 'externalLink',
       title: 'External link',
-      description: 'Optional. If set, the frontend can link out instead of the journal page.',
+      description: 'Optional. If set, the frontend can link out instead of the expanded practice page.',
       type: 'url',
     }),
     defineField({
@@ -85,7 +85,7 @@ export default defineType({
     }),
     defineField({
       name: 'relatedJournals',
-      title: 'Related journal entries',
+      title: 'Related expanded practice entries',
       description:
         'Pick up to 3 related entries. Any empty slots are filled automatically from the same category.',
       type: 'array',

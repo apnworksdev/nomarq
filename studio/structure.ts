@@ -49,7 +49,7 @@ export const structure: StructureResolver = (S) =>
         ),
       S.divider(),
       localizedDocumentList(S, 'project', 'Projects', [{ field: 'year', direction: 'desc' }]),
-      localizedDocumentList(S, 'journal', 'Journal', [{ field: 'year', direction: 'desc' }]),
+      localizedDocumentList(S, 'journal', 'Expanded Practice', [{ field: 'year', direction: 'desc' }]),
       S.divider(),
       S.listItem()
         .title('People')

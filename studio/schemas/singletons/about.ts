@@ -69,7 +69,7 @@ export default defineType({
     defineField({
       name: 'recognitions',
       title: 'Recognitions',
-      description: 'Prize, press, and conferences journal entries',
+      description: 'Prize, press, and conferences expanded practice entries',
       type: 'array',
       of: [
         {
@@ -85,7 +85,7 @@ export default defineType({
     defineField({
       name: 'initiatives',
       title: 'Initiatives',
-      description: 'Editorial, exhibition, and events journal entries',
+      description: 'Editorial, exhibition, and events expanded practice entries',
       type: 'array',
       of: [
         {

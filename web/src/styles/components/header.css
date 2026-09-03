@@ -165,9 +165,9 @@ html[data-projects-view='list'] .header-nav-view-switch button[data-projects-vie
   }
 
   .header-logo {
-    grid-column: 1 / -1;
+    grid-column: 2;
     grid-row: 1;
-    justify-self: center;
+    justify-self: start;
     z-index: calc(var(--z-index-mobile-menu) + 2);
     pointer-events: none;
   }

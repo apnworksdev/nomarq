@@ -21,7 +21,7 @@ export default defineType({
       options: {
         list: [
           { title: 'Project', value: 'project' },
-          { title: 'Journal', value: 'journal' },
+          { title: 'Expanded Practice', value: 'journal' },
         ],
         layout: 'radio',
       },
@@ -93,7 +93,7 @@ export default defineType({
     }),
     defineField({
       name: 'journal',
-      title: 'Journal',
+      title: 'Expanded Practice',
       type: 'reference',
       to: [{ type: 'journal' }],
       options: englishDocumentReferenceFilter,
@@ -111,7 +111,7 @@ export default defineType({
       }
 
       if (value.sectionType === 'journal' && !value.journal) {
-        return 'Journal entry is required';
+        return 'Expanded Practice entry is required';
       }
 
       const startingColumn = resolveStartingColumn(value);
@@ -171,7 +171,7 @@ export default defineType({
         title: isProject ? projectTitle : journalTitle,
         subtitle: isProject
           ? `Project${layoutLabel}${columnLabel}`
-          : `${journalCategory ?? 'Journal'}${columnLabel}`,
+          : `${journalCategory ?? 'Expanded Practice'}${columnLabel}`,
         media: isProject ? projectMedia : journalMedia,
       };
     },

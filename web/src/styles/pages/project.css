@@ -269,9 +269,9 @@
     pointer-events: none;
   }
 
-  .project-hero[data-entry-kind='journal'] .entry-overlay.project-detail {
+  /* .project-hero[data-entry-kind='journal'] .entry-overlay.project-detail {
     top: 50dvh;
-  }
+  } */
 
   .project-hero .entry-overlay.project-detail .entry-overlay-type {
     display: flex;
@@ -284,6 +284,7 @@
 
   .project-hero .entry-overlay.project-detail .entry-layout-detail {
     grid-column: auto;
+    width: 100%;
   }
 
   .project-hero .entry-overlay.project-detail .entry-overlay-description {
@@ -298,7 +299,9 @@
   }
 
   .project-hero .entry-overlay.project-detail .entry-overlay-detail-trigger {
+    display: block;
     pointer-events: auto;
+    max-width: calc(50% - var(--columns-gap) / 2);
   }
 
   .project-hero .entry-info-toggle {
