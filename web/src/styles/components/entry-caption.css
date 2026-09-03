@@ -26,6 +26,12 @@
   padding-left: var(--entry-description-indent);
 }
 
+.entry-overlay-description:empty,
+.entry-overlay-description.is-empty {
+  display: none;
+  padding-left: 0;
+}
+
 /* Run in after the caption on the same line; wraps flush left. */
 .entry-overlay-description-paragraph:first-child {
   display: inline;

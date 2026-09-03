@@ -77,13 +77,23 @@ function setActiveSection(buttons: HTMLElement[], sectionId: string) {
   });
 }
 
-function setTargetSection(buttons: HTMLElement[], sectionId: string | null) {
-  buttons.forEach((button) => {
-    button.classList.toggle(
-      'is-target',
-      Boolean(sectionId) && button.dataset.projectDeeperSection === sectionId,
-    );
-  });
+function setOverlayDescription(hero: HTMLElement, sectionId: string) {
+  const overlay = hero.querySelector<HTMLElement>('[data-project-deeper-overlay-description]');
+  if (!overlay) {
+    return;
+  }
+
+  const template = hero.querySelector<HTMLTemplateElement>(
+    `template[data-project-deeper-description="${sectionId}"]`,
+  );
+  const paragraphs = template
+    ? [...template.content.querySelectorAll('p')].map((paragraph) =>
+        paragraph.cloneNode(true),
+      )
+    : [];
+
+  overlay.replaceChildren(...paragraphs);
+  overlay.classList.toggle('is-empty', paragraphs.length === 0);
 }
 
 function initAccessForm(form: HTMLFormElement) {
@@ -159,12 +169,24 @@ function initSectionsPanel(root: HTMLElement) {
     return () => {};
   }
 
-  let ignoreScrollSync = false;
-  let scrollEndTimer: ReturnType<typeof setTimeout> | undefined;
+  let activeSectionId: string | null = null;
+  let lockedSectionId: string | null = null;
 
-  const syncActiveFromScroll = () => {
-    if (ignoreScrollSync || slides.length === 0) {
+  const applyActiveSection = (sectionId: string) => {
+    if (activeSectionId === sectionId) {
       return;
+    }
+
+    activeSectionId = sectionId;
+    setActiveSection(sectionButtons, sectionId);
+    if (hero) {
+      setOverlayDescription(hero, sectionId);
+    }
+  };
+
+  const getSectionIdAtScroll = () => {
+    if (slides.length === 0) {
+      return null;
     }
 
     const anchor = scroll.scrollTop + 1;
@@ -178,17 +200,26 @@ function initSectionsPanel(root: HTMLElement) {
       }
     }
 
-    const sectionId = activeSlide?.dataset.projectDeeperSlide;
+    return activeSlide?.dataset.projectDeeperSlide ?? null;
+  };
+
+  const onScroll = () => {
+    const sectionId = getSectionIdAtScroll();
+
+    if (lockedSectionId) {
+      if (sectionId === lockedSectionId) {
+        lockedSectionId = null;
+      }
+      return;
+    }
+
     if (sectionId) {
-      setActiveSection(sectionButtons, sectionId);
+      applyActiveSection(sectionId);
     }
   };
 
-  const finishProgrammaticScroll = () => {
-    window.clearTimeout(scrollEndTimer);
-    ignoreScrollSync = false;
-    setTargetSection(sectionButtons, null);
-    syncActiveFromScroll();
+  const onUserScrollIntent = () => {
+    lockedSectionId = null;
   };
 
   const onSectionClick = (event: Event) => {
@@ -203,20 +234,18 @@ function initSectionsPanel(root: HTMLElement) {
       return;
     }
 
-    ignoreScrollSync = true;
-    setTargetSection(sectionButtons, sectionId);
+    applyActiveSection(sectionId);
+    lockedSectionId = getSectionIdAtScroll() === sectionId ? null : sectionId;
     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-    window.clearTimeout(scrollEndTimer);
-    scrollEndTimer = window.setTimeout(finishProgrammaticScroll, 800);
   };
 
   sectionButtons.forEach((button) => {
     button.addEventListener('click', onSectionClick);
   });
 
-  scroll.addEventListener('scroll', syncActiveFromScroll, { passive: true });
-  scroll.addEventListener('scrollend', finishProgrammaticScroll);
+  scroll.addEventListener('scroll', onScroll, { passive: true });
+  scroll.addEventListener('wheel', onUserScrollIntent, { passive: true });
+  scroll.addEventListener('touchstart', onUserScrollIntent, { passive: true });
 
   const onRequestClick = async () => {
     if (!requestButton) {
@@ -263,12 +292,12 @@ function initSectionsPanel(root: HTMLElement) {
   requestButton?.addEventListener('click', onRequestClick);
 
   return () => {
-    window.clearTimeout(scrollEndTimer);
     sectionButtons.forEach((button) => {
       button.removeEventListener('click', onSectionClick);
     });
-    scroll.removeEventListener('scroll', syncActiveFromScroll);
-    scroll.removeEventListener('scrollend', finishProgrammaticScroll);
+    scroll.removeEventListener('scroll', onScroll);
+    scroll.removeEventListener('wheel', onUserScrollIntent);
+    scroll.removeEventListener('touchstart', onUserScrollIntent);
     requestButton?.removeEventListener('click', onRequestClick);
   };
 }

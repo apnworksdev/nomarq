@@ -62,7 +62,6 @@ const {
 
 const isPriv = variant === 'priv';
 const hasStrip = !isPriv && images.length > 1;
-const descriptionParagraphs = description ? splitParagraphs(description) : [];
 const preparedDeeperSections = deeperSections
   .map((section) => ({
     ...section,
@@ -72,6 +71,11 @@ const preparedDeeperSections = deeperSections
 const hasDeeper = preparedDeeperSections.length > 0 && Boolean(deeperCopy);
 const showAccessForm = !isPriv && hasDeeper && Boolean(privHref);
 const showPrivPanel = isPriv && hasDeeper;
+const overlayDescription = isPriv
+  ? (preparedDeeperSections[0]?.description ?? '')
+  : (description ?? '');
+const descriptionParagraphs = overlayDescription ? splitParagraphs(overlayDescription) : [];
+const showOverlayDescription = descriptionParagraphs.length > 0 || showPrivPanel;
 const hasInfo = technicalRows.length > 0 || Boolean(description) || showAccessForm || showPrivPanel;
 ---
 
@@ -185,8 +189,11 @@ const hasInfo = technicalRows.length > 0 || Boolean(description) || showAccessFo
           <EntryCaption title={entryTitle} place={captionPlace} country={captionCountry} />
         </span>
         {
-          descriptionParagraphs.length > 0 && (
-            <div class="entry-overlay-description">
+          showOverlayDescription && (
+            <div
+              class:list={['entry-overlay-description', { 'is-empty': descriptionParagraphs.length === 0 }]}
+              data-project-deeper-overlay-description={showPrivPanel ? '' : undefined}
+            >
               {
                 descriptionParagraphs.map((paragraph) => (
                   <p class="entry-overlay-description-paragraph">{paragraph}</p>

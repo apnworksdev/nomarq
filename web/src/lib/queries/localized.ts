@@ -46,9 +46,9 @@ export const localizedProjectDetailProjection = `
   "year": coalesce(${translatedProjectRef}year, year),
   "collaborators": coalesce(${translatedProjectRef}collaborators, collaborators),
   "photography": coalesce(${translatedProjectRef}photography, photography),
-  "deeperDescription": coalesce(${translatedProjectRef}deeperDescription, deeperDescription),
   "deeperSections": coalesce(${translatedProjectRef}deeperSections, deeperSections)[] {
     name,
+    description,
     "images": images[] ${imageProjection}
   }
 `;

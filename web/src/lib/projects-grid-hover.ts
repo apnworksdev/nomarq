@@ -3,7 +3,7 @@ const ITEM_SELECTOR = '[data-projects-grid-item]';
 const MAIN_SELECTOR = '[data-projects-grid-main]';
 const PREVIEW_SELECTOR = '[data-projects-grid-preview]';
 
-const HOVER_ENTER_DELAY_MS = 180;
+const HOVER_ENTER_DELAY_MS = 360;
 const MOBILE_MQ = '(max-width: 820px)';
 
 function isMobileViewport() {
@@ -51,6 +51,25 @@ export function initProjectsGridHover() {
       }
     };
 
+    const resetHover = () => {
+      clearEnterTimeout();
+      deactivateAll(grid);
+    };
+
+    const onScroll = () => {
+      if (isMobileViewport() || !grid.classList.contains('is-hovering')) {
+        clearEnterTimeout();
+        return;
+      }
+
+      resetHover();
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    cleanups.push(() => {
+      window.removeEventListener('scroll', onScroll);
+    });
+
     grid.querySelectorAll<HTMLElement>(ITEM_SELECTOR).forEach((item) => {
       const main = item.querySelector<HTMLElement>(MAIN_SELECTOR);
 
@@ -73,8 +92,7 @@ export function initProjectsGridHover() {
       };
 
       const onLeave = () => {
-        clearEnterTimeout();
-        deactivateAll(grid);
+        resetHover();
       };
 
       main.addEventListener('mouseenter', onEnter);

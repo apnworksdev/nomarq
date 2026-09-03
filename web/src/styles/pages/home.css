@@ -47,6 +47,9 @@ html[data-page='home'] .footer {
 .home-section {
   /* svh keeps section height stable when mobile browser chrome shows/hides,
      so scroll-snap + active-section detection stay reliable. */
+  --home-expand-duration: 0.5s;
+  --home-expand-timing: ease;
+
   height: 100svh;
   grid-column: var(--home-start-column, 1) / span var(--home-span, 5);
   scroll-snap-align: center;
@@ -77,8 +80,8 @@ html[data-page='home'] .footer {
   opacity: 0;
   visibility: hidden;
   transition:
-    opacity var(--transition-duration) var(--transition-timing-function),
-    visibility var(--transition-duration) var(--transition-timing-function);
+    opacity var(--home-expand-duration) var(--home-expand-timing),
+    visibility var(--home-expand-duration) var(--home-expand-timing);
 }
 
 .home-section .entry-overlay {
@@ -92,6 +95,17 @@ html[data-page='home'] .footer {
 .home-section.is-active .entry-overlay {
   opacity: 1;
   visibility: visible;
+}
+
+.home-section .entry-media {
+  transition: opacity var(--home-expand-duration) var(--home-expand-timing);
+}
+
+.home-section .entry-overlay-description,
+.home-section .entry-overlay-link {
+  transition:
+    opacity var(--home-expand-duration) var(--home-expand-timing),
+    visibility var(--home-expand-duration) var(--home-expand-timing);
 }
 
 .home-section.is-expanded .home-section-overlay--media {
@@ -209,7 +223,10 @@ html[data-page='home'] .footer {
 
 @media (prefers-reduced-motion: reduce) {
   .home-section-overlay,
-  .home-section .entry-overlay {
+  .home-section .entry-overlay,
+  .home-section .entry-media,
+  .home-section .entry-overlay-description,
+  .home-section .entry-overlay-link {
     transition-duration: 0.01ms;
   }
 }

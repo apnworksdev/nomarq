@@ -13,6 +13,13 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
+      name: 'description',
+      title: 'Description',
+      description: 'Shown in the overlay while this section is active.',
+      type: 'text',
+      rows: 5,
+    }),
+    defineField({
       name: 'images',
       title: 'Images',
       type: 'array',

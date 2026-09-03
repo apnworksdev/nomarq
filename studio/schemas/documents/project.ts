@@ -96,18 +96,10 @@ export default defineType({
       group: 'main',
     }),
     defineField({
-      name: 'deeperDescription',
-      title: 'Description',
-      description: 'Shown on the priv page. If empty, the public description is used.',
-      type: 'text',
-      rows: 5,
-      group: 'deeper',
-    }),
-    defineField({
       name: 'deeperSections',
       title: 'Deeper sections',
       description:
-        'Sections and images for the priv page (/projects/[slug]/priv). The access form on the public project page links here.',
+        'Sections, descriptions, and images for the priv page (/projects/[slug]/priv). The access form on the public project page links here.',
       type: 'array',
       of: [{ type: 'deeperSection' }],
       group: 'deeper',

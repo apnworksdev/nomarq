@@ -31,6 +31,7 @@ if (!project) {
 const deeperSections = (project.deeperSections ?? [])
   .map((section) => ({
     name: section.name?.trim() ?? '',
+    description: section.description?.trim() ?? '',
     images: (section.images ?? []).filter((image) => image.image),
   }))
   .filter((section) => section.name && section.images.length > 0);
@@ -61,8 +62,6 @@ const technicalRows = [
   { label: copy.technicalInfo.photography, value: project.photography?.trim() },
 ].filter((row) => Boolean(row.value));
 
-const privDescription =
-  project.deeperDescription?.trim() || project.description?.trim() || undefined;
 const publicHref = getRelativeLocaleUrl(locale, `/projects/${slug}`);
 const privHref = getRelativeLocaleUrl(locale, `/projects/${slug}/priv`);
 ---
@@ -78,7 +77,6 @@ const privHref = getRelativeLocaleUrl(locale, `/projects/${slug}/priv`);
   informationLabel={copy.information}
   captionPlace={place}
   captionCountry={country}
-  description={privDescription}
   relatedEntries={[]}
   relatedHeading={copy.relatedProjects}
   deeperSections={deeperSections}

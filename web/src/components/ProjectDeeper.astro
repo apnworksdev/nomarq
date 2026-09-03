@@ -1,5 +1,6 @@
 ---
 import { imageAlt } from '../lib/alt';
+import { splitParagraphs } from '../lib/entry-detail';
 import type { DeeperSection } from '../lib/queries';
 import { urlFor } from '../lib/image';
 import type { UiCopy } from '../lib/ui';
@@ -8,6 +9,7 @@ type PreparedSection = {
   id: string;
   name: string;
   indexLabel: string;
+  paragraphs: string[];
   images: { src: string; alt: string }[];
 };
 
@@ -42,6 +44,7 @@ const prepared: PreparedSection[] = sections
       id: `section-${sectionIndex}`,
       name: section.name,
       indexLabel: String(sectionIndex + 1).padStart(2, '0'),
+      paragraphs: splitParagraphs(section.description ?? ''),
       images,
     };
   })
@@ -69,6 +72,15 @@ const prepared: PreparedSection[] = sections
           )
         }
       </div>
+      {
+        prepared.map((section) => (
+          <template data-project-deeper-description={section.id}>
+            {section.paragraphs.map((paragraph) => (
+              <p class="entry-overlay-description-paragraph">{paragraph}</p>
+            ))}
+          </template>
+        ))
+      }
     </div>
   )
 }

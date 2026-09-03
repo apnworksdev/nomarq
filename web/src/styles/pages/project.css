@@ -123,6 +123,7 @@
 .project-deeper-field-label {
   grid-area: 1 / 1;
   pointer-events: none;
+  color: var(--gray-color);
 }
 
 .project-deeper-field input {
@@ -511,6 +512,11 @@
     flex: 1;
     overflow: auto;
     padding: 0;
+  }
+
+  .project-hero.is-info-open .entry-overlay.project-detail .entry-overlay-description:empty,
+  .project-hero.is-info-open .entry-overlay.project-detail .entry-overlay-description.is-empty {
+    display: none;
   }
 
   .project-deeper-slide {

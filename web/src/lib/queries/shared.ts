@@ -10,6 +10,7 @@ export type ImageField = ImageWithAlt & {
 
 export type DeeperSection = {
   name: string;
+  description?: string;
   images: ImageField[];
 };
 
@@ -23,7 +24,6 @@ export type ProjectCard = {
 
 export type Project = ProjectCard & {
   description?: string;
-  deeperDescription?: string;
   use?: LocalizedUse[];
   year?: string | number;
   collaborators?: string;

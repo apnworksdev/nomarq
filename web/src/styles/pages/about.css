@@ -89,9 +89,8 @@
 }
 
 .about-section-heading {
-  margin-bottom: 20px;
-  font-size: var(--font-size-small);
-  line-height: var(--line-height-small);
+  /* font-size: var(--font-size-small);
+  line-height: var(--line-height-small); */
 }
 
 .about-section-heading::before {
@@ -243,7 +242,8 @@
   grid-column: 5 / 9;
   grid-row: 2;
   align-self: end;
-  text-align: right;
+  text-align: left;
+  text-indent: 120px;
   white-space: pre-line;
   padding-bottom: var(--margin);
 }
@@ -306,8 +306,13 @@
 }
 
 .about-lists-sidebar .about-list-block {
+  position: relative;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+}
+
+.about-lists-sidebar .about-list-block:nth-child(1) {
+  z-index: 2;
 }
 
 .about-list {
@@ -431,7 +436,7 @@
 .about-team-section {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 14px;
   min-width: 0;
   break-inside: avoid;
   margin-bottom: 60px;

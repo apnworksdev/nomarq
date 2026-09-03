@@ -41,6 +41,7 @@ const images = (project.images ?? []).filter((image) => image.image);
 const deeperSections = (project.deeperSections ?? [])
   .map((section) => ({
     name: section.name?.trim() ?? '',
+    description: section.description?.trim() ?? '',
     images: (section.images ?? []).filter((image) => image.image),
   }))
   .filter((section) => section.name && section.images.length > 0);
