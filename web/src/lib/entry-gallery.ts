@@ -378,14 +378,36 @@ function initMobileGallery(
   images: GalleryImage[],
 ) {
   const media = main.closest<HTMLElement>('[data-entry-media]') ?? main;
+  const swipeRoot =
+    main.closest<HTMLElement>('[data-entry-detail]') ??
+    main.closest<HTMLElement>('.project-media') ??
+    media;
+
   let activeIndex = 0;
   let thumbs = renderVisibleThumbs(gallery, images, images.length, activeIndex);
-  let touchStartX = 0;
-  let touchStartY = 0;
-  let touchAxis: 'x' | 'y' | null = null;
+  let startX = 0;
+  let startY = 0;
+  let axis: 'x' | 'y' | null = null;
+  let tracking = false;
   let animating = false;
 
   main.style.cursor = 'default';
+  swipeRoot.style.touchAction = 'pan-y';
+
+  const isIgnoredTarget = (target: EventTarget | null) => {
+    if (!(target instanceof Element)) {
+      return false;
+    }
+
+    return Boolean(
+      target.closest('[data-entry-thumb]') ||
+        target.closest('[data-entry-gallery]') ||
+        target.closest('[data-entry-info-toggle]') ||
+        target.closest('.entry-overlay-detail-trigger') ||
+        target.closest('.header') ||
+        target.closest('a, button, input, textarea, select, label'),
+    );
+  };
 
   const goTo = async (index: number, direction: 1 | -1) => {
     if (animating || images.length < 2) {
@@ -403,8 +425,11 @@ function initMobileGallery(
     scrollThumbIntoView(thumbs[next]);
 
     animating = true;
-    await showImageMobile(main, counter, image, direction);
-    animating = false;
+    try {
+      await showImageMobile(main, counter, image, direction);
+    } finally {
+      animating = false;
+    }
   };
 
   const onThumbClick = (event: MouseEvent) => {
@@ -421,60 +446,50 @@ function initMobileGallery(
     void goTo(index, index > activeIndex ? 1 : -1);
   };
 
-  const onTouchStart = (event: TouchEvent) => {
-    if (animating || event.touches.length !== 1) {
+  const onPointerDown = (event: PointerEvent) => {
+    if (animating || event.button !== 0 || isIgnoredTarget(event.target)) {
       return;
     }
 
-    touchStartX = event.touches[0]?.clientX ?? 0;
-    touchStartY = event.touches[0]?.clientY ?? 0;
-    touchAxis = null;
+    tracking = true;
+    axis = null;
+    startX = event.clientX;
+    startY = event.clientY;
   };
 
-  const onTouchMove = (event: TouchEvent) => {
-    if (animating || event.touches.length !== 1 || touchAxis === 'y') {
+  const onPointerMove = (event: PointerEvent) => {
+    if (!tracking || animating) {
       return;
     }
 
-    const touch = event.touches[0];
-    if (!touch) {
-      return;
-    }
+    const dx = event.clientX - startX;
+    const dy = event.clientY - startY;
 
-    const dx = touch.clientX - touchStartX;
-    const dy = touch.clientY - touchStartY;
-
-    if (!touchAxis) {
+    if (!axis) {
       if (Math.abs(dx) < 8 && Math.abs(dy) < 8) {
         return;
       }
 
-      touchAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+      axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
     }
 
-    if (touchAxis === 'x') {
+    if (axis === 'x') {
       event.preventDefault();
     }
   };
 
-  const onTouchEnd = (event: TouchEvent) => {
-    if (animating || event.changedTouches.length !== 1) {
-      touchAxis = null;
+  const finishPointer = (event: PointerEvent) => {
+    if (!tracking) {
       return;
     }
 
-    const touch = event.changedTouches[0];
-    if (!touch) {
-      touchAxis = null;
-      return;
-    }
+    tracking = false;
+    const dx = event.clientX - startX;
+    const dy = event.clientY - startY;
+    const usedAxis = axis;
+    axis = null;
 
-    const dx = touch.clientX - touchStartX;
-    const dy = touch.clientY - touchStartY;
-    const axis = touchAxis;
-    touchAxis = null;
-
-    if (axis === 'y') {
+    if (usedAxis === 'y') {
       return;
     }
 
@@ -485,15 +500,27 @@ function initMobileGallery(
     void goTo(activeIndex + (dx < 0 ? 1 : -1), dx < 0 ? 1 : -1);
   };
 
-  media.addEventListener('touchstart', onTouchStart, { passive: true });
-  media.addEventListener('touchmove', onTouchMove, { passive: false });
-  media.addEventListener('touchend', onTouchEnd, { passive: true });
+  const onPointerUp = (event: PointerEvent) => {
+    finishPointer(event);
+  };
+
+  const onPointerCancel = () => {
+    tracking = false;
+    axis = null;
+  };
+
+  swipeRoot.addEventListener('pointerdown', onPointerDown);
+  swipeRoot.addEventListener('pointermove', onPointerMove, { passive: false });
+  swipeRoot.addEventListener('pointerup', onPointerUp);
+  swipeRoot.addEventListener('pointercancel', onPointerCancel);
   gallery.addEventListener('click', onThumbClick);
 
   return () => {
-    media.removeEventListener('touchstart', onTouchStart);
-    media.removeEventListener('touchmove', onTouchMove);
-    media.removeEventListener('touchend', onTouchEnd);
+    swipeRoot.style.touchAction = '';
+    swipeRoot.removeEventListener('pointerdown', onPointerDown);
+    swipeRoot.removeEventListener('pointermove', onPointerMove);
+    swipeRoot.removeEventListener('pointerup', onPointerUp);
+    swipeRoot.removeEventListener('pointercancel', onPointerCancel);
     gallery.removeEventListener('click', onThumbClick);
     fadeLayerCleanup(main);
   };
