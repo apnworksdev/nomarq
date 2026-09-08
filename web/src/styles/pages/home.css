@@ -8,6 +8,16 @@
   color: var(--background-color);
   mix-blend-mode: difference;
   pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--transition-duration) var(--transition-timing-function),
+    visibility var(--transition-duration) var(--transition-timing-function);
+}
+
+.home-section-nav:has(.is-active) {
+  opacity: 1;
+  visibility: visible;
 }
 
 .home-section-nav-list {
@@ -222,6 +232,7 @@ html[data-page='home'] .footer {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .home-section-nav,
   .home-section-overlay,
   .home-section .entry-overlay,
   .home-section .entry-media,

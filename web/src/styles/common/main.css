@@ -11,4 +11,5 @@ body {
 
 main {
   flex: 1 0 auto;
+  min-height: calc(100dvh - 40px);
 }
