@@ -22,20 +22,21 @@ const [projects, uses] = await Promise.all([
   sanity.fetch<UseDocument[]>(usesQuery),
 ]);
 
-const gridProjects = projects.filter((project) =>
-  (project.images ?? []).some((image) => image.image),
+const listProjects = projects;
+const gridProjects = listProjects.filter(
+  (project) => project.selected !== false && (project.images ?? []).some((image) => image.image),
 );
 ---
 
 <Layout title={`${copy.nav.projects} — Nomarq`} page="projects">
-  <ProjectsFilters projects={gridProjects} uses={uses} locale={locale} />
+  <ProjectsFilters projects={listProjects} uses={uses} locale={locale} />
   {
-    gridProjects.length === 0 ? (
+    listProjects.length === 0 ? (
       <p class="projects-empty">{copy.noProjects}</p>
     ) : (
       <>
         <ProjectsGrid projects={gridProjects} locale={locale} />
-        <ProjectsList projects={gridProjects} locale={locale} />
+        <ProjectsList projects={listProjects} locale={locale} />
       </>
     )
   }

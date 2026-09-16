@@ -21,6 +21,7 @@ type ProjectFilterRecord = {
   imageCount: number;
   useSlugs: string[];
   searchText: string;
+  selected: boolean;
 };
 
 function readFilterRecords(root: HTMLElement): ProjectFilterRecord[] {
@@ -221,7 +222,10 @@ function applyFilters(root: HTMLElement) {
   const visibleRecords = records.filter((record) => matchesFilters(record, selectedUses, query));
 
   if (grid) {
-    applyLayout(grid, visibleRecords);
+    const gridRecords = visibleRecords
+      .filter((record) => record.selected)
+      .map((record, orderIndex) => ({ ...record, orderIndex }));
+    applyLayout(grid, gridRecords);
   }
 
   if (list) {

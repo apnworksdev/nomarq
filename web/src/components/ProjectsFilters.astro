@@ -17,13 +17,8 @@ const { projects, uses, locale } = Astro.props;
 const copy = getUi(locale).projectsFilters;
 const useColumns = groupUsesForFilter(uses);
 
-const filterRecords = projects.flatMap((project, orderIndex) => {
+const filterRecords = projects.map((project, orderIndex) => {
   const images = (project.images ?? []).filter((image) => image.image);
-
-  if (images.length === 0) {
-    return [];
-  }
-
   const useSlugs = normalizeProjectUseSlugs(
     (project.use ?? [])
       .map((entry) => {
@@ -42,15 +37,14 @@ const filterRecords = projects.flatMap((project, orderIndex) => {
     '';
   const searchText = [project.title, place, country].join(' ').toLowerCase();
 
-  return [
-    {
-      slug: project.slug,
-      orderIndex,
-      imageCount: images.length,
-      useSlugs,
-      searchText,
-    },
-  ];
+  return {
+    slug: project.slug,
+    orderIndex,
+    imageCount: images.length,
+    useSlugs,
+    searchText,
+    selected: project.selected !== false && images.length > 0,
+  };
 });
 ---
 

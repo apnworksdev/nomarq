@@ -21,6 +21,15 @@ export default defineType({
       validation: (Rule) => Rule.required(),
       group: 'main',
     }),
+    defineField({
+      name: 'selected',
+      title: 'Selected',
+      description:
+        'Selected projects appear in the grid and the list. Unselected projects appear only in the list.',
+      type: 'boolean',
+      initialValue: true,
+      group: 'main',
+    }),
     localizedSlugField({ group: 'main' }),
     defineField({
       name: 'location',
@@ -111,18 +120,20 @@ export default defineType({
   preview: {
     select: {
       title: 'title',
+      selected: 'selected',
       year: 'year',
       locationPlace: 'location.place',
       locationCountryFull: 'location.country.full',
       locationCountryShort: 'location.country.short',
       media: 'images.0.image',
     },
-    prepare({ title, year, locationPlace, locationCountryFull, locationCountryShort, media }) {
+    prepare({ title, selected, year, locationPlace, locationCountryFull, locationCountryShort, media }) {
       const location =
         locationPlace && locationCountryFull
           ? `${locationPlace} / ${locationCountryFull}`
           : locationPlace || locationCountryFull || locationCountryShort;
-      const subtitle = [year, location].filter(Boolean).join(' · ');
+      const visibility = selected === false ? 'List only' : 'Grid + list';
+      const subtitle = [visibility, year, location].filter(Boolean).join(' · ');
 
       return {
         title,

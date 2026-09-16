@@ -32,6 +32,7 @@ export type Project = ProjectCard & {
   deeperSections?: DeeperSection[];
   relatedProjects?: ProjectCard[];
   useRefIds?: string[];
+  selected?: boolean;
 };
 
 export const imageProjection = `{
