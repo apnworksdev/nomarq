@@ -41,7 +41,21 @@ const localizedHomeProjectProjection = `
 const localizedHomeJournalProjection = `
   "title": coalesce(${translatedJournalRef}title, title, ${journalContentFallback}title),
   "slug": coalesce(${translatedJournalRef}slug.current, slug.current, ${journalContentFallback}slug.current),
-  "category": coalesce(${translatedJournalRef}category, category, ${journalContentFallback}category),
+  "category": select(
+    defined(coalesce(${translatedJournalRef}category, category, ${journalContentFallback}category)->slug.current) => coalesce(${translatedJournalRef}category, category, ${journalContentFallback}category)->slug.current,
+    coalesce(${translatedJournalRef}category, category, ${journalContentFallback}category)
+  ),
+  "categorySection": coalesce(${translatedJournalRef}category, category, ${journalContentFallback}category)->section,
+  "categoryLabel": select(
+    $language == "es" => coalesce(
+      coalesce(${translatedJournalRef}category, category, ${journalContentFallback}category)->titleEs,
+      coalesce(${translatedJournalRef}category, category, ${journalContentFallback}category)->titleEn
+    ),
+    coalesce(
+      coalesce(${translatedJournalRef}category, category, ${journalContentFallback}category)->titleEn,
+      coalesce(${translatedJournalRef}category, category, ${journalContentFallback}category)->titleEs
+    )
+  ),
   "shortDescription": coalesce(
     ${translatedJournalRef}shortDescription,
     shortDescription,

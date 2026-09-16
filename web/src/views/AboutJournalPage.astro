@@ -8,7 +8,7 @@ import {
   JOURNAL_SECTIONS,
   type JournalSection,
 } from '../lib/journal';
-import { journalsByCategoriesQuery, type JournalEntry } from '../lib/queries/journal';
+import { journalsBySectionQuery, type JournalEntry } from '../lib/queries/journal';
 import { sanity } from '../lib/sanity';
 import { getUi } from '../lib/ui';
 import '../styles/pages/projects-index.css';
@@ -22,12 +22,13 @@ const { locale, section } = Astro.props;
 const copy = getUi(locale);
 const sectionLabel =
   section === 'recognition' ? copy.about.recognitions : copy.about.initiatives;
-const categories = [...JOURNAL_SECTIONS[section].categories];
+const fallbackCategories = [...JOURNAL_SECTIONS[section].categories];
 
-const entries = await sanity.fetch<JournalEntry[]>(journalsByCategoriesQuery, {
+const entries = await sanity.fetch<JournalEntry[]>(journalsBySectionQuery, {
   language: locale,
   defaultLanguage: defaultLocale,
-  categories,
+  section,
+  fallbackCategories,
 });
 ---
 

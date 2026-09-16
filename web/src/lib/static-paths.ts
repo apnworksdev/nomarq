@@ -1,5 +1,5 @@
 import { sanity } from './sanity';
-import { journalSlugsByCategoriesQuery, projectPrivSlugsQuery, projectSlugsQuery } from './queries';
+import { journalSlugsBySectionQuery, projectPrivSlugsQuery, projectSlugsQuery } from './queries';
 import { defaultLocale, type Locale } from './i18n';
 import { JOURNAL_SECTIONS, type JournalSection } from './journal';
 
@@ -29,11 +29,11 @@ export async function getJournalStaticPaths(
   locale: Locale = defaultLocale,
   section: JournalSection,
 ) {
-  const categories = [...JOURNAL_SECTIONS[section].categories];
-  const slugs = await sanity.fetch<{ slug: string }[]>(journalSlugsByCategoriesQuery, {
+  const slugs = await sanity.fetch<{ slug: string }[]>(journalSlugsBySectionQuery, {
     language: locale,
     defaultLanguage: defaultLocale,
-    categories,
+    section,
+    fallbackCategories: [...JOURNAL_SECTIONS[section].categories],
   });
 
   return slugs.map(({ slug }) => ({

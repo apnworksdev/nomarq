@@ -2,10 +2,14 @@ import type { ImageField } from './queries/shared';
 import type { Locale } from './i18n';
 import { getLocalizedPath, normalizePath } from './i18n';
 
+export type JournalSection = 'recognition' | 'initiatives';
+
 export type JournalCard = {
   title: string;
   slug: string;
   category?: string;
+  categorySection?: JournalSection;
+  categoryLabel?: string;
   year?: string | number;
   coverImage?: ImageField;
   translated?: JournalCard | null;
@@ -20,8 +24,6 @@ export type JournalEntry = JournalCard & {
   images?: ImageField[];
   relatedJournals?: JournalCard[];
 };
-
-export type JournalSection = 'recognition' | 'initiatives';
 
 export type JournalCategory =
   | 'prize'
@@ -47,7 +49,14 @@ export const JOURNAL_CATEGORY_ORDER = [
   ...JOURNAL_SECTIONS.initiatives.categories,
 ] as const;
 
-export function getJournalSection(category?: string): JournalSection | undefined {
+export function getJournalSection(
+  category?: string,
+  section?: JournalSection | string | null,
+): JournalSection | undefined {
+  if (section === 'recognition' || section === 'initiatives') {
+    return section;
+  }
+
   if (!category) {
     return undefined;
   }
@@ -67,9 +76,9 @@ export function getJournalSectionPath(section: JournalSection): string {
   return JOURNAL_SECTIONS[section].path;
 }
 
-export function getJournalBasePath(category?: string): string {
-  const section = getJournalSection(category);
-  return section ? JOURNAL_SECTIONS[section].path : JOURNAL_SECTIONS.recognition.path;
+export function getJournalBasePath(category?: string, section?: JournalSection): string {
+  const resolved = getJournalSection(category, section);
+  return resolved ? JOURNAL_SECTIONS[resolved].path : JOURNAL_SECTIONS.recognition.path;
 }
 
 export function getJournalSectionFromPath(pathname: string): JournalSection | null {
@@ -88,7 +97,7 @@ export function getJournalSectionFromPath(pathname: string): JournalSection | nu
 
 export function getJournalEntryHref(
   locale: Locale,
-  entry: Pick<JournalEntry, 'slug' | 'externalLink' | 'category'>,
+  entry: Pick<JournalEntry, 'slug' | 'externalLink' | 'category' | 'categorySection'>,
 ): string | undefined {
   const externalLink = entry.externalLink?.trim();
 
@@ -97,11 +106,25 @@ export function getJournalEntryHref(
   }
 
   if (entry.slug) {
-    const basePath = getJournalBasePath(entry.category);
+    const basePath = getJournalBasePath(entry.category, entry.categorySection);
     return getLocalizedPath(locale, `${basePath}/${entry.slug}`);
   }
 
   return undefined;
+}
+
+export function getJournalCategoryDisplayLabel(
+  locale: Locale,
+  entry: { category?: string; categoryLabel?: string },
+  fallback: (locale: Locale, category: string) => string,
+): string {
+  const label = entry.categoryLabel?.trim();
+
+  if (label) {
+    return label;
+  }
+
+  return entry.category ? fallback(locale, entry.category) : '';
 }
 
 export function isExternalJournalLink(href: string): boolean {

@@ -1,5 +1,8 @@
+import collaborator from './documents/collaborator';
 import journal from './documents/journal';
+import journalCategory from './documents/journalCategory';
 import person from './documents/person';
+import photographer from './documents/photographer';
 import project from './documents/project';
 import use from './documents/use';
 import blockContent from './objects/blockContent';
@@ -27,6 +30,9 @@ export const schemaTypes = [
   teamSection,
   homeSection,
   use,
+  photographer,
+  collaborator,
+  journalCategory,
   project,
   journal,
   person,

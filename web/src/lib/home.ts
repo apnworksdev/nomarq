@@ -3,7 +3,12 @@ import type { SanityImageSource } from '@sanity/image-url';
 import type { ImageWithAlt } from './alt';
 import type { Locale } from './i18n';
 import { getLocalizedPath } from './i18n';
-import { getJournalEntryHref, getJournalSection } from './journal';
+import {
+  getJournalCategoryDisplayLabel,
+  getJournalEntryHref,
+  getJournalSection,
+  type JournalSection,
+} from './journal';
 import type { Location } from './location';
 import { getJournalCategoryLabel, getNavLabel, getUi } from './ui';
 
@@ -19,6 +24,8 @@ export type HomeSectionItem = {
   images?: HomeSectionImage[];
   externalLink?: string;
   category?: string;
+  categorySection?: JournalSection;
+  categoryLabel?: string;
   location?: Location;
 };
 
@@ -66,11 +73,9 @@ export function formatHomeSectionCaption(
     };
   }
 
-  const categoryLabel = item.category
-    ? getJournalCategoryLabel(locale, item.category)
-    : '';
+  const categoryLabel = getJournalCategoryDisplayLabel(locale, item, getJournalCategoryLabel);
   const copy = getUi(locale);
-  const journalSection = getJournalSection(item.category);
+  const journalSection = getJournalSection(item.category, item.categorySection);
   const sectionLabel =
     journalSection === 'recognition'
       ? copy.about.recognitions

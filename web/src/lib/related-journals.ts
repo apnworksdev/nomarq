@@ -23,6 +23,8 @@ function resolveJournalCard(entry: JournalCard): JournalCard | null {
     title: resolved.title,
     slug: resolved.slug,
     category: resolved.category,
+    categorySection: resolved.categorySection,
+    categoryLabel: resolved.categoryLabel,
     year: resolved.year,
     coverImage: resolved.coverImage,
   };

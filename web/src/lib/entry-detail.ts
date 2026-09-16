@@ -1,7 +1,6 @@
 import type { Locale } from './i18n';
 import { getLocalizedPath } from './i18n';
-import type { JournalCard } from './journal';
-import { getJournalBasePath } from './journal';
+import { getJournalBasePath, getJournalCategoryDisplayLabel, type JournalCard } from './journal';
 import type { ProjectCard } from './queries';
 import type { ImageField } from './queries/shared';
 import { getJournalCategoryLabel } from './ui';
@@ -51,11 +50,9 @@ export function journalToRelatedEntry(
     return null;
   }
 
-  const place = entry.category
-    ? getJournalCategoryLabel(locale, entry.category)
-    : undefined;
+  const place = getJournalCategoryDisplayLabel(locale, entry, getJournalCategoryLabel) || undefined;
   const country = formatYear(entry.year);
-  const basePath = getJournalBasePath(entry.category);
+  const basePath = getJournalBasePath(entry.category, entry.categorySection);
 
   return {
     title: entry.title,

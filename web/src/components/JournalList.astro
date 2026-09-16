@@ -1,6 +1,6 @@
 ---
 import type { JournalEntry, JournalSection } from '../lib/journal';
-import { getJournalEntryHref, isExternalJournalLink } from '../lib/journal';
+import { getJournalCategoryDisplayLabel, getJournalEntryHref, isExternalJournalLink } from '../lib/journal';
 import type { Locale } from '../lib/i18n';
 import { urlFor } from '../lib/image';
 import { getJournalCategoryLabel } from '../lib/ui';
@@ -20,7 +20,7 @@ const { entries, locale, section } = Astro.props;
     entries.map((entry, index) => {
       const coverImage = (entry.images ?? []).find((image) => image.image);
       const description = entry.description?.trim() ?? '';
-      const categoryLabel = getJournalCategoryLabel(locale, entry.category);
+      const categoryLabel = getJournalCategoryDisplayLabel(locale, entry, getJournalCategoryLabel);
       const entryId = entry._id;
       const href = getJournalEntryHref(locale, entry);
       const external = href ? isExternalJournalLink(href) : false;

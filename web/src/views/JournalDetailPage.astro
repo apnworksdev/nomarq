@@ -6,6 +6,7 @@ import type { Locale } from '../lib/i18n';
 import { defaultLocale } from '../lib/i18n';
 import { journalToRelatedEntry, mapRelatedEntries } from '../lib/entry-detail';
 import {
+  getJournalCategoryDisplayLabel,
   getJournalSection,
   getJournalSectionPath,
   type JournalSection,
@@ -36,7 +37,7 @@ if (!entry?.slug) {
   return Astro.redirect(getRelativeLocaleUrl(locale, sectionPath));
 }
 
-const entrySection = getJournalSection(entry.category);
+const entrySection = getJournalSection(entry.category, entry.categorySection);
 
 if (entrySection && entrySection !== section) {
   return Astro.redirect(
@@ -50,9 +51,7 @@ if (entry.externalLink) {
 
 const relatedEntries = await getRelatedJournals(entry, locale, defaultLocale);
 
-const categoryLabel = entry.category
-  ? getJournalCategoryLabel(locale, entry.category)
-  : undefined;
+const categoryLabel = getJournalCategoryDisplayLabel(locale, entry, getJournalCategoryLabel) || undefined;
 const year = formatYear(entry.year);
 const images = (entry.images ?? []).filter((image) => image.image);
 
@@ -61,7 +60,7 @@ const technicalRows = [
   { label: copy.technicalInfo.year, value: year },
   { label: copy.technicalInfo.collaborators, value: entry.collaborators?.trim() },
   { label: copy.technicalInfo.photography, value: entry.photography?.trim() },
-].filter((row) => Boolean(row.value));
+].filter((row): row is { label: string; value: string } => Boolean(row.value));
 ---
 
 <EntryDetailPage

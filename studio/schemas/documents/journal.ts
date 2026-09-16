@@ -4,16 +4,6 @@ import { englishDocumentReferenceFilter } from '../../lib/referenceFilters';
 import { languageField } from '../fields/language';
 import { localizedSlugField } from '../fields/localizedSlug';
 
-/** Recognition: prize, press, conferences. Initiatives: editorial, exhibition, events. */
-const journalCategories = [
-  { title: 'Prize', value: 'prize' },
-  { title: 'Press', value: 'press' },
-  { title: 'Conferences', value: 'conferences' },
-  { title: 'Editorial', value: 'editorial' },
-  { title: 'Exhibition', value: 'exhibition' },
-  { title: 'Events', value: 'events' },
-] as const;
-
 export default defineType({
   name: 'journal',
   title: 'Expanded Practice',
@@ -31,12 +21,9 @@ export default defineType({
       name: 'category',
       title: 'Category',
       description:
-        'Prize, press, and conferences appear under Recognition. Editorial, exhibition, and events appear under Initiatives.',
-      type: 'string',
-      options: {
-        list: [...journalCategories],
-        layout: 'dropdown',
-      },
+        'Add or edit categories under Expanded Practice Categories. Recognition vs Initiatives is set on the category.',
+      type: 'reference',
+      to: [{ type: 'journalCategory' }],
       validation: (Rule) => Rule.required(),
     }),
     defineField({
@@ -48,13 +35,16 @@ export default defineType({
     defineField({
       name: 'collaborators',
       title: 'Collaborators',
-      type: 'text',
-      rows: 3,
+      description: 'Pick from the Collaborators list, or create a new name inline.',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'collaborator' }] }],
     }),
     defineField({
       name: 'photography',
       title: 'Photography',
-      type: 'string',
+      description: 'Pick from the Photographers list, or create a new name inline.',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'photographer' }] }],
     }),
     defineField({
       name: 'description',
@@ -102,7 +92,7 @@ export default defineType({
   preview: {
     select: {
       title: 'title',
-      category: 'category',
+      category: 'category.titleEn',
       year: 'year',
       media: 'images.0.image',
     },

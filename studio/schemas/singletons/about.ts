@@ -69,14 +69,14 @@ export default defineType({
     defineField({
       name: 'recognitions',
       title: 'Recognitions',
-      description: 'Prize, press, and conferences expanded practice entries',
+      description: 'Prize, press, conferences, and other Recognition categories',
       type: 'array',
       of: [
         {
           type: 'reference',
           to: [{ type: 'journal' }],
           options: {
-            filter: 'category in ["prize", "press", "conferences"]',
+            filter: 'category->section == "recognition"',
           },
         },
       ],
@@ -85,14 +85,14 @@ export default defineType({
     defineField({
       name: 'initiatives',
       title: 'Initiatives',
-      description: 'Editorial, exhibition, and events expanded practice entries',
+      description: 'Editorial, exhibition, events, and other Initiatives categories',
       type: 'array',
       of: [
         {
           type: 'reference',
           to: [{ type: 'journal' }],
           options: {
-            filter: 'category in ["editorial", "exhibition", "events"]',
+            filter: 'category->section == "initiatives"',
           },
         },
       ],

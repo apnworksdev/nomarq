@@ -137,7 +137,7 @@ export default defineType({
       journalCount: 'journalCount',
       projectTitle: 'project.title',
       journalTitle: 'journal.title',
-      journalCategory: 'journal.category',
+      journalCategory: 'journal.category.titleEn',
       projectMedia: 'project.images.0.image',
       journalMedia: 'journal.images.0.image',
     },

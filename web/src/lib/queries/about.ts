@@ -7,7 +7,12 @@ const translatedJournalRef = `*[_type == "translation.metadata" && references(^.
 const journalEntryFields = `
   _id,
   "title": coalesce(${translatedJournalRef}title, title),
-  category,
+  "category": select(defined(category->slug.current) => category->slug.current, category),
+  "categorySection": category->section,
+  "categoryLabel": select(
+    $language == "es" => coalesce(category->titleEs, category->titleEn),
+    coalesce(category->titleEn, category->titleEs)
+  ),
   year,
   "slug": coalesce(${translatedJournalRef}slug.current, slug.current),
   externalLink,

@@ -1,7 +1,14 @@
-import { imageProjection, locationProjection } from './shared';
+import { imageProjection } from './shared';
 
 /** GROQ path to the translated project document for the requested language. */
 export const translatedProjectRef = `*[_type == "translation.metadata" && references(^._id)][0].translations[language == $language][0].value->`;
+
+/** Join referenced name documents into a comma-separated string. */
+export function joinReferencedNames(translatedRef: string, field: string) {
+  const value = `coalesce(${translatedRef}${field}, ${field})`;
+
+  return `array::join(array::compact(${value}[]->name), ", ")`;
+}
 
 /** Published projects with real content (excludes empty i18n stubs).
  * One base document per project; translations resolve via coalesce. */
@@ -44,8 +51,8 @@ export const localizedProjectDetailProjection = `
   ${localizedProjectListProjection},
   "useRefIds": coalesce(${translatedProjectRef}use, use[]._ref),
   "year": coalesce(${translatedProjectRef}year, year),
-  "collaborators": coalesce(${translatedProjectRef}collaborators, collaborators),
-  "photography": coalesce(${translatedProjectRef}photography, photography),
+  "collaborators": ${joinReferencedNames(translatedProjectRef, 'collaborators')},
+  "photography": ${joinReferencedNames(translatedProjectRef, 'photography')},
   "deeperSections": coalesce(${translatedProjectRef}deeperSections, deeperSections)[] {
     name,
     description,

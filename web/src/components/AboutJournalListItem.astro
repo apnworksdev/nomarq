@@ -2,7 +2,7 @@
 import type { AboutJournalEntry } from '../lib/about';
 import type { Locale } from '../lib/i18n';
 import { urlFor } from '../lib/image';
-import { getJournalEntryHref, isExternalJournalLink } from '../lib/journal';
+import { getJournalCategoryDisplayLabel, getJournalEntryHref, isExternalJournalLink } from '../lib/journal';
 import { getJournalCategoryLabel } from '../lib/ui';
 
 interface Props {
@@ -25,7 +25,7 @@ const coverImage = entry.coverImage?.image;
       <a class="about-list-item-link" href={href} data-about-list-link {...linkProps}>
         <span class="about-list-item-label">
           <span class="about-list-item-category">
-            {getJournalCategoryLabel(locale, entry.category)}
+            {getJournalCategoryDisplayLabel(locale, entry, getJournalCategoryLabel)}
           </span>
           <span class="about-list-item-title">{entry.title}</span>
         </span>
@@ -35,7 +35,7 @@ const coverImage = entry.coverImage?.image;
       <span class="about-list-item-link" data-about-list-link>
         <span class="about-list-item-label">
           <span class="about-list-item-category">
-            {getJournalCategoryLabel(locale, entry.category)}
+            {getJournalCategoryDisplayLabel(locale, entry, getJournalCategoryLabel)}
           </span>
           <span class="about-list-item-title">{entry.title}</span>
         </span>

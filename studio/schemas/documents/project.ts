@@ -45,14 +45,17 @@ export default defineType({
     defineField({
       name: 'collaborators',
       title: 'Collaborators',
-      type: 'text',
-      rows: 3,
+      description: 'Pick from the Collaborators list, or create a new name inline.',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'collaborator' }] }],
       group: 'main',
     }),
     defineField({
       name: 'photography',
       title: 'Photography',
-      type: 'string',
+      description: 'Pick from the Photographers list, or create a new name inline.',
+      type: 'array',
+      of: [{ type: 'reference', to: [{ type: 'photographer' }] }],
       group: 'main',
     }),
     defineField({

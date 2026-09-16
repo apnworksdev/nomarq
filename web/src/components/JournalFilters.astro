@@ -1,5 +1,6 @@
 ---
 import type { JournalEntry } from '../lib/journal';
+import { getJournalCategoryDisplayLabel } from '../lib/journal';
 import { groupJournalCategoriesForFilter } from '../lib/journal-filter';
 import type { Locale } from '../lib/i18n';
 import { getJournalCategoryLabel, getUi } from '../lib/ui';
@@ -13,16 +14,32 @@ interface Props {
 
 const { entries, locale, label } = Astro.props;
 const copy = getUi(locale).projectsFilters;
+const categoryLabels = new Map(
+  entries
+    .filter((entry) => entry.category)
+      .map((entry) => [
+        entry.category as string,
+        getJournalCategoryDisplayLabel(locale, entry, getJournalCategoryLabel),
+      ]),
+);
 
 const categoryColumns = groupJournalCategoriesForFilter([
-  ...new Set(entries.map((entry) => entry.category).filter(Boolean)),
+  ...new Set(
+    entries
+      .map((entry) => entry.category)
+      .filter((category): category is string => Boolean(category)),
+  ),
 ]);
 
 const filterRecords = entries.map((entry, orderIndex) => ({
   id: entry._id,
   orderIndex,
   category: entry.category,
-  searchText: [entry.title, entry.year ?? '', getJournalCategoryLabel(locale, entry.category)]
+  searchText: [
+    entry.title,
+    entry.year ?? '',
+    getJournalCategoryDisplayLabel(locale, entry, getJournalCategoryLabel),
+  ]
     .join(' ')
     .toLowerCase(),
 }));
@@ -59,7 +76,7 @@ const filterRecords = entries.map((entry, orderIndex) => ({
                         <span class="projects-filter-use-marker-slot"></span>
                         <span class="projects-filter-use-marker-close">)</span>
                       </span>
-                      {getJournalCategoryLabel(locale, category)}
+                      {categoryLabels.get(category) ?? getJournalCategoryLabel(locale, category)}
                     </button>
                   </li>
                 ))

@@ -65,4 +65,25 @@ export const structure: StructureResolver = (S) =>
             .title('Uses')
             .defaultOrdering([{ field: 'titleEn', direction: 'asc' }]),
         ),
+      S.listItem()
+        .title('Photographers')
+        .child(
+          S.documentTypeList('photographer')
+            .title('Photographers')
+            .defaultOrdering([{ field: 'name', direction: 'asc' }]),
+        ),
+      S.listItem()
+        .title('Collaborators')
+        .child(
+          S.documentTypeList('collaborator')
+            .title('Collaborators')
+            .defaultOrdering([{ field: 'name', direction: 'asc' }]),
+        ),
+      S.listItem()
+        .title('Expanded Practice Categories')
+        .child(
+          S.documentTypeList('journalCategory')
+            .title('Expanded Practice Categories')
+            .defaultOrdering([{ field: 'titleEn', direction: 'asc' }]),
+        ),
     ]);
