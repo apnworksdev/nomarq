@@ -1,10 +1,5 @@
 ---
-import { getJournalStaticPaths } from '../../../lib/static-paths';
 import JournalDetailPage from '../../../views/JournalDetailPage.astro';
-
-export async function getStaticPaths() {
-  return getJournalStaticPaths('en', 'initiatives');
-}
 
 const { slug } = Astro.params;
 
