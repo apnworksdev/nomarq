@@ -5,17 +5,12 @@ import {
   getEmailFrom,
   getOwnerEmail,
   getResendClient,
-  type AccessLead,
 } from '../../lib/email';
+import { leadInputFromRecord, validateLead } from '../../lib/lead-profile';
 
 export const prerender = false;
 
-type RequestBody = {
-  name?: string;
-  profile?: string;
-  phone?: string;
-  location?: string;
-  email?: string;
+type RequestBody = Record<string, unknown> & {
   projectTitle?: string;
   projectUrl?: string;
   privUrl?: string;
@@ -28,29 +23,12 @@ function isNonEmptyString(value: unknown): value is string {
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = (await request.json()) as RequestBody;
-    const lead: AccessLead = {
-      name: body.name?.trim() ?? '',
-      profile: body.profile?.trim() ?? '',
-      phone: body.phone?.trim() ?? '',
-      location: body.location?.trim() ?? '',
-      email: body.email?.trim() ?? '',
-    };
+    const result = validateLead(leadInputFromRecord(body));
     const projectTitle = body.projectTitle?.trim() ?? '';
     const projectUrl = body.projectUrl?.trim() ?? '';
     const privUrl = body.privUrl?.trim() ?? '';
 
-    if (
-      ![
-        lead.name,
-        lead.profile,
-        lead.phone,
-        lead.location,
-        lead.email,
-        projectTitle,
-        projectUrl,
-        privUrl,
-      ].every(isNonEmptyString)
-    ) {
+    if (!result.ok || ![projectTitle, projectUrl, privUrl].every(isNonEmptyString)) {
       return new Response(JSON.stringify({ error: 'Missing required fields.' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
@@ -61,10 +39,10 @@ export const POST: APIRoute = async ({ request }) => {
     const { error } = await resend.emails.send({
       from: getEmailFrom(),
       to: [getOwnerEmail()],
-      replyTo: lead.email,
+      replyTo: result.lead.email,
       subject: `File request — ${projectTitle}`,
       html: buildRequestFilesEmailHtml({
-        lead,
+        lead: result.lead,
         projectTitle,
         projectUrl,
         privUrl,

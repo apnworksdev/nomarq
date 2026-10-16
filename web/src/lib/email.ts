@@ -1,12 +1,8 @@
 import { Resend } from 'resend';
 
-export type AccessLead = {
-  name: string;
-  profile: string;
-  phone: string;
-  location: string;
-  email: string;
-};
+import { leadEmailRows, type LeadRecord } from './lead-profile';
+
+export type AccessLead = LeadRecord;
 
 function requireEnv(name: string): string {
   const value = import.meta.env[name];
@@ -88,45 +84,46 @@ export function buildAccessEmailHtml(input: {
   `;
 }
 
+function leadListHtml(lead: LeadRecord) {
+  return leadEmailRows(lead)
+    .map(([label, value]) => `<li><strong>${label}:</strong> ${escapeHtml(value)}</li>`)
+    .join('');
+}
+
+export function buildAccessNoticeHtml(input: {
+  lead: AccessLead;
+  projectTitle: string;
+  privUrl: string;
+}) {
+  return `
+    <p>New project access request for <strong>${escapeHtml(input.projectTitle)}</strong>.</p>
+    <ul>${leadListHtml(input.lead)}</ul>
+    <p><strong>Priv page:</strong> <a href="${escapeHtml(input.privUrl)}">${escapeHtml(input.privUrl)}</a></p>
+  `;
+}
+
 export function buildRequestFilesEmailHtml(input: {
   lead: AccessLead;
   projectTitle: string;
   projectUrl: string;
   privUrl: string;
 }) {
-  const lead = input.lead;
-
   return `
     <p>New file request for <strong>${escapeHtml(input.projectTitle)}</strong>.</p>
-    <ul>
-      <li><strong>Name:</strong> ${escapeHtml(lead.name)}</li>
-      <li><strong>Profile:</strong> ${escapeHtml(lead.profile)}</li>
-      <li><strong>Phone:</strong> ${escapeHtml(lead.phone)}</li>
-      <li><strong>Location:</strong> ${escapeHtml(lead.location)}</li>
-      <li><strong>Email:</strong> ${escapeHtml(lead.email)}</li>
-    </ul>
+    <ul>${leadListHtml(input.lead)}</ul>
     <p><strong>Public project:</strong> <a href="${escapeHtml(input.projectUrl)}">${escapeHtml(input.projectUrl)}</a></p>
     <p><strong>Priv page:</strong> <a href="${escapeHtml(input.privUrl)}">${escapeHtml(input.privUrl)}</a></p>
   `;
 }
 
-export type ContactMessage = {
-  name: string;
-  lastNames: string;
-  phone: string;
-  email: string;
-  website: string;
+export type ContactMessage = LeadRecord & {
   subject: string;
   message: string;
 };
 
 export function buildContactEmailHtml(input: ContactMessage) {
   const rows = [
-    ['Name', input.name],
-    ['Last names', input.lastNames],
-    ['Phone', input.phone],
-    ['Email', input.email],
-    ['Website', input.website],
+    ...leadEmailRows(input),
     ['Subject', input.subject],
   ]
     .filter(([, value]) => value.trim())

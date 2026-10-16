@@ -21,6 +21,7 @@
   font-family: inherit;
   font-weight: inherit;
   font-size: inherit;
+  font-feature-settings: inherit;
   margin: 0;
   padding: 0;
   border-radius: 0;
@@ -46,6 +47,7 @@ html {
   background-color: var(--background-color);
   color: var(--foreground-color);
   overflow-x: clip;
+  overscroll-behavior: none;
   scroll-behavior: smooth;
 }
 
@@ -75,6 +77,7 @@ textarea {
   font-family: inherit;
   font-size: inherit;
   font-weight: inherit;
+  font-feature-settings: inherit;
   color: inherit;
 }
 
@@ -85,6 +88,24 @@ fieldset {
 a,
 button {
   cursor: pointer;
+}
+
+strong {
+  font-weight: 700;
+  font-style: normal;
+  font-synthesis: none;
+}
+
+em {
+  font-style: italic;
+  font-weight: 400;
+  font-synthesis: none;
+}
+
+strong em,
+em strong {
+  font-weight: 700;
+  font-style: italic;
 }
 
 textarea {

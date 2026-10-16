@@ -1,7 +1,9 @@
+import { initLeadForm, leadFromForm, syncLeadFields } from './lead-form';
+
 function getValue(form: HTMLFormElement, name: string) {
   const field = form.elements.namedItem(name);
 
-  if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement) {
+  if (field instanceof HTMLInputElement || field instanceof HTMLTextAreaElement || field instanceof HTMLSelectElement) {
     return field.value.trim();
   }
 
@@ -14,16 +16,19 @@ function initAboutContactForm(form: HTMLFormElement) {
   const defaultLabel = submitButton?.textContent?.trim() ?? 'Submit';
   const sentLabel =
     form.dataset.aboutFormSent?.trim() || 'Your request has been sent successfully';
+  const cleanupLead = initLeadForm(form);
 
   const onSubmit = async (event: Event) => {
     event.preventDefault();
 
-    const name = getValue(form, 'name');
-    const email = getValue(form, 'email');
+    const lead = leadFromForm(form);
     const message = getValue(form, 'message');
+    const messageField = form.elements.namedItem('message');
 
-    if (!name || !email || !message) {
-      form.reportValidity();
+    if (!lead) return;
+
+    if (!message && messageField instanceof HTMLTextAreaElement) {
+      messageField.reportValidity();
       return;
     }
 
@@ -42,11 +47,7 @@ function initAboutContactForm(form: HTMLFormElement) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name,
-          lastNames: getValue(form, 'lastNames'),
-          phone: getValue(form, 'phone'),
-          email,
-          website: getValue(form, 'website'),
+          ...lead,
           subject: getValue(form, 'subject'),
           message,
           privacy: true,
@@ -64,6 +65,7 @@ function initAboutContactForm(form: HTMLFormElement) {
       }
 
       form.reset();
+      syncLeadFields(form);
     } catch (error) {
       console.error('Failed to send contact email:', error);
       if (submitButton) {
@@ -77,16 +79,17 @@ function initAboutContactForm(form: HTMLFormElement) {
 
   return () => {
     form.removeEventListener('submit', onSubmit);
+    cleanupLead();
   };
 }
 
 export function initAboutContactForms() {
-  const cleanups = [
-    ...document.querySelectorAll<HTMLFormElement>('[data-about-contact-form]'),
-  ].map(initAboutContactForm);
+  const stops = [...document.querySelectorAll<HTMLFormElement>('[data-about-contact-form]')].map(
+    initAboutContactForm,
+  );
 
   return () => {
-    cleanups.forEach((cleanup) => cleanup());
+    stops.forEach((stop) => stop());
   };
 }
 

@@ -1,5 +1,6 @@
 ---
 import EntryCaption from './EntryCaption.astro';
+import InlineText from './InlineText.astro';
 import EntryGallery from './EntryGallery.astro';
 import ProjectDeeper from './ProjectDeeper.astro';
 import RelatedEntries from './RelatedEntries.astro';
@@ -27,6 +28,8 @@ interface Props {
   captionPlace?: string;
   captionCountry?: string;
   description?: string;
+  externalHref?: string;
+  externalLabel?: string;
   relatedEntries: RelatedEntryItem[];
   relatedHeading: string;
   relatedTitleId?: string;
@@ -50,6 +53,8 @@ const {
   captionPlace,
   captionCountry,
   description,
+  externalHref,
+  externalLabel,
   relatedEntries,
   relatedHeading,
   relatedTitleId,
@@ -196,13 +201,26 @@ const hasInfo = technicalRows.length > 0 || Boolean(description) || showAccessFo
             >
               {
                 descriptionParagraphs.map((paragraph) => (
-                  <p class="entry-overlay-description-paragraph">{paragraph}</p>
+                  <p class="entry-overlay-description-paragraph"><InlineText text={paragraph} /></p>
                 ))
               }
             </div>
           )
         }
       </div>
+
+      {
+        externalHref && externalLabel && (
+          <a
+            class="entry-overlay-link"
+            href={externalHref}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {externalLabel}
+          </a>
+        )
+      }
 
       {
         hasInfo && (

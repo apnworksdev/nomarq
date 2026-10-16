@@ -2,10 +2,12 @@
 import { getRelativeLocaleUrl } from "astro:i18n";
 
 import AboutJournalListItem from "../components/AboutJournalListItem.astro";
+import InlineText from "../components/InlineText.astro";
+import LeadFields from "../components/LeadFields.astro";
 import type { AboutDocument } from "../lib/about";
 import type { Locale } from "../lib/i18n";
 import Layout from "../layouts/Layout.astro";
-import { urlFor } from "../lib/image";
+import { responsiveImage } from "../lib/image";
 import { getPersonPosition } from "../lib/person";
 import { aboutQuery } from "../lib/queries/about";
 import { sanity } from "../lib/sanity";
@@ -59,7 +61,7 @@ const privacyHref = getRelativeLocaleUrl(locale, "privacy-policy");
           about?.contactImage?.asset ? (
             <img
               class="about-contact-image"
-              src={urlFor(about.contactImage).width(1200).fit("max").url()}
+              {...responsiveImage(about.contactImage, [1400, 2200, 3000], "(max-width: 820px) 100vw, 50vw")}
               alt={about.contactImage.alt ?? ""}
               loading="lazy"
             />
@@ -102,79 +104,20 @@ const privacyHref = getRelativeLocaleUrl(locale, "privacy-policy");
             data-about-contact-form
             data-about-form-sent={copy.about.form.sent}
           >
-            <div class="about-form-row">
-              <div class="about-form-field" data-about-form-field="name">
-                <input
-                  id="about-name"
-                  name="name"
-                  type="text"
-                  autocomplete="given-name"
-                  placeholder=" "
-                  required
-                />
-                <label for="about-name">{copy.about.form.name}</label>
-              </div>
-              <div class="about-form-field" data-about-form-field="phone">
-                <input
-                  id="about-phone"
-                  name="phone"
-                  type="tel"
-                  autocomplete="tel"
-                  placeholder=" "
-                />
-                <label for="about-phone">{copy.about.form.phone}</label>
-              </div>
-            </div>
+            <LeadFields locale={locale} idPrefix="about" variant="about" />
 
-            <div class="about-form-row">
-              <div class="about-form-field" data-about-form-field="last-names">
-                <input
-                  id="about-last-names"
-                  name="lastNames"
-                  type="text"
-                  autocomplete="family-name"
-                  placeholder=" "
-                />
-                <label for="about-last-names">{copy.about.form.lastNames}</label>
-              </div>
-              <div class="about-form-field" data-about-form-field="email">
-                <input
-                  id="about-email"
-                  name="email"
-                  type="email"
-                  autocomplete="email"
-                  placeholder=" "
-                  required
-                />
-                <label for="about-email">{copy.about.form.email}</label>
-              </div>
-            </div>
-
-            <div class="about-form-row">
-              <div class="about-form-field" data-about-form-field="website">
-                <input
-                  id="about-website"
-                  name="website"
-                  type="text"
-                  inputmode="url"
-                  autocomplete="url"
-                  placeholder=" "
-                />
-                <label for="about-website">{copy.about.form.website}</label>
-              </div>
-              <div class="about-form-field" data-about-form-field="subject">
-                <input
-                  id="about-subject"
-                  name="subject"
-                  type="text"
-                  placeholder=" "
-                />
-                <label for="about-subject">{copy.about.form.subject}</label>
-              </div>
+            <div class="about-form-field about-form-span" data-about-form-field="subject">
+              <input
+                id="about-subject"
+                name="subject"
+                type="text"
+                placeholder=" "
+              />
+              <label for="about-subject">{copy.about.form.subject}</label>
             </div>
 
             <div
-              class="about-form-field about-form-field--message"
+              class="about-form-field about-form-field--message about-form-span"
               data-about-form-field="message"
             >
               <textarea
@@ -185,7 +128,7 @@ const privacyHref = getRelativeLocaleUrl(locale, "privacy-policy");
                 required></textarea>
               <label for="about-message">{copy.about.form.message}</label>
             </div>
-            <div class="about-form-submit-wrap" data-about-form-field="submit">
+            <div class="about-form-submit-wrap about-form-span" data-about-form-field="submit">
               <div class="about-form-consent">
                 <input
                   id="about-privacy"
@@ -216,22 +159,22 @@ const privacyHref = getRelativeLocaleUrl(locale, "privacy-policy");
       {
         about?.studioDescription && (
           <p class="about-contact-description">
-            {about.studioDescription}
+            <InlineText text={about.studioDescription} />
           </p>
         )
       }
     </section>
 
-    <section class="about-gallery" aria-label="Gallery">
+    <section class="about-gallery" data-about-gallery aria-label="Gallery">
       <div class="about-gallery-track">
         {
           galleryImages.length > 0 ? (
             galleryImages.map((slide, index) => (
               <>
                 {slide.image ? (
-                  <figure class="about-gallery-slide">
+                  <figure class="about-gallery-slide" data-about-gallery-slide>
                     <img
-                      src={urlFor(slide.image).width(1400).fit("max").url()}
+                      {...responsiveImage(slide.image, [1600, 2400, 3200], "80vw")}
                       alt={slide.alt ?? ""}
                       loading="lazy"
                     />
@@ -241,13 +184,13 @@ const privacyHref = getRelativeLocaleUrl(locale, "privacy-policy");
             ))
           ) : (
             <>
-              <figure class="about-gallery-slide">
+              <figure class="about-gallery-slide" data-about-gallery-slide>
                 <div class="about-gallery-placeholder" aria-hidden="true" />
               </figure>
-              <figure class="about-gallery-slide">
+              <figure class="about-gallery-slide" data-about-gallery-slide>
                 <div class="about-gallery-placeholder" aria-hidden="true" />
               </figure>
-              <figure class="about-gallery-slide">
+              <figure class="about-gallery-slide" data-about-gallery-slide>
                 <div class="about-gallery-placeholder" aria-hidden="true" />
               </figure>
             </>
@@ -330,8 +273,10 @@ const privacyHref = getRelativeLocaleUrl(locale, "privacy-policy");
 
 <script>
   import { initAboutContactFormState } from '../lib/about-contact-form';
+  import { initAboutGalleryState } from '../lib/about-gallery';
   import { initAboutListHoverState } from '../lib/about-list-hover';
 
   initAboutListHoverState();
   initAboutContactFormState();
+  initAboutGalleryState();
 </script>

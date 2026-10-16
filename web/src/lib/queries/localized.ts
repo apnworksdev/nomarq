@@ -10,14 +10,21 @@ export function joinReferencedNames(translatedRef: string, field: string) {
   return `array::join(array::compact(${value}[]->name), ", ")`;
 }
 
+/** English base documents, plus translations whose English original was deleted. */
+export const canonicalLanguageFilter = `(!defined(language) || language == $defaultLanguage || (
+  language == $language &&
+  count(*[_type == "translation.metadata" && references(^._id)].translations[language == $defaultLanguage && defined(value->._id)]) == 0
+))`;
+
 /** Published projects with real content (excludes empty i18n stubs).
  * One base document per project; translations resolve via coalesce. */
-export const validProjectFilter = `_type == "project" && defined(slug.current) && defined(title) && count(images[defined(image.asset)]) > 0 && (!defined(language) || language == $defaultLanguage)`;
+export const validProjectFilter = `_type == "project" && defined(slug.current) && defined(title) && count(images[defined(image.asset)]) > 0 && ${canonicalLanguageFilter}`;
 
 export const localizedProjectListProjection = `
   "title": coalesce(${translatedProjectRef}title, title),
   "slug": coalesce(${translatedProjectRef}slug.current, slug.current),
   "description": coalesce(${translatedProjectRef}description, description),
+  "shortDescription": coalesce(${translatedProjectRef}shortDescription, shortDescription),
   "location": coalesce(${translatedProjectRef}location, location) {
     place,
     country {

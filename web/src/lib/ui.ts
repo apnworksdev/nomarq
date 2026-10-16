@@ -1,5 +1,6 @@
 import type { Locale, NavId } from './i18n';
 import type { JournalCategory } from './journal';
+import type { LeadProfileId, OriginId, RoleId, SectorId, SocialId } from './lead-profile';
 
 type UiStrings = {
   nav: Record<NavId, string>;
@@ -21,6 +22,32 @@ type UiStrings = {
   menu: string;
   close: string;
   information: string;
+  lead: {
+    profile: string;
+    profileOther: string;
+    name: string;
+    lastNames: string;
+    email: string;
+    emailInvalid: string;
+    phonePrefix: string;
+    phoneNumber: string;
+    phoneInvalid: string;
+    city: string;
+    placeInvalid: string;
+    organization: string;
+    role: string;
+    roleOther: string;
+    sector: string;
+    origin: string;
+    originSocial: string;
+    originOther: string;
+    profiles: Record<LeadProfileId, string>;
+    roles: Record<RoleId, string>;
+    sectors: Record<SectorId, string>;
+    sectorNotes: Record<SectorId, string>;
+    origins: Record<OriginId, string>;
+    socials: Record<SocialId, string>;
+  };
   deeper: {
     moreInformation: string;
     name: string;
@@ -58,6 +85,7 @@ type UiStrings = {
   backToProjects: string;
   fullProject: string;
   fullJournal: string;
+  visitSite: string;
   projectsFilters: {
     toggle: string;
     typology: string;
@@ -110,6 +138,70 @@ export const ui = {
     menu: 'Menu',
     close: 'Close',
     information: 'Information',
+    lead: {
+      profile: 'Profile',
+      profileOther: 'Specify',
+      name: 'Name',
+      lastNames: 'Last names',
+      email: 'Email',
+      emailInvalid: 'Enter a valid email.',
+      phonePrefix: 'Prefix',
+      phoneNumber: 'Number',
+      phoneInvalid: 'Enter the prefix and number.',
+      city: 'City (+ country)',
+      placeInvalid: 'Choose a city from the list.',
+      organization: 'Company / Entity',
+      role: 'Role',
+      roleOther: 'Specify role',
+      sector: 'Sector',
+      origin: 'How did you find us?',
+      originSocial: 'Social network',
+      originOther: 'Specify',
+      profiles: {
+        student: 'Student',
+        editor: 'Editor or communicator',
+        promoter: 'Developer',
+        investor: 'Investor',
+        client: 'Nomarq client',
+        ambassador: 'Nomarq ambassador',
+        collaborator: 'Collaborator',
+        other: 'Other',
+      },
+      roles: {
+        founder: 'Founder',
+        director: 'Director',
+        technical: 'Technician',
+        other: 'Other',
+      },
+      sectors: {
+        building: 'Building',
+        financial: 'Financiero',
+        hospitality: 'Hotelero y wellness',
+        creative: 'Creativo & Cultura',
+        consulting: 'Consultores',
+      },
+      sectorNotes: {
+        building: 'Developers, builders, landowners and real-estate owners, real estate',
+        financial: 'Family offices, funds and investors',
+        hospitality: '',
+        creative: 'Architects, interior designers, art creatives and suppliers',
+        consulting: 'Lawyers, engineers, project managers, advisors',
+      },
+      origins: {
+        members: 'Nomarq members',
+        ambassadors: 'Nomarq ambassadors',
+        social: 'Social media',
+        search: 'Google / search engines',
+        website: 'Website',
+        other: 'Other',
+      },
+      socials: {
+        instagram: 'Instagram',
+        linkedin: 'LinkedIn',
+        youtube: 'YouTube',
+        vimeo: 'Vimeo',
+      },
+    },
     deeper: {
       moreInformation: 'More Information',
       name: 'Name',
@@ -147,6 +239,7 @@ export const ui = {
     backToProjects: '← All projects',
     fullProject: 'Full Project',
     fullJournal: 'Full entry',
+    visitSite: 'Visit site',
     projectsFilters: {
       toggle: 'Filters',
       typology: 'Typology',
@@ -201,6 +294,70 @@ export const ui = {
     menu: 'Menu',
     close: 'Cerrar',
     information: 'Información',
+    lead: {
+      profile: 'Perfil',
+      profileOther: 'Especificar',
+      name: 'Nombre',
+      lastNames: 'Apellidos',
+      email: 'Email',
+      emailInvalid: 'Introduce un email válido.',
+      phonePrefix: 'Prefijo',
+      phoneNumber: 'Número',
+      phoneInvalid: 'Introduce el prefijo y el número.',
+      city: 'Ciudad (+ país)',
+      placeInvalid: 'Elige una ciudad de la lista.',
+      organization: 'Empresa / Entidad',
+      role: 'Cargo',
+      roleOther: 'Especificar cargo',
+      sector: 'Sector',
+      origin: '¿Cómo nos has conocido?',
+      originSocial: 'Red social',
+      originOther: 'Especificar',
+      profiles: {
+        student: 'Estudiante',
+        editor: 'Editor o divulgador',
+        promoter: 'Promotor',
+        investor: 'Inversor',
+        client: 'Cliente nomarq',
+        ambassador: 'Embajador nomarq',
+        collaborator: 'Colaborador',
+        other: 'Otro',
+      },
+      roles: {
+        founder: 'Fundador',
+        director: 'Director',
+        technical: 'Técnico',
+        other: 'Otro',
+      },
+      sectors: {
+        building: 'Building',
+        financial: 'Financiero',
+        hospitality: 'Hotelero y wellness',
+        creative: 'Creativo & Cultura',
+        consulting: 'Consultores',
+      },
+      sectorNotes: {
+        building: 'Promotores, constructores, propietarios de suelo y activos inmobiliarios, inmobiliaria',
+        financial: 'Family offices, fondos e inversores',
+        hospitality: '',
+        creative: 'Arquitectos, interioristas, creativos de arte y proveedores',
+        consulting: 'Abogados, ingenierías, project managers, asesores',
+      },
+      origins: {
+        members: 'Miembros nomarq',
+        ambassadors: 'Embajadores nomarq',
+        social: 'Redes sociales',
+        search: 'Google / Buscadores',
+        website: 'Página web',
+        other: 'Otro',
+      },
+      socials: {
+        instagram: 'Instagram',
+        linkedin: 'LinkedIn',
+        youtube: 'YouTube',
+        vimeo: 'Vimeo',
+      },
+    },
     deeper: {
       moreInformation: 'Más Información',
       name: 'Nombre',
@@ -238,6 +395,7 @@ export const ui = {
     backToProjects: '← Todos los proyectos',
     fullProject: 'Proyecto completo',
     fullJournal: 'Entrada completa',
+    visitSite: 'Ir al sitio',
     projectsFilters: {
       toggle: 'Filtros',
       typology: 'Tipología',

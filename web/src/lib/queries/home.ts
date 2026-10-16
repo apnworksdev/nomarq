@@ -61,6 +61,11 @@ const localizedHomeJournalProjection = `
     shortDescription,
     ${journalContentFallback}shortDescription
   ),
+  "description": coalesce(
+    ${translatedJournalRef}description,
+    description,
+    ${journalContentFallback}description
+  ),
   "externalLink": coalesce(
     ${translatedJournalRef}externalLink,
     externalLink,

@@ -21,6 +21,7 @@ export type HomeSectionItem = {
   title: string;
   slug?: string;
   shortDescription?: string;
+  description?: string;
   images?: HomeSectionImage[];
   externalLink?: string;
   category?: string;

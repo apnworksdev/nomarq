@@ -1,0 +1,160 @@
+---
+import '../styles/components/lead-form.css';
+
+import {
+  leadProfileIds,
+  originIds,
+  roleIds,
+  sectorIds,
+  socialIds,
+} from '../lib/lead-profile';
+import { getUi } from '../lib/ui';
+import type { Locale } from '../lib/i18n';
+
+interface Props {
+  locale: Locale;
+  idPrefix: string;
+  variant: 'about' | 'project';
+}
+
+const { locale, idPrefix, variant } = Astro.props;
+const copy = getUi(locale).lead;
+const fieldClass = variant === 'about' ? 'about-form-field' : 'project-deeper-field';
+const labelClass = variant === 'about' ? undefined : 'project-deeper-field-label';
+const id = (name: string) => `${idPrefix}-${name}`;
+---
+
+<div class:list={[fieldClass, 'lead-span']} data-lead-field="profile">
+  <select id={id('profile')} name="profile" required autocomplete="off">
+    <option value=""></option>
+    {leadProfileIds.map((profileId) => (
+      <option value={profileId}>{copy.profiles[profileId]}</option>
+    ))}
+  </select>
+  <label class={labelClass} for={id('profile')}>{copy.profile}</label>
+</div>
+
+<div class:list={[fieldClass, 'lead-span']} data-lead-field="profileOther" hidden>
+  <input id={id('profile-other')} name="profileOther" type="text" placeholder=" " disabled />
+  <label class={labelClass} for={id('profile-other')}>{copy.profileOther}</label>
+</div>
+
+<div class={fieldClass} data-lead-field="name" hidden>
+  <input id={id('name')} name="name" type="text" autocomplete="given-name" placeholder=" " disabled />
+  <label class={labelClass} for={id('name')}>{copy.name}</label>
+</div>
+
+<div class={fieldClass} data-lead-field="lastNames" hidden>
+  <input id={id('last-names')} name="lastNames" type="text" autocomplete="family-name" placeholder=" " disabled />
+  <label class={labelClass} for={id('last-names')}>{copy.lastNames}</label>
+</div>
+
+<div class={fieldClass} data-lead-field="email" hidden>
+  <input id={id('email')} name="email" type="email" autocomplete="email" placeholder=" " disabled data-lead-invalid={copy.emailInvalid} />
+  <label class={labelClass} for={id('email')}>{copy.email}</label>
+</div>
+
+<div class="lead-phone" data-lead-field="phone" hidden>
+  <div class={fieldClass}>
+    <input
+      id={id('phone-prefix')}
+      name="phonePrefix"
+      type="text"
+      inputmode="tel"
+      autocomplete="tel-country-code"
+      placeholder=" "
+      disabled
+      data-lead-invalid={copy.phoneInvalid}
+    />
+    <label class={labelClass} for={id('phone-prefix')}>{copy.phonePrefix}</label>
+  </div>
+  <div class={fieldClass}>
+    <input
+      id={id('phone-number')}
+      name="phoneNumber"
+      type="tel"
+      autocomplete="tel-national"
+      placeholder=" "
+      disabled
+      data-lead-invalid={copy.phoneInvalid}
+    />
+    <label class={labelClass} for={id('phone-number')}>{copy.phoneNumber}</label>
+  </div>
+</div>
+
+<div class:list={[fieldClass, 'lead-place']} data-lead-field="city" hidden>
+  <input
+    id={id('place')}
+    name="place"
+    type="text"
+    autocomplete="off"
+    placeholder=" "
+    role="combobox"
+    aria-autocomplete="list"
+    aria-expanded="false"
+    aria-controls={id('place-list')}
+    data-lead-place-input
+    data-lead-invalid={copy.placeInvalid}
+    disabled
+  />
+  <label class={labelClass} for={id('place')}>{copy.city}</label>
+  <input type="hidden" name="city" disabled />
+  <input type="hidden" name="country" disabled />
+  <ul id={id('place-list')} class="lead-place-list" data-lead-place-list hidden></ul>
+</div>
+
+<div class={fieldClass} data-lead-field="organization" hidden>
+  <input id={id('organization')} name="organization" type="text" autocomplete="organization" placeholder=" " disabled />
+  <label class={labelClass} for={id('organization')}>{copy.organization}</label>
+</div>
+
+<div class={fieldClass} data-lead-field="role" hidden>
+  <select id={id('role')} name="role" autocomplete="organization-title" disabled>
+    <option value=""></option>
+    {roleIds.map((roleId) => (
+      <option value={roleId}>{copy.roles[roleId]}</option>
+    ))}
+  </select>
+  <label class={labelClass} for={id('role')}>{copy.role}</label>
+</div>
+
+<div class={fieldClass} data-lead-field="roleOther" hidden>
+  <input id={id('role-other')} name="roleOther" type="text" placeholder=" " disabled />
+  <label class={labelClass} for={id('role-other')}>{copy.roleOther}</label>
+</div>
+
+<div class={fieldClass} data-lead-field="sector" hidden>
+  <select id={id('sector')} name="sector" disabled>
+    <option value=""></option>
+    {sectorIds.map((sectorId) => (
+      <option value={sectorId} data-note={copy.sectorNotes[sectorId]}>{copy.sectors[sectorId]}</option>
+    ))}
+  </select>
+  <label class={labelClass} for={id('sector')}>{copy.sector}</label>
+  <p class="lead-field-note" data-lead-sector-note hidden></p>
+</div>
+
+<div class={fieldClass} data-lead-field="origin" hidden>
+  <select id={id('origin')} name="origin" disabled>
+    <option value=""></option>
+    {originIds.map((originId) => (
+      <option value={originId}>{copy.origins[originId]}</option>
+    ))}
+  </select>
+  <label class={labelClass} for={id('origin')}>{copy.origin}</label>
+</div>
+
+<div class={fieldClass} data-lead-field="originSocial" hidden>
+  <select id={id('origin-social')} name="originSocial" disabled>
+    <option value=""></option>
+    {socialIds.map((socialId) => (
+      <option value={socialId}>{copy.socials[socialId]}</option>
+    ))}
+  </select>
+  <label class={labelClass} for={id('origin-social')}>{copy.originSocial}</label>
+</div>
+
+<div class={fieldClass} data-lead-field="originOther" hidden>
+  <input id={id('origin-other')} name="originOther" type="text" placeholder=" " disabled />
+  <label class={labelClass} for={id('origin-other')}>{copy.originOther}</label>
+</div>

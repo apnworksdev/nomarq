@@ -1,5 +1,6 @@
 ---
 import EntryCaption from './EntryCaption.astro';
+import InlineText from './InlineText.astro';
 import EntryGallery from './EntryGallery.astro';
 import {
   formatHomeSectionCaption,
@@ -103,7 +104,7 @@ const shortDescriptionParagraphs = item.shortDescription
           <div class="entry-overlay-description">
             {
               shortDescriptionParagraphs.map((paragraph) => (
-                <p class="entry-overlay-description-paragraph">{paragraph}</p>
+                <p class="entry-overlay-description-paragraph"><InlineText text={paragraph} /></p>
               ))
             }
           </div>

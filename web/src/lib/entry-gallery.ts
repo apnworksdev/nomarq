@@ -5,10 +5,26 @@ const SWIPE_DURATION_MS = 380;
 
 type GalleryImage = {
   src: string;
+  srcset?: string;
+  sizes?: string;
   thumbSrc: string;
   alt: string;
   originalIndex: number;
 };
+
+function applyImageSource(img: HTMLImageElement, image: GalleryImage) {
+  img.src = image.src;
+
+  if (image.srcset) {
+    img.srcset = image.srcset;
+  } else {
+    img.removeAttribute('srcset');
+  }
+
+  if (image.sizes) {
+    img.sizes = image.sizes;
+  }
+}
 
 function isMobileViewport() {
   return window.matchMedia(MOBILE_MQ).matches;
@@ -47,7 +63,7 @@ function showImage(
   counter: HTMLElement | null,
   image: GalleryImage,
 ) {
-  main.src = image.src;
+  applyImageSource(main, image);
   if (image.alt) {
     main.alt = image.alt;
   }
@@ -129,7 +145,7 @@ async function showImageMobile(
 
   const media = main.closest<HTMLElement>('[data-entry-media]');
   if (!media || prefersReducedMotion()) {
-    main.src = image.src;
+    applyImageSource(main, image);
     return;
   }
 
@@ -141,7 +157,7 @@ async function showImageMobile(
   main.style.transition = 'none';
   layer.style.transform = `translate3d(${direction * 100}%, 0, 0)`;
   main.style.transform = 'translate3d(0, 0, 0)';
-  layer.src = image.src;
+  applyImageSource(layer, image);
 
   try {
     await layer.decode();
@@ -160,7 +176,7 @@ async function showImageMobile(
 
   main.style.transition = 'none';
   layer.style.transition = 'none';
-  main.src = image.src;
+  applyImageSource(main, image);
   main.style.transform = 'translate3d(0, 0, 0)';
   layer.style.transform = `translate3d(${direction * 100}%, 0, 0)`;
   void main.offsetWidth;

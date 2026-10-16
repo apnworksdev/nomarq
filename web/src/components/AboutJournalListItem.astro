@@ -1,8 +1,8 @@
 ---
 import type { AboutJournalEntry } from '../lib/about';
 import type { Locale } from '../lib/i18n';
-import { urlFor } from '../lib/image';
-import { getJournalCategoryDisplayLabel, getJournalEntryHref, isExternalJournalLink } from '../lib/journal';
+import { responsiveImage } from '../lib/image';
+import { getJournalCategoryDisplayLabel, getJournalEntryHref, isExternalHref } from '../lib/journal';
 import { getJournalCategoryLabel } from '../lib/ui';
 
 interface Props {
@@ -12,17 +12,21 @@ interface Props {
 
 const { entry, locale } = Astro.props;
 const href = getJournalEntryHref(locale, entry);
-const external = href ? isExternalJournalLink(href) : false;
-const linkProps = external
-  ? { target: '_blank', rel: 'noopener noreferrer' }
-  : { 'data-entry-close-link': true, 'data-entry-close-origin': 'about' };
+const external = href ? isExternalHref(href) : false;
 const coverImage = entry.coverImage?.image;
 ---
 
 <li class="about-list-item" data-about-list-item>
   {
     href ? (
-      <a class="about-list-item-link" href={href} data-about-list-link {...linkProps}>
+      <a
+        class="about-list-item-link"
+        href={href}
+        data-about-list-link
+        {...(external
+          ? { target: '_blank', rel: 'noopener noreferrer' }
+          : { 'data-entry-close-link': true, 'data-entry-close-origin': 'about' })}
+      >
         <span class="about-list-item-label">
           <span class="about-list-item-category">
             {getJournalCategoryDisplayLabel(locale, entry, getJournalCategoryLabel)}
@@ -47,7 +51,7 @@ const coverImage = entry.coverImage?.image;
     coverImage && (
       <div class="about-list-thumb" aria-hidden="true">
         <img
-          src={urlFor(coverImage).width(800).fit('max').url()}
+          {...responsiveImage(coverImage, [800, 1400], '25vw')}
           alt=""
           loading="lazy"
           decoding="async"

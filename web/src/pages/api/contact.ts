@@ -7,10 +7,13 @@ import {
   getResendClient,
   type ContactMessage,
 } from '../../lib/email';
+import { leadInputFromRecord, validateLead } from '../../lib/lead-profile';
 
 export const prerender = false;
 
-type ContactBody = Partial<ContactMessage> & {
+type ContactBody = Record<string, unknown> & {
+  subject?: string;
+  message?: string;
   privacy?: boolean;
 };
 
@@ -21,15 +24,9 @@ function isNonEmptyString(value: unknown): value is string {
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = (await request.json()) as ContactBody;
-    const message: ContactMessage = {
-      name: body.name?.trim() ?? '',
-      lastNames: body.lastNames?.trim() ?? '',
-      phone: body.phone?.trim() ?? '',
-      email: body.email?.trim() ?? '',
-      website: body.website?.trim() ?? '',
-      subject: body.subject?.trim() ?? '',
-      message: body.message?.trim() ?? '',
-    };
+    const result = validateLead(leadInputFromRecord(body));
+    const subject = body.subject?.trim() ?? '';
+    const messageText = body.message?.trim() ?? '';
 
     if (!body.privacy) {
       return new Response(JSON.stringify({ error: 'Privacy consent is required.' }), {
@@ -38,12 +35,18 @@ export const POST: APIRoute = async ({ request }) => {
       });
     }
 
-    if (![message.name, message.email, message.message].every(isNonEmptyString)) {
+    if (!result.ok || !isNonEmptyString(messageText)) {
       return new Response(JSON.stringify({ error: 'Missing required fields.' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
       });
     }
+
+    const message: ContactMessage = {
+      ...result.lead,
+      subject,
+      message: messageText,
+    };
 
     const resend = getResendClient();
     const subjectLine = message.subject

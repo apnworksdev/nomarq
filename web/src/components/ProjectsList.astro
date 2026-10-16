@@ -1,8 +1,9 @@
 ---
 import { getRelativeLocaleUrl } from 'astro:i18n';
 
+import InlineText from './InlineText.astro';
 import type { Locale } from '../lib/i18n';
-import { urlFor } from '../lib/image';
+import { responsiveImage } from '../lib/image';
 import type { Project } from '../lib/queries';
 import { getUseTitle } from '../lib/use';
 import '../styles/components/projects-list.css';
@@ -25,7 +26,7 @@ const { projects, locale } = Astro.props;
         project.location?.country?.short?.trim() ||
         '';
       const uses = project.use ?? [];
-      const description = project.description?.trim() ?? '';
+      const description = project.shortDescription?.trim() ?? '';
 
       return (
         <li
@@ -37,7 +38,7 @@ const { projects, locale } = Astro.props;
             coverImage?.image && (
               <div class="projects-list-thumb" aria-hidden="true">
                 <img
-                  src={urlFor(coverImage.image).width(400).fit('max').url()}
+                  {...responsiveImage(coverImage.image, [800, 1400], '25vw')}
                   alt=""
                   loading="lazy"
                   decoding="async"
@@ -82,7 +83,7 @@ const { projects, locale } = Astro.props;
           {
             description && (
               <p class="projects-list-description" data-projects-list-description>
-                {description}
+                <InlineText text={description} />
               </p>
             )
           }

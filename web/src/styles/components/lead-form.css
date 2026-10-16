@@ -1,0 +1,70 @@
+.about-form-field[hidden],
+.project-deeper-field[hidden],
+.lead-phone[hidden],
+.lead-field-note[hidden],
+.lead-place-list[hidden] {
+  display: none;
+}
+
+.lead-span {
+  grid-column: 1 / -1;
+}
+
+.lead-phone:not([hidden]) {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: var(--columns-gap);
+  grid-column: 1 / -1;
+}
+
+.lead-place-list {
+  z-index: 30;
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+  background: var(--background-color);
+  color: var(--foreground-color);
+}
+
+.lead-place-option {
+  display: block;
+  width: 100%;
+  padding: 4px 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.lead-field-note {
+  grid-row: 2;
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-small);
+  opacity: 0.55;
+}
+
+.about-form-field select,
+.project-deeper-field select {
+  grid-area: 1 / 1;
+  z-index: 1;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  appearance: none;
+  cursor: pointer;
+}
+
+.about-form-field select:focus,
+.about-form-field select:focus-visible,
+.project-deeper-field select:focus,
+.project-deeper-field select:focus-visible {
+  outline: none;
+}
+
+.about-form-field.is-filled > label,
+.about-form-field:focus-within > label,
+.project-deeper-field.is-filled > .project-deeper-field-label,
+.project-deeper-field:focus-within > .project-deeper-field-label {
+  opacity: 0;
+}

@@ -1,0 +1,11 @@
+---
+import { formatInlineMarkup } from '../lib/inline-markup';
+
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+---
+
+<Fragment set:html={formatInlineMarkup(text)} />

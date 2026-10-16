@@ -24,8 +24,10 @@
   left: 50%;
   width: 100%;
   height: 100%;
+  min-width: 177.78vh;
+  min-height: 56.25vw;
   border: 0;
-  transform: translate(-50%, -50%) scale(1.2);
+  transform: translate(-50%, -50%);
   pointer-events: none;
 }
 
@@ -38,7 +40,8 @@
 /* —— Contact —— */
 
 .about-contact {
-  height: 100dvh;
+  min-height: 100dvh;
+  height: auto;
   display: grid;
   grid-template-columns: repeat(var(--columns), 1fr);
   grid-template-rows: 1fr auto;
@@ -89,8 +92,7 @@
 }
 
 .about-section-heading {
-  /* font-size: var(--font-size-small);
-  line-height: var(--line-height-small); */
+  margin-bottom: 16px;
 }
 
 .about-section-heading::before {
@@ -113,15 +115,14 @@
 }
 
 .about-contact-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.about-form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: var(--columns-gap);
+  row-gap: 16px;
+}
+
+.about-form-span {
+  grid-column: 1 / -1;
 }
 
 .about-form-field {
@@ -255,6 +256,14 @@
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
+}
+
+.about-gallery.is-nav-prev {
+  cursor: w-resize;
+}
+
+.about-gallery.is-nav-next {
+  cursor: e-resize;
 }
 
 .about-gallery-track {
@@ -491,7 +500,8 @@
 
   .about-contact-content {
     order: 1;
-    height: 100dvh;
+    height: auto;
+    min-height: 100dvh;
     padding: 60px var(--margin) 30px;
     display: flex;
     flex-direction: column;
@@ -516,31 +526,13 @@
     gap: 6px;
   }
 
-  .about-form-row {
-    display: contents;
-  }
-
   .about-contact-form {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    grid-template-columns: 1fr;
   }
-
-  .about-contact-form [data-about-form-field="name"] { order: 1; }
-  .about-contact-form [data-about-form-field="last-names"] { order: 2; }
-  .about-contact-form [data-about-form-field="phone"] { order: 3; }
-  .about-contact-form [data-about-form-field="email"] { order: 4; }
-  .about-contact-form [data-about-form-field="website"] { order: 5; }
-  .about-contact-form [data-about-form-field="subject"] {
-    order: 6;
-    margin-top: 100px;
-  }
-  .about-contact-form [data-about-form-field="message"] { order: 7; }
-  .about-contact-form [data-about-form-field="submit"] { order: 8; }
 
   .about-form-field--message {
     margin-top: 0;
-    margin-bottom: 100px;
+    margin-bottom: 32px;
   }
 
   .about-contact-description {

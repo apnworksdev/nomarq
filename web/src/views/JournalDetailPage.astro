@@ -9,6 +9,7 @@ import {
   getJournalCategoryDisplayLabel,
   getJournalSection,
   getJournalSectionPath,
+  hasJournalEntryContent,
   type JournalSection,
 } from '../lib/journal';
 import { journalBySlugQuery, type JournalEntry } from '../lib/queries';
@@ -45,8 +46,11 @@ if (entrySection && entrySection !== section) {
   );
 }
 
-if (entry.externalLink) {
-  return Astro.redirect(entry.externalLink);
+const externalHref = entry.externalLink?.trim();
+const externalLink = externalHref && /^https?:\/\//.test(externalHref) ? externalHref : undefined;
+
+if (externalLink && !hasJournalEntryContent(entry)) {
+  return Astro.redirect(externalLink);
 }
 
 const relatedEntries = await getRelatedJournals(entry, locale, defaultLocale);
@@ -72,6 +76,8 @@ const technicalRows = [
   entryKind="journal"
   informationLabel={copy.information}
   description={entry.description}
+  externalHref={externalLink}
+  externalLabel={copy.visitSite}
   relatedEntries={mapRelatedEntries(relatedEntries, journalToRelatedEntry, locale)}
   relatedHeading={copy.relatedJournals}
   relatedTitleId="journal-related-title"

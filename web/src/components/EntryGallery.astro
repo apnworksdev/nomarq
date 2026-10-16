@@ -1,7 +1,7 @@
 ---
 import { imageAlt } from '../lib/alt';
 import type { ImageField } from '../lib/queries';
-import { urlFor } from '../lib/image';
+import { imageUrl, responsiveImage } from '../lib/image';
 
 interface Props {
   images: ImageField[];
@@ -35,10 +35,14 @@ const galleryImages = validImages.flatMap((image, imageIndex) => {
     return [];
   }
 
+  const cover = responsiveImage(image.image, [1600, 2400, 3200], '(max-width: 820px) 100vw, 70vw');
+
   return [
     {
-      src: urlFor(image.image).width(1600).fit('max').url(),
-      thumbSrc: urlFor(image.image).height(200).url(),
+      src: cover.src,
+      srcset: cover.srcset,
+      sizes: cover.sizes,
+      thumbSrc: imageUrl(image.image, 800),
       alt: imageAlt(image.alt, title, { index: imageIndex }),
       originalIndex: imageIndex,
     },
@@ -52,7 +56,9 @@ const stripImages = galleryImages.slice(0, VISIBLE_THUMB_MAX);
   showCover && cover?.image && (
     <figure class="entry-media" data-entry-media>
       <img
-        src={urlFor(cover.image).width(1600).fit('max').url()}
+        src={galleryImages[0]?.src}
+        srcset={galleryImages[0]?.srcset}
+        sizes={galleryImages[0]?.sizes}
         alt={imageAlt(cover.alt, title)}
         loading={loading}
         data-entry-main

@@ -56,8 +56,13 @@ export function getVideoEmbed(url: string): VideoEmbed | null {
         autoplay: '1',
         muted: '1',
         loop: '1',
-        background: '1',
         autopause: '0',
+        controls: '0',
+        title: '0',
+        byline: '0',
+        portrait: '0',
+        dnt: '1',
+        quality: '1080p',
       });
 
       return {

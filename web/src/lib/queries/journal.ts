@@ -5,8 +5,12 @@ import { imageProjection } from './shared';
 
 const translatedJournalRef = `*[_type == "translation.metadata" && references(^._id)][0].translations[language == $language][0].value->`;
 
-/** One base document per journal entry; translations resolve via coalesce. */
-const validJournalFilter = `_type == "journal" && defined(title) && defined(slug.current) && (!defined(language) || language == $defaultLanguage)`;
+/** One base document per journal entry; translations resolve via coalesce.
+ * Spanish documents whose English original was deleted are included on the Spanish site. */
+const validJournalFilter = `_type == "journal" && defined(title) && defined(slug.current) && (!defined(language) || language == $defaultLanguage || (
+  language == $language &&
+  count(*[_type == "translation.metadata" && references(^._id)].translations[language == $defaultLanguage && defined(value->._id)]) == 0
+))`;
 
 const categoryValue = `coalesce(${translatedJournalRef}category, category)`;
 
@@ -72,7 +76,6 @@ export const relatedJournalsQuery = `*[
   ${validJournalFilter}
   && slug.current != $slug
   && !(slug.current in $excludeSlugs)
-  && !defined(coalesce(${translatedJournalRef}externalLink, externalLink))
 ] {
   ${localizedJournalCardProjection},
   "score": select(${categorySlug} == $category => 2, 0)
@@ -90,7 +93,6 @@ export const journalSlugsBySectionQuery = `*[
       && ${categorySlug} in $fallbackCategories
     )
   )
-  && !defined(coalesce(${translatedJournalRef}externalLink, externalLink))
 ] {
   "slug": coalesce(${translatedJournalRef}slug.current, slug.current)
 }`;

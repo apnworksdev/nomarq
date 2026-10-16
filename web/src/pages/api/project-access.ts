@@ -2,18 +2,16 @@ import type { APIRoute } from 'astro';
 
 import {
   buildAccessEmailHtml,
+  buildAccessNoticeHtml,
   getEmailFrom,
+  getOwnerEmail,
   getResendClient,
 } from '../../lib/email';
+import { leadInputFromRecord, validateLead } from '../../lib/lead-profile';
 
 export const prerender = false;
 
-type AccessBody = {
-  name?: string;
-  profile?: string;
-  phone?: string;
-  location?: string;
-  email?: string;
+type AccessBody = Record<string, unknown> & {
   projectTitle?: string;
   privUrl?: string;
   locale?: 'en' | 'es';
@@ -26,18 +24,12 @@ function isNonEmptyString(value: unknown): value is string {
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = (await request.json()) as AccessBody;
-    const name = body.name?.trim() ?? '';
-    const profile = body.profile?.trim() ?? '';
-    const phone = body.phone?.trim() ?? '';
-    const location = body.location?.trim() ?? '';
-    const email = body.email?.trim() ?? '';
+    const result = validateLead(leadInputFromRecord(body));
     const projectTitle = body.projectTitle?.trim() ?? '';
     const privUrl = body.privUrl?.trim() ?? '';
     const locale = body.locale === 'es' ? 'es' : 'en';
 
-    if (
-      ![name, profile, phone, location, email, projectTitle, privUrl].every(isNonEmptyString)
-    ) {
+    if (!result.ok || ![projectTitle, privUrl].every(isNonEmptyString)) {
       return new Response(JSON.stringify({ error: 'Missing required fields.' }), {
         status: 400,
         headers: { 'Content-Type': 'application/json' },
@@ -45,22 +37,38 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const resend = getResendClient();
-    const { error } = await resend.emails.send({
+    const visitor = await resend.emails.send({
       from: getEmailFrom(),
-      to: [email],
+      to: [result.lead.email],
       subject:
         locale === 'es'
           ? `Acceso privado — ${projectTitle}`
           : `Private access — ${projectTitle}`,
-      html: buildAccessEmailHtml({ name, projectTitle, privUrl, locale }),
+      html: buildAccessEmailHtml({ name: result.lead.name, projectTitle, privUrl, locale }),
     });
 
-    if (error) {
-      console.error('Resend access email error:', error);
-      return new Response(JSON.stringify({ error: error.message }), {
+    if (visitor.error) {
+      console.error('Resend access email error:', visitor.error);
+      return new Response(JSON.stringify({ error: visitor.error.message }), {
         status: 502,
         headers: { 'Content-Type': 'application/json' },
       });
+    }
+
+    const notice = await resend.emails.send({
+      from: getEmailFrom(),
+      to: [getOwnerEmail()],
+      replyTo: result.lead.email,
+      subject: `Project access — ${projectTitle}`,
+      html: buildAccessNoticeHtml({
+        lead: result.lead,
+        projectTitle,
+        privUrl,
+      }),
+    });
+
+    if (notice.error) {
+      console.error('Resend access notice error:', notice.error);
     }
 
     return new Response(JSON.stringify({ ok: true }), {

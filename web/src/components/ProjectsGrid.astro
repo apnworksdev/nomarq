@@ -3,7 +3,7 @@ import { getRelativeLocaleUrl } from 'astro:i18n';
 
 import { imageAlt } from '../lib/alt';
 import type { Locale } from '../lib/i18n';
-import { urlFor } from '../lib/image';
+import { responsiveImage } from '../lib/image';
 import { buildProjectsGridLayout } from '../lib/projects-grid';
 import type { Project } from '../lib/queries';
 import EntryCaption from './EntryCaption.astro';
@@ -40,7 +40,7 @@ const items = buildProjectsGridLayout(projects);
             {
               item.coverImage.image && (
                 <img
-                  src={urlFor(item.coverImage.image).width(1200).fit('max').url()}
+                  {...responsiveImage(item.coverImage.image, [1200, 2000, 2800], '(max-width: 820px) 100vw, 45vw')}
                   alt={imageAlt(item.coverImage.alt, item.title)}
                   loading="lazy"
                   decoding="async"
@@ -67,7 +67,7 @@ const items = buildProjectsGridLayout(projects);
                 data-preview-index={preview.imageIndex}
               >
                 <img
-                  src={urlFor(preview.image.image).width(600).fit('max').url()}
+                  {...responsiveImage(preview.image.image, [800, 1400], '(max-width: 820px) 50vw, 20vw')}
                   alt={imageAlt(preview.image.alt, item.title, { index: preview.imageIndex })}
                   loading="lazy"
                   decoding="async"

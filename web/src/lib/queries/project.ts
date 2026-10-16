@@ -6,7 +6,7 @@ import {
   validProjectFilter,
 } from './localized';
 
-export const projectsQuery = `*[${validProjectFilter}] | order(title asc) {
+export const projectsQuery = `*[${validProjectFilter}] | order(orderRank asc, title asc) {
   ${localizedProjectListProjection}
 }`;
 

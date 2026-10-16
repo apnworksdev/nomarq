@@ -1,8 +1,9 @@
 ---
+import InlineText from './InlineText.astro';
 import type { JournalEntry, JournalSection } from '../lib/journal';
-import { getJournalCategoryDisplayLabel, getJournalEntryHref, isExternalJournalLink } from '../lib/journal';
+import { getJournalCategoryDisplayLabel, getJournalEntryHref, isExternalHref } from '../lib/journal';
 import type { Locale } from '../lib/i18n';
-import { urlFor } from '../lib/image';
+import { responsiveImage } from '../lib/image';
 import { getJournalCategoryLabel } from '../lib/ui';
 import '../styles/components/projects-list.css';
 
@@ -23,7 +24,7 @@ const { entries, locale, section } = Astro.props;
       const categoryLabel = getJournalCategoryDisplayLabel(locale, entry, getJournalCategoryLabel);
       const entryId = entry._id;
       const href = getJournalEntryHref(locale, entry);
-      const external = href ? isExternalJournalLink(href) : false;
+      const external = href ? isExternalHref(href) : false;
 
       return (
         <li
@@ -35,7 +36,7 @@ const { entries, locale, section } = Astro.props;
             coverImage?.image && (
               <div class="projects-list-thumb" aria-hidden="true">
                 <img
-                  src={urlFor(coverImage.image).width(400).fit('max').url()}
+                  {...responsiveImage(coverImage.image, [800, 1400], '25vw')}
                   alt=""
                   loading="lazy"
                   decoding="async"
@@ -52,12 +53,9 @@ const { entries, locale, section } = Astro.props;
                 href={href}
                 class="projects-list-title"
                 data-journal-list-title
-                {...(!external
-                  ? {
-                      'data-entry-close-link': true,
-                      'data-entry-close-origin': section,
-                    }
-                  : { target: '_blank', rel: 'noopener noreferrer' })}
+                {...(external
+                  ? { target: '_blank', rel: 'noopener noreferrer' }
+                  : { 'data-entry-close-link': true, 'data-entry-close-origin': section })}
               >
                 {entry.title}
               </a>
@@ -78,7 +76,7 @@ const { entries, locale, section } = Astro.props;
           {
             description && (
               <p class="projects-list-description" data-journal-list-description>
-                {description}
+                <InlineText text={description} />
               </p>
             )
           }

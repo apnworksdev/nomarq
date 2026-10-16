@@ -1,8 +1,10 @@
 ---
 import { imageAlt } from '../lib/alt';
+import InlineText from './InlineText.astro';
+import LeadFields from './LeadFields.astro';
 import { splitParagraphs } from '../lib/entry-detail';
 import type { DeeperSection } from '../lib/queries';
-import { urlFor } from '../lib/image';
+import { imageUrl } from '../lib/image';
 import type { UiCopy } from '../lib/ui';
 
 type PreparedSection = {
@@ -34,7 +36,7 @@ const prepared: PreparedSection[] = sections
         }
 
         return {
-          src: urlFor(image.image).width(1600).fit('max').url(),
+          src: imageUrl(image.image, 2800),
           alt: imageAlt(image.alt, entryTitle, { index: imageIndex }),
         };
       })
@@ -76,7 +78,7 @@ const prepared: PreparedSection[] = sections
         prepared.map((section) => (
           <template data-project-deeper-description={section.id}>
             {section.paragraphs.map((paragraph) => (
-              <p class="entry-overlay-description-paragraph">{paragraph}</p>
+              <p class="entry-overlay-description-paragraph"><InlineText text={paragraph} /></p>
             ))}
           </template>
         ))
@@ -99,26 +101,7 @@ const prepared: PreparedSection[] = sections
             data-project-locale={locale}
           >
             <div class="project-deeper-fields">
-              <label class="project-deeper-field">
-                <input type="text" name="name" required autocomplete="name" placeholder=" " />
-                <span class="project-deeper-field-label">{copy.name}</span>
-              </label>
-              <label class="project-deeper-field">
-                <input type="text" name="profile" required autocomplete="organization-title" placeholder=" " />
-                <span class="project-deeper-field-label">{copy.profile}</span>
-              </label>
-              <label class="project-deeper-field">
-                <input type="tel" name="phone" required autocomplete="tel" placeholder=" " />
-                <span class="project-deeper-field-label">{copy.phone}</span>
-              </label>
-              <label class="project-deeper-field">
-                <input type="text" name="location" required autocomplete="address-level2" placeholder=" " />
-                <span class="project-deeper-field-label">{copy.location}</span>
-              </label>
-              <label class="project-deeper-field">
-                <input type="email" name="email" required autocomplete="email" placeholder=" " />
-                <span class="project-deeper-field-label">{copy.email}</span>
-              </label>
+              <LeadFields locale={locale} idPrefix="project-lead" variant="project" />
             </div>
             <button type="submit" class="project-deeper-access">
               {copy.access}

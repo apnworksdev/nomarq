@@ -95,22 +95,43 @@ export function getJournalSectionFromPath(pathname: string): JournalSection | nu
   return null;
 }
 
-export function getJournalEntryHref(
-  locale: Locale,
-  entry: Pick<JournalEntry, 'slug' | 'externalLink' | 'category' | 'categorySection'>,
-): string | undefined {
+type JournalLinkEntry = Pick<JournalEntry, 'slug' | 'category' | 'categorySection'> & {
+  externalLink?: string;
+  description?: string;
+  images?: { image?: unknown }[];
+  coverImage?: { image?: unknown };
+};
+
+/** The entry page has something to show besides the list line. */
+export function hasJournalEntryContent(entry: JournalLinkEntry): boolean {
+  if (entry.description?.trim()) {
+    return true;
+  }
+
+  if (entry.images?.some((image) => image.image)) {
+    return true;
+  }
+
+  return Boolean(entry.coverImage?.image);
+}
+
+export function isExternalHref(href: string): boolean {
+  return /^https?:\/\//.test(href);
+}
+
+export function getJournalEntryHref(locale: Locale, entry: JournalLinkEntry): string | undefined {
   const externalLink = entry.externalLink?.trim();
 
-  if (externalLink) {
+  if (externalLink && isExternalHref(externalLink) && !hasJournalEntryContent(entry)) {
     return externalLink;
   }
 
-  if (entry.slug) {
-    const basePath = getJournalBasePath(entry.category, entry.categorySection);
-    return getLocalizedPath(locale, `${basePath}/${entry.slug}`);
+  if (!entry.slug) {
+    return undefined;
   }
 
-  return undefined;
+  const basePath = getJournalBasePath(entry.category, entry.categorySection);
+  return getLocalizedPath(locale, `${basePath}/${entry.slug}`);
 }
 
 export function getJournalCategoryDisplayLabel(
@@ -125,8 +146,4 @@ export function getJournalCategoryDisplayLabel(
   }
 
   return entry.category ? fallback(locale, entry.category) : '';
-}
-
-export function isExternalJournalLink(href: string): boolean {
-  return /^https?:\/\//.test(href);
 }

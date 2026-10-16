@@ -1,30 +1,23 @@
-const STORAGE_KEY = 'nomarq-deeper-access';
+import { initLeadForm, leadFromForm, restoreLeadForm } from './lead-form';
+import { validateLead, type LeadRecord } from './lead-profile';
 
-export type DeeperAccessFields = {
-  name: string;
-  profile: string;
-  phone: string;
-  location: string;
-  email: string;
-};
+const STORAGE_KEY = 'nomarq-deeper-access-v2';
 
-const FIELD_KEYS = ['name', 'profile', 'phone', 'location', 'email'] as const;
-
-function readStoredFields(): Partial<DeeperAccessFields> {
+function readStoredFields(): Partial<LeadRecord> {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
       return {};
     }
 
-    const parsed = JSON.parse(raw) as Partial<DeeperAccessFields>;
+    const parsed = JSON.parse(raw) as Partial<LeadRecord>;
     return parsed && typeof parsed === 'object' ? parsed : {};
   } catch {
     return {};
   }
 }
 
-function writeStoredFields(fields: DeeperAccessFields) {
+function writeStoredFields(fields: LeadRecord) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(fields));
   } catch {
@@ -32,20 +25,27 @@ function writeStoredFields(fields: DeeperAccessFields) {
   }
 }
 
-function collectFields(form: HTMLFormElement): DeeperAccessFields {
-  const data = new FormData(form);
+function storedLead(stored: Partial<LeadRecord>): LeadRecord | null {
+  const result = validateLead({
+    profile: stored.profile ?? '',
+    profileOther: stored.profileOther ?? '',
+    name: stored.name ?? '',
+    lastNames: stored.lastNames ?? '',
+    email: stored.email ?? '',
+    phonePrefix: stored.phonePrefix ?? '',
+    phoneNumber: stored.phoneNumber ?? '',
+    city: stored.city ?? '',
+    country: stored.country ?? '',
+    organization: stored.organization ?? '',
+    role: stored.role ?? '',
+    roleOther: stored.roleOther ?? '',
+    sector: stored.sector ?? '',
+    origin: stored.origin ?? '',
+    originSocial: stored.originSocial ?? '',
+    originOther: stored.originOther ?? '',
+  });
 
-  return {
-    name: String(data.get('name') ?? '').trim(),
-    profile: String(data.get('profile') ?? '').trim(),
-    phone: String(data.get('phone') ?? '').trim(),
-    location: String(data.get('location') ?? '').trim(),
-    email: String(data.get('email') ?? '').trim(),
-  };
-}
-
-function fieldsAreComplete(fields: DeeperAccessFields) {
-  return FIELD_KEYS.every((key) => fields[key].length > 0);
+  return result.ok ? result.lead : null;
 }
 
 function toAbsoluteUrl(path: string) {
@@ -97,20 +97,14 @@ function setOverlayDescription(hero: HTMLElement, sectionId: string) {
 }
 
 function initAccessForm(form: HTMLFormElement) {
-  const stored = readStoredFields();
-  FIELD_KEYS.forEach((key) => {
-    const input = form.elements.namedItem(key);
-    if (input instanceof HTMLInputElement && stored[key]) {
-      input.value = stored[key] ?? '';
-    }
-  });
+  const cleanupLead = initLeadForm(form);
+  restoreLeadForm(form, readStoredFields());
 
   const onSubmit = async (event: Event) => {
     event.preventDefault();
-    const fields = collectFields(form);
+    const fields = leadFromForm(form);
 
-    if (!fieldsAreComplete(fields)) {
-      form.reportValidity();
+    if (!fields) {
       return;
     }
 
@@ -151,6 +145,7 @@ function initAccessForm(form: HTMLFormElement) {
 
   return () => {
     form.removeEventListener('submit', onSubmit);
+    cleanupLead();
   };
 }
 
@@ -252,16 +247,9 @@ function initSectionsPanel(root: HTMLElement) {
       return;
     }
 
-    const stored = readStoredFields();
-    const fields: DeeperAccessFields = {
-      name: stored.name?.trim() ?? '',
-      profile: stored.profile?.trim() ?? '',
-      phone: stored.phone?.trim() ?? '',
-      location: stored.location?.trim() ?? '',
-      email: stored.email?.trim() ?? '',
-    };
+    const fields = storedLead(readStoredFields());
 
-    if (!fieldsAreComplete(fields)) {
+    if (!fields) {
       console.error('Missing access form data for file request.');
       return;
     }

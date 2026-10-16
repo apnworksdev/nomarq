@@ -21,6 +21,7 @@ import {
   getJournalSectionPath,
 } from '../lib/journal';
 import { getNavLabel, getUi } from '../lib/ui';
+import Logo from './Logo.astro';
 import '../styles/components/header.css';
 
 const pathname = Astro.url.pathname;
@@ -137,7 +138,9 @@ const closeHref = getLocalizedPath(
 
   <div class="header-logo">
     <h2 class="header-logo-text">
-      <a href={getRelativeLocaleUrl(locale, '/')} data-header-logo>nomarq</a>
+      <a href={getRelativeLocaleUrl(locale, '/')} data-header-logo aria-label="nomarq">
+        <Logo />
+      </a>
     </h2>
   </div>
 

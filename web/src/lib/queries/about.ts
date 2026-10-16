@@ -16,6 +16,7 @@ const journalEntryFields = `
   year,
   "slug": coalesce(${translatedJournalRef}slug.current, slug.current),
   externalLink,
+  "description": coalesce(${translatedJournalRef}description, description),
   "coverImage": coalesce(${translatedJournalRef}images, images)[0] ${imageProjection}
 `;
 

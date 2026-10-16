@@ -24,6 +24,7 @@ export type ProjectCard = {
 
 export type Project = ProjectCard & {
   description?: string;
+  shortDescription?: string;
   use?: LocalizedUse[];
   year?: string | number;
   collaborators?: string;

@@ -36,34 +36,17 @@
   column-gap: var(--columns-gap);
 }
 
-html[data-page='home'] {
-  scroll-snap-type: y mandatory;
-}
-
-html.mobile-menu-open[data-page='home'] {
-  scroll-snap-type: none;
-}
-
 html[data-home-scroll-restore] {
   scroll-behavior: auto !important;
 }
 
-/* Let the footer be a valid snap destination past the last section. */
-html[data-page='home'] .footer {
-  scroll-snap-align: end;
-  scroll-snap-stop: always;
-}
-
 .home-section {
-  /* svh keeps section height stable when mobile browser chrome shows/hides,
-     so scroll-snap + active-section detection stay reliable. */
+  /* svh keeps section height stable when mobile browser chrome shows/hides. */
   --home-expand-duration: 0.5s;
   --home-expand-timing: ease;
 
   height: 100svh;
   grid-column: var(--home-start-column, 1) / span var(--home-span, 5);
-  scroll-snap-align: center;
-  scroll-snap-stop: always;
   position: relative;
 }
 

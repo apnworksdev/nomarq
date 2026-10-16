@@ -2,6 +2,7 @@ body {
   font-family: var(--font-family);
   font-size: var(--font-size);
   font-weight: var(--font-weight);
+  font-feature-settings: "ss01" 1, "ss02" 1;
   line-height: var(--line-height);
   letter-spacing: var(--letter-spacing);
   min-height: 100dvh;

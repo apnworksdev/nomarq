@@ -2,7 +2,7 @@
 import EntryCaption from './EntryCaption.astro';
 import { imageAlt } from '../lib/alt';
 import type { RelatedEntryItem } from '../lib/entry-detail';
-import { urlFor } from '../lib/image';
+import { responsiveImage } from '../lib/image';
 
 interface Props {
   entries: RelatedEntryItem[];
@@ -16,7 +16,7 @@ const { entries, heading, titleId = 'related-entries-title' } = Astro.props;
 {
   entries.length > 0 && (
     <section class="project-related" aria-labelledby={titleId}>
-      <h2 id={titleId} class="project-related-title">{heading}</h2>
+      <h2 id={titleId} class="project-related-title">( {heading} )</h2>
       <ul class="project-related-list">
         {
           entries.map((entry) => (
@@ -26,7 +26,7 @@ const { entries, heading, titleId = 'related-entries-title' } = Astro.props;
                   entry.coverImage?.image && (
                     <figure class="project-related-media">
                       <img
-                        src={urlFor(entry.coverImage.image).width(900).fit('max').url()}
+                        {...responsiveImage(entry.coverImage.image, [1000, 1800], '(max-width: 820px) 100vw, 30vw')}
                         alt={imageAlt(entry.coverImage.alt, entry.title)}
                         loading="lazy"
                       />

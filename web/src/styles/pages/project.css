@@ -114,6 +114,14 @@
   row-gap: 14px;
 }
 
+@media (min-width: 821px) {
+  .project-deeper-fields {
+    max-height: calc(100dvh - var(--header-offset) - 180px);
+    overflow-y: auto;
+    scrollbar-width: none;
+  }
+}
+
 .project-deeper-field {
   display: grid;
   position: relative;
@@ -287,7 +295,8 @@
     width: 100%;
   }
 
-  .project-hero .entry-overlay.project-detail .entry-overlay-description {
+  .project-hero .entry-overlay.project-detail .entry-overlay-description,
+  .project-hero .entry-overlay.project-detail .entry-overlay-link {
     opacity: 0;
     visibility: hidden;
     position: absolute;
@@ -520,6 +529,18 @@
   .project-hero.is-info-open .entry-overlay.project-detail .entry-overlay-description:empty,
   .project-hero.is-info-open .entry-overlay.project-detail .entry-overlay-description.is-empty {
     display: none;
+  }
+
+  .project-hero.is-info-open .entry-overlay.project-detail .entry-overlay-link {
+    display: block;
+    opacity: 1;
+    visibility: visible;
+    position: static;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    padding: 0;
+    pointer-events: auto;
   }
 
   .project-deeper-slide {
