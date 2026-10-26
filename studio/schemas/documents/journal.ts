@@ -1,3 +1,4 @@
+import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-list';
 import { defineField, defineType } from 'sanity';
 
 import { englishDocumentReferenceFilter } from '../../lib/referenceFilters';
@@ -8,8 +9,10 @@ export default defineType({
   name: 'journal',
   title: 'Expanded Practice',
   type: 'document',
+  orderings: [orderRankOrdering],
   fields: [
     languageField,
+    orderRankField({ type: 'journal' }),
     defineField({
       name: 'title',
       title: 'Title',

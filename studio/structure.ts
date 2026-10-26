@@ -1,3 +1,4 @@
+import { orderableDocumentListDeskItem } from '@sanity/orderable-document-list';
 import type { StructureResolver } from 'sanity/structure';
 
 import { defaultLanguage } from './lib/i18n';
@@ -29,7 +30,7 @@ const localizedDocumentList = (
         .defaultOrdering(ordering),
     );
 
-export const structure: StructureResolver = (S) =>
+export const structure: StructureResolver = (S, context) =>
   S.list()
     .title('Content')
     .items([
@@ -49,7 +50,27 @@ export const structure: StructureResolver = (S) =>
         ),
       S.divider(),
       localizedDocumentList(S, 'project', 'Projects', [{ field: 'year', direction: 'desc' }]),
+      orderableDocumentListDeskItem({
+        type: 'project',
+        title: 'Projects Order',
+        id: 'orderable-projects',
+        filter: '(!defined(language) || language == $lang)',
+        params: { lang: defaultLanguage },
+        createIntent: false,
+        S,
+        context,
+      }),
       localizedDocumentList(S, 'journal', 'Expanded Practice', [{ field: 'year', direction: 'desc' }]),
+      orderableDocumentListDeskItem({
+        type: 'journal',
+        title: 'Expanded Practice Order',
+        id: 'orderable-journals',
+        filter: '(!defined(language) || language == $lang)',
+        params: { lang: defaultLanguage },
+        createIntent: false,
+        S,
+        context,
+      }),
       S.divider(),
       S.listItem()
         .title('People')

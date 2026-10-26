@@ -1,3 +1,4 @@
+import { orderRankField, orderRankOrdering } from '@sanity/orderable-document-list';
 import { defineField, defineType } from 'sanity';
 
 import { englishDocumentReferenceFilter } from '../../lib/referenceFilters';
@@ -12,8 +13,10 @@ export default defineType({
     { name: 'main', title: 'Main', default: true },
     { name: 'deeper', title: 'Deeper Level' },
   ],
+  orderings: [orderRankOrdering],
   fields: [
     languageField,
+    orderRankField({ type: 'project' }),
     defineField({
       name: 'title',
       title: 'Title',

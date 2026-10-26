@@ -58,7 +58,7 @@ export const journalsBySectionQuery = `*[
       && ${categorySlug} in $fallbackCategories
     )
   )
-] | order(year desc, title asc) {
+] | order(orderRank asc, title asc) {
   ${localizedJournalListProjection}
 }`;
 
