@@ -34,6 +34,11 @@
   cursor: pointer;
 }
 
+.lead-place-status {
+  padding: 4px 0;
+  color: var(--gray-color);
+}
+
 .lead-field-note {
   grid-row: 2;
   font-size: var(--font-size-small);

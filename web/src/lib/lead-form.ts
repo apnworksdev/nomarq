@@ -16,6 +16,12 @@ type PlaceHit = {
 };
 
 const PLACE_TYPES = new Set(['city', 'town', 'village', 'municipality', 'hamlet', 'locality']);
+const PHOTON_LANGS = new Set(['default', 'de', 'en', 'fr']);
+
+function photonLanguage(language: string) {
+  const code = language.trim().toLowerCase().split('-')[0] ?? '';
+  return PHOTON_LANGS.has(code) ? code : 'default';
+}
 
 function formControl(form: HTMLFormElement, name: string) {
   const control = form.elements.namedItem(name);
@@ -139,7 +145,7 @@ async function searchPlaces(query: string, signal: AbortSignal): Promise<PlaceHi
   const url = new URL('https://photon.komoot.io/api/');
   url.searchParams.set('q', query);
   url.searchParams.set('limit', '8');
-  url.searchParams.set('lang', document.documentElement.lang || 'en');
+  url.searchParams.set('lang', photonLanguage(document.documentElement.lang || 'en'));
 
   const response = await fetch(url, { signal });
   if (!response.ok) return [];
@@ -181,6 +187,20 @@ function initPlaceField(form: HTMLFormElement) {
     list.hidden = true;
     list.replaceChildren();
     input.setAttribute('aria-expanded', 'false');
+    input.setAttribute('aria-busy', 'false');
+  };
+
+  const showStatus = (text: string, busy: boolean) => {
+    list.replaceChildren();
+    const item = document.createElement('li');
+    item.className = 'lead-place-status';
+    item.setAttribute('role', 'status');
+    item.textContent = text;
+    list.append(item);
+    positionList();
+    list.hidden = false;
+    input.setAttribute('aria-expanded', 'true');
+    input.setAttribute('aria-busy', busy ? 'true' : 'false');
   };
 
   const positionList = () => {
@@ -203,11 +223,20 @@ function initPlaceField(form: HTMLFormElement) {
   };
 
   const showHits = (hits: PlaceHit[]) => {
-    list.replaceChildren();
-    if (hits.length === 0 || field.hidden) {
+    if (field.hidden || document.activeElement !== input) {
       hideList();
       return;
     }
+
+    if (hits.length === 0) {
+      const emptyLabel = input.dataset.leadPlaceEmpty ?? '';
+      if (emptyLabel) showStatus(emptyLabel, false);
+      else hideList();
+      return;
+    }
+
+    list.replaceChildren();
+    input.setAttribute('aria-busy', 'false');
 
     hits.forEach((hit) => {
       const item = document.createElement('li');
@@ -240,6 +269,9 @@ function initPlaceField(form: HTMLFormElement) {
       return;
     }
 
+    const searchingLabel = input.dataset.leadPlaceSearching ?? '';
+    if (searchingLabel) showStatus(searchingLabel, true);
+
     timer = window.setTimeout(async () => {
       const next = new AbortController();
       request = next;
@@ -247,6 +279,11 @@ function initPlaceField(form: HTMLFormElement) {
         showHits(await searchPlaces(query, next.signal));
       } catch (error) {
         if (error instanceof DOMException && error.name === 'AbortError') return;
+        const emptyLabel = input.dataset.leadPlaceEmpty ?? '';
+        if (emptyLabel && document.activeElement === input && !field.hidden) {
+          showStatus(emptyLabel, false);
+          return;
+        }
         hideList();
       }
     }, 250);

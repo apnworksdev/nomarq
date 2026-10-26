@@ -33,6 +33,8 @@ type UiStrings = {
     phoneNumber: string;
     phoneInvalid: string;
     city: string;
+    placeSearching: string;
+    placeEmpty: string;
     placeInvalid: string;
     organization: string;
     role: string;
@@ -149,6 +151,8 @@ export const ui = {
       phoneNumber: 'Number',
       phoneInvalid: 'Enter the prefix and number.',
       city: 'City (+ country)',
+      placeSearching: 'Searching…',
+      placeEmpty: 'No cities.',
       placeInvalid: 'Choose a city from the list.',
       organization: 'Company / Entity',
       role: 'Role',
@@ -305,6 +309,8 @@ export const ui = {
       phoneNumber: 'Número',
       phoneInvalid: 'Introduce el prefijo y el número.',
       city: 'Ciudad (+ país)',
+      placeSearching: 'Buscando…',
+      placeEmpty: 'Ninguna ciudad.',
       placeInvalid: 'Elige una ciudad de la lista.',
       organization: 'Empresa / Entidad',
       role: 'Cargo',

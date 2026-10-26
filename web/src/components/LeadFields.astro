@@ -94,6 +94,8 @@ const id = (name: string) => `${idPrefix}-${name}`;
     aria-expanded="false"
     aria-controls={id('place-list')}
     data-lead-place-input
+    data-lead-place-searching={copy.placeSearching}
+    data-lead-place-empty={copy.placeEmpty}
     data-lead-invalid={copy.placeInvalid}
     disabled
   />
