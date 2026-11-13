@@ -47,6 +47,36 @@
   height: auto;
   display: block;
 }
+
+/* Public: this wrapper is invisible. Priv desktop: one sticky viewport, same layout as public. */
+.project-priv-frame {
+  display: contents;
+}
+
+@media (min-width: 821px) {
+  .project-hero.is-priv .project-media--deeper {
+    height: auto;
+    grid-row: 1;
+  }
+
+  .project-hero.is-priv .project-deeper-scroll {
+    height: auto;
+    overflow: visible;
+  }
+
+  .project-hero.is-priv .project-priv-frame {
+    display: block;
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    grid-column: 1 / -1;
+    grid-row: 1;
+    align-self: start;
+    z-index: 40;
+    pointer-events: none;
+  }
+}
+
 .project-technical {
   position: absolute;
   top: 0;

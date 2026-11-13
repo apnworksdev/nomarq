@@ -28,7 +28,7 @@ export default defineType({
       name: 'selected',
       title: 'Selected',
       description:
-        'Selected projects appear in the grid and the list. Unselected projects appear only in the list.',
+        'Selected projects appear in the home highlights (if linked), the grid, and the list. Unselected projects appear only in the list — per language.',
       type: 'boolean',
       initialValue: true,
       group: 'main',
@@ -89,7 +89,7 @@ export default defineType({
       name: 'images',
       title: 'Images',
       description:
-        'The first image is used for grids and home sections. Detail pages show up to 6 thumbnails at a time; clicking one brings it to the front.',
+        'The first image is used for grids and home sections. Detail pages show up to 6 thumbnails at a time; clicking one brings it to the front. If this language has no images, the site reuses the other language’s gallery automatically.',
       type: 'array',
       of: [{ type: 'imageWithAlt' }],
       group: 'main',
@@ -114,7 +114,7 @@ export default defineType({
       name: 'deeperSections',
       title: 'Deeper sections',
       description:
-        'Sections, descriptions, and images for the priv page (/projects/[slug]/priv). The access form on the public project page links here.',
+        'Sections, descriptions, and images for the priv page (/projects/[slug]/priv). The access form on the public project page links here. If this language has no deeper sections with images, the other language’s deeper content is reused for the gallery; translate section names/descriptions when you need different copy.',
       type: 'array',
       of: [{ type: 'deeperSection' }],
       group: 'deeper',

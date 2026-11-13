@@ -31,6 +31,7 @@ const localizedHomeProjectProjection = `
       short
     }
   },
+  "selected": coalesce(${translatedProjectRef}selected, selected, true),
   "images": coalesce(
     select(count(${translatedProjectRef}images[defined(image.asset)]) > 0 => ${translatedProjectRef}images),
     select(count(images[defined(image.asset)]) > 0 => images),

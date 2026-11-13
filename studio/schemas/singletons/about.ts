@@ -1,6 +1,7 @@
 import { defineField, defineType } from 'sanity';
 
 import { languageField } from '../fields/language';
+import { legacyOrderRankField } from '../fields/legacyOrderRank';
 
 export default defineType({
   name: 'about',
@@ -15,6 +16,7 @@ export default defineType({
   ],
   fields: [
     languageField,
+    legacyOrderRankField,
     defineField({
       name: 'videoUrl',
       title: 'Video URL',

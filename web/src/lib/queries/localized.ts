@@ -3,6 +3,15 @@ import { imageProjection } from './shared';
 /** GROQ path to the translated project document for the requested language. */
 export const translatedProjectRef = `*[_type == "translation.metadata" && references(^._id)][0].translations[language == $language][0].value->`;
 
+/**
+ * Prefer the translation's images when it has any; otherwise inherit the base
+ * document's gallery so editors only maintain visuals once (# shared media).
+ */
+export const localizedProjectImages = `coalesce(
+  select(count(${translatedProjectRef}images[defined(image.asset)]) > 0 => ${translatedProjectRef}images),
+  select(count(images[defined(image.asset)]) > 0 => images)
+)`;
+
 /** Join referenced name documents into a comma-separated string. */
 export function joinReferencedNames(translatedRef: string, field: string) {
   const value = `coalesce(${translatedRef}${field}, ${field})`;
@@ -32,7 +41,7 @@ export const localizedProjectListProjection = `
       short
     }
   },
-  "images": coalesce(${translatedProjectRef}images, images)[] ${imageProjection},
+  "images": ${localizedProjectImages}[] ${imageProjection},
   "use": coalesce(${translatedProjectRef}use, use)[]->{
     titleEn,
     titleEs,
@@ -52,7 +61,7 @@ export const localizedProjectCardProjection = `
       short
     }
   },
-  "coverImage": coalesce(${translatedProjectRef}images, images)[0] ${imageProjection}
+  "coverImage": ${localizedProjectImages}[0] ${imageProjection}
 `;
 
 export const localizedProjectDetailProjection = `
@@ -61,7 +70,10 @@ export const localizedProjectDetailProjection = `
   "year": coalesce(${translatedProjectRef}year, year),
   "collaborators": ${joinReferencedNames(translatedProjectRef, 'collaborators')},
   "photography": ${joinReferencedNames(translatedProjectRef, 'photography')},
-  "deeperSections": coalesce(${translatedProjectRef}deeperSections, deeperSections)[] {
+  "deeperSections": coalesce(
+    select(count(${translatedProjectRef}deeperSections[defined(name) && name != "" && count(images[defined(image.asset)]) > 0]) > 0 => ${translatedProjectRef}deeperSections),
+    deeperSections
+  )[] {
     name,
     description,
     "images": images[] ${imageProjection}

@@ -35,6 +35,10 @@ function uniqueProjects(projects: ProjectCard[], excludeSlugs: Set<string>): Pro
   const result: ProjectCard[] = [];
 
   for (const project of projects) {
+    if (!project) {
+      continue;
+    }
+
     const resolved = resolveProjectCard(project);
     if (!resolved || excludeSlugs.has(resolved.slug) || seen.has(resolved.slug)) {
       continue;
@@ -76,15 +80,17 @@ export async function getRelatedProjects(
 
   const related = [...manual];
 
-  for (const item of automatic) {
+  for (const item of automatic ?? []) {
     if (related.length >= RELATED_PROJECT_COUNT) {
       break;
     }
 
-    if (!excludeSlugs.has(item.slug)) {
-      related.push(item);
-      excludeSlugs.add(item.slug);
+    if (!item?.slug || excludeSlugs.has(item.slug)) {
+      continue;
     }
+
+    related.push(item);
+    excludeSlugs.add(item.slug);
   }
 
   return related.slice(0, RELATED_PROJECT_COUNT);

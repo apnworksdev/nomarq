@@ -125,116 +125,118 @@ const hasInfo = technicalRows.length > 0 || Boolean(description) || showAccessFo
       )
     }
 
-    {
-      (technicalRows.length > 0 || showAccessForm || showPrivPanel) && (
-        <section class="project-technical" aria-label={technicalTitle}>
-          <div class="project-technical-inner">
-            {
-              technicalRows.length > 0 && (
-                <div class="project-technical-main">
-                  <h2 id="entry-technical-title" class="project-technical-title">
-                    {technicalTitle}
-                  </h2>
-                  <dl class="project-technical-list">
-                    {
-                      technicalRows.map((row) => (
-                        <div class="project-technical-row">
-                          <dt>{row.label}</dt>
-                          <dd>{row.value}</dd>
-                        </div>
-                      ))
-                    }
-                  </dl>
-                </div>
-              )
-            }
-
-            {
-              showAccessForm && deeperCopy && privHref && (
-                <ProjectDeeper
-                  sections={preparedDeeperSections}
-                  entryTitle={entryTitle}
-                  copy={deeperCopy}
-                  mode="access"
-                  privHref={privHref}
-                  locale={locale}
-                />
-              )
-            }
-
-            {
-              showPrivPanel && deeperCopy && (
-                <ProjectDeeper
-                  sections={preparedDeeperSections}
-                  entryTitle={entryTitle}
-                  copy={deeperCopy}
-                  mode="sections"
-                  privHref={privHref}
-                  publicHref={publicHref}
-                  locale={locale}
-                />
-              )
-            }
-          </div>
-        </section>
-      )
-    }
-
-    <div class="entry-overlay entry-layout-overlay entry-layout-overlay--anchored is-expanded project-detail">
+    <div class="project-priv-frame">
       {
-        sectionTypeLabel && (
-          <div class="entry-overlay-type">
-            <p class="entry-overlay-type-label">{sectionTypeLabel}</p>
-          </div>
+        (technicalRows.length > 0 || showAccessForm || showPrivPanel) && (
+          <section class="project-technical" aria-label={technicalTitle}>
+            <div class="project-technical-inner">
+              {
+                technicalRows.length > 0 && (
+                  <div class="project-technical-main">
+                    <h2 id="entry-technical-title" class="project-technical-title">
+                      {technicalTitle}
+                    </h2>
+                    <dl class="project-technical-list">
+                      {
+                        technicalRows.map((row) => (
+                          <div class="project-technical-row">
+                            <dt>{row.label}</dt>
+                            <dd>{row.value}</dd>
+                          </div>
+                        ))
+                      }
+                    </dl>
+                  </div>
+                )
+              }
+
+              {
+                showAccessForm && deeperCopy && privHref && (
+                  <ProjectDeeper
+                    sections={preparedDeeperSections}
+                    entryTitle={entryTitle}
+                    copy={deeperCopy}
+                    mode="access"
+                    privHref={privHref}
+                    locale={locale}
+                  />
+                )
+              }
+
+              {
+                showPrivPanel && deeperCopy && (
+                  <ProjectDeeper
+                    sections={preparedDeeperSections}
+                    entryTitle={entryTitle}
+                    copy={deeperCopy}
+                    mode="sections"
+                    privHref={privHref}
+                    publicHref={publicHref}
+                    locale={locale}
+                  />
+                )
+              }
+            </div>
+          </section>
         )
       }
 
-      <div class="entry-overlay-detail entry-layout-detail">
-        <span class="entry-overlay-detail-trigger">
-          <EntryCaption title={entryTitle} place={captionPlace} country={captionCountry} />
-        </span>
+      <div class="entry-overlay entry-layout-overlay entry-layout-overlay--anchored is-expanded project-detail">
         {
-          showOverlayDescription && (
-            <div
-              class:list={['entry-overlay-description', { 'is-empty': descriptionParagraphs.length === 0 }]}
-              data-project-deeper-overlay-description={showPrivPanel ? '' : undefined}
-            >
-              {
-                descriptionParagraphs.map((paragraph) => (
-                  <p class="entry-overlay-description-paragraph"><InlineText text={paragraph} /></p>
-                ))
-              }
+          sectionTypeLabel && (
+            <div class="entry-overlay-type">
+              <p class="entry-overlay-type-label">{sectionTypeLabel}</p>
             </div>
           )
         }
+
+        <div class="entry-overlay-detail entry-layout-detail">
+          <span class="entry-overlay-detail-trigger">
+            <EntryCaption title={entryTitle} place={captionPlace} country={captionCountry} />
+          </span>
+          {
+            showOverlayDescription && (
+              <div
+                class:list={['entry-overlay-description', { 'is-empty': descriptionParagraphs.length === 0 }]}
+                data-project-deeper-overlay-description
+              >
+                {
+                  descriptionParagraphs.map((paragraph) => (
+                    <p class="entry-overlay-description-paragraph"><InlineText text={paragraph} /></p>
+                  ))
+                }
+              </div>
+            )
+          }
+        </div>
+
+        {
+          externalHref && externalLabel && (
+            <a
+              class="entry-overlay-link"
+              href={externalHref}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {externalLabel}
+            </a>
+          )
+        }
+
+        {
+          hasInfo && (
+            <button
+              type="button"
+              class="entry-info-toggle"
+              data-entry-info-toggle
+              aria-expanded="false"
+            >
+              <span data-entry-info-toggle-label>{informationLabel}</span>
+              <span data-entry-info-toggle-sign aria-hidden="true">( + )</span>
+            </button>
+          )
+        }
       </div>
-
-      {
-        externalHref && externalLabel && (
-          <a
-            class="entry-overlay-link"
-            href={externalHref}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {externalLabel}
-          </a>
-        )
-      }
-
-      {
-        hasInfo && (
-          <button
-            type="button"
-            class="entry-info-toggle"
-            data-entry-info-toggle
-            aria-expanded="false"
-          >
-            <span data-entry-info-toggle-label>{informationLabel}</span>
-            <span data-entry-info-toggle-sign aria-hidden="true">( + )</span>
-          </button>
-        )
-      }
     </div>
   </article>
 

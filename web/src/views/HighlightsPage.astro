@@ -1,6 +1,6 @@
 ---
 import HomeSection from '../components/HomeSection.astro';
-import { getHomeSectionHref, getHomeSectionItem } from '../lib/home';
+import { getHomeSectionHref, isHomeSectionVisible } from '../lib/home';
 import { HOME_SCROLL_RESTORE_KEY } from '../lib/home-scroll';
 import { defaultLocale, type Locale } from '../lib/i18n';
 import { getLocalizedPath } from '../lib/i18n';
@@ -21,7 +21,7 @@ const home = await sanity.fetch<HomeDocument | null>(homeQuery, {
   language: locale,
   defaultLanguage: defaultLocale,
 });
-const sections = (home?.sections ?? []).filter((section) => getHomeSectionItem(section));
+const sections = (home?.sections ?? []).filter(isHomeSectionVisible);
 ---
 
 <Layout title="Nomarq" page="home">

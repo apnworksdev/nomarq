@@ -17,10 +17,30 @@ type PlaceHit = {
 
 const PLACE_TYPES = new Set(['city', 'town', 'village', 'municipality', 'hamlet', 'locality']);
 const PHOTON_LANGS = new Set(['default', 'de', 'en', 'fr']);
+const PLACE_SEARCH_DEBOUNCE_MS = 120;
+const PLACE_CACHE_LIMIT = 40;
+
+const placeCache = new Map<string, PlaceHit[]>();
 
 function photonLanguage(language: string) {
   const code = language.trim().toLowerCase().split('-')[0] ?? '';
   return PHOTON_LANGS.has(code) ? code : 'default';
+}
+
+function placeCacheKey(query: string, language: string) {
+  return `${photonLanguage(language)}:${query.trim().toLowerCase()}`;
+}
+
+function rememberPlaceHits(key: string, hits: PlaceHit[]) {
+  placeCache.set(key, hits);
+  if (placeCache.size <= PLACE_CACHE_LIMIT) {
+    return;
+  }
+
+  const oldest = placeCache.keys().next().value;
+  if (oldest) {
+    placeCache.delete(oldest);
+  }
 }
 
 function formControl(form: HTMLFormElement, name: string) {
@@ -142,10 +162,17 @@ function clearPlace(form: HTMLFormElement) {
 }
 
 async function searchPlaces(query: string, signal: AbortSignal): Promise<PlaceHit[]> {
+  const language = document.documentElement.lang || 'en';
+  const cacheKey = placeCacheKey(query, language);
+  const cached = placeCache.get(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
   const url = new URL('https://photon.komoot.io/api/');
   url.searchParams.set('q', query);
   url.searchParams.set('limit', '8');
-  url.searchParams.set('lang', photonLanguage(document.documentElement.lang || 'en'));
+  url.searchParams.set('lang', photonLanguage(language));
 
   const response = await fetch(url, { signal });
   if (!response.ok) return [];
@@ -171,6 +198,7 @@ async function searchPlaces(query: string, signal: AbortSignal): Promise<PlaceHi
     if (hits.length === 5) break;
   }
 
+  rememberPlaceHits(cacheKey, hits);
   return hits;
 }
 
@@ -257,15 +285,11 @@ function initPlaceField(form: HTMLFormElement) {
     input.setAttribute('aria-expanded', 'true');
   };
 
-  const onInput = () => {
-    clearPlace(form);
-    setFilled(input);
-    window.clearTimeout(timer);
-    request?.abort();
-
-    const query = input.value.trim();
-    if (query.length < 2) {
-      hideList();
+  const runSearch = (query: string) => {
+    const cacheKey = placeCacheKey(query, document.documentElement.lang || 'en');
+    const cached = placeCache.get(cacheKey);
+    if (cached) {
+      showHits(cached);
       return;
     }
 
@@ -286,7 +310,33 @@ function initPlaceField(form: HTMLFormElement) {
         }
         hideList();
       }
-    }, 250);
+    }, PLACE_SEARCH_DEBOUNCE_MS);
+  };
+
+  const onInput = () => {
+    clearPlace(form);
+    setFilled(input);
+    window.clearTimeout(timer);
+    request?.abort();
+
+    const query = input.value.trim();
+    if (query.length < 2) {
+      hideList();
+      return;
+    }
+
+    runSearch(query);
+  };
+
+  const onFocus = () => {
+    const query = input.value.trim();
+    if (query.length < 2) {
+      return;
+    }
+
+    window.clearTimeout(timer);
+    request?.abort();
+    runSearch(query);
   };
 
   const onBlur = () => {
@@ -298,6 +348,7 @@ function initPlaceField(form: HTMLFormElement) {
   };
 
   input.addEventListener('input', onInput);
+  input.addEventListener('focus', onFocus);
   input.addEventListener('blur', onBlur);
   window.addEventListener('scroll', onScroll, true);
   window.addEventListener('resize', onScroll);
@@ -306,6 +357,7 @@ function initPlaceField(form: HTMLFormElement) {
     window.clearTimeout(timer);
     request?.abort();
     input.removeEventListener('input', onInput);
+    input.removeEventListener('focus', onFocus);
     input.removeEventListener('blur', onBlur);
     window.removeEventListener('scroll', onScroll, true);
     window.removeEventListener('resize', onScroll);

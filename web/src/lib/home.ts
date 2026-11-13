@@ -28,6 +28,8 @@ export type HomeSectionItem = {
   categorySection?: JournalSection;
   categoryLabel?: string;
   location?: Location;
+  /** Projects only — mirrors Sanity `selected` for the active language. */
+  selected?: boolean;
 };
 
 export function getHomeSectionImages(item: HomeSectionItem): HomeSectionImage[] {
@@ -130,6 +132,26 @@ export function getHomeSectionItem(section: HomeSection): HomeSectionItem | null
   }
 
   return section.journal ?? null;
+}
+
+/** Home should not show list-only or empty localized projects. */
+export function isHomeSectionVisible(section: HomeSection): boolean {
+  const item = getHomeSectionItem(section);
+  if (!item) {
+    return false;
+  }
+
+  if (section.sectionType === 'project') {
+    if (item.selected === false) {
+      return false;
+    }
+
+    if (!getHomeSectionCover(item)?.image) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 export function getHomeSectionHref(

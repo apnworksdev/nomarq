@@ -1,4 +1,7 @@
 ---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+import { fetchProjectBySlug, preparedDeeperSections } from '../../../../lib/load-project';
 import ProjectPrivPage from '../../../../views/ProjectPrivPage.astro';
 
 const { slug } = Astro.params;
@@ -6,6 +9,16 @@ const { slug } = Astro.params;
 if (!slug) {
   return Astro.redirect('/es/projects');
 }
+
+const project = await fetchProjectBySlug(slug, 'es');
+
+if (!project) {
+  return Astro.redirect(getRelativeLocaleUrl('es', '/projects'));
+}
+
+if (preparedDeeperSections(project).length === 0) {
+  return Astro.redirect(getRelativeLocaleUrl('es', `/projects/${slug}`));
+}
 ---
 
-<ProjectPrivPage locale="es" slug={slug} />
+<ProjectPrivPage locale="es" slug={slug} project={project} />

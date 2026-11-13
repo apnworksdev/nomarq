@@ -3,9 +3,8 @@ import { getRelativeLocaleUrl } from 'astro:i18n';
 
 import EntryDetailPage from '../components/EntryDetailPage.astro';
 import type { Locale } from '../lib/i18n';
-import { defaultLocale } from '../lib/i18n';
-import { projectBySlugQuery, type Project } from '../lib/queries';
-import { sanity } from '../lib/sanity';
+import { preparedDeeperSections } from '../lib/load-project';
+import type { Project } from '../lib/queries';
 import { getUi } from '../lib/ui';
 import { getUseTitle } from '../lib/use';
 import { formatYear } from '../lib/year';
@@ -13,32 +12,13 @@ import { formatYear } from '../lib/year';
 interface Props {
   locale: Locale;
   slug: string;
+  project: Project;
 }
 
-const { locale, slug } = Astro.props;
+const { locale, slug, project } = Astro.props;
 const copy = getUi(locale);
 
-const project = await sanity.fetch<Project | null>(projectBySlugQuery, {
-  slug,
-  language: locale,
-  defaultLanguage: defaultLocale,
-});
-
-if (!project) {
-  return Astro.redirect(getRelativeLocaleUrl(locale, '/projects'));
-}
-
-const deeperSections = (project.deeperSections ?? [])
-  .map((section) => ({
-    name: section.name?.trim() ?? '',
-    description: section.description?.trim() ?? '',
-    images: (section.images ?? []).filter((image) => image.image),
-  }))
-  .filter((section) => section.name && section.images.length > 0);
-
-if (deeperSections.length === 0) {
-  return Astro.redirect(getRelativeLocaleUrl(locale, `/projects/${slug}`));
-}
+const deeperSections = preparedDeeperSections(project);
 
 const place = project.location?.place?.trim() || undefined;
 const country =

@@ -285,16 +285,26 @@ function initDesktopGallery(
   let thumbs = renderVisibleThumbs(gallery, rotated, VISIBLE_THUMB_MAX, 0);
   let committedIndex = 0;
   let previewIndex: number | null = null;
+  /** After a commit, thumb widths change and the pointer lands on a neighbor — ignore hover until the pointer moves. */
+  let suppressHover = false;
+  let suppressX = 0;
+  let suppressY = 0;
 
   main.style.cursor = 'pointer';
 
-  const commit = (visibleIndex: number) => {
+  const commit = (visibleIndex: number, pointer?: { x: number; y: number }) => {
     rotated = rotateImages(rotated, visibleIndex);
     thumbs = renderVisibleThumbs(gallery, rotated, VISIBLE_THUMB_MAX, 0);
     committedIndex = 0;
     previewIndex = null;
     showImage(main, counter, rotated[0]);
     setActiveThumb(thumbs, 0);
+
+    if (pointer) {
+      suppressHover = true;
+      suppressX = pointer.x;
+      suppressY = pointer.y;
+    }
   };
 
   const preview = (visibleIndex: number) => {
@@ -323,15 +333,19 @@ function initDesktopGallery(
     }
   };
 
-  const onMainClick = () => {
+  const onMainClick = (event: MouseEvent) => {
     if (rotated.length < 2) {
       return;
     }
 
-    commit(1);
+    commit(1, { x: event.clientX, y: event.clientY });
   };
 
   const onThumbEnter = (event: MouseEvent) => {
+    if (suppressHover) {
+      return;
+    }
+
     const thumb = (event.target as Element | null)?.closest<HTMLElement>('[data-entry-thumb]');
     if (!thumb || !gallery.contains(thumb)) {
       return;
@@ -361,7 +375,29 @@ function initDesktopGallery(
       return;
     }
 
-    commit(index);
+    commit(index, { x: event.clientX, y: event.clientY });
+  };
+
+  const onPointerMove = (event: PointerEvent) => {
+    if (!suppressHover) {
+      return;
+    }
+
+    if (Math.hypot(event.clientX - suppressX, event.clientY - suppressY) < 10) {
+      return;
+    }
+
+    suppressHover = false;
+
+    const thumb = (event.target as Element | null)?.closest<HTMLElement>('[data-entry-thumb]');
+    if (!thumb || !gallery.contains(thumb)) {
+      return;
+    }
+
+    const index = Number(thumb.dataset.entryIndex);
+    if (!Number.isNaN(index)) {
+      preview(index);
+    }
   };
 
   const onGalleryLeave = (event: MouseEvent) => {
@@ -370,18 +406,21 @@ function initDesktopGallery(
       return;
     }
 
+    suppressHover = false;
     revert();
   };
 
   main.addEventListener('click', onMainClick);
   gallery.addEventListener('mouseover', onThumbEnter);
   gallery.addEventListener('click', onThumbClick);
+  gallery.addEventListener('pointermove', onPointerMove);
   gallery.addEventListener('mouseleave', onGalleryLeave);
 
   return () => {
     main.removeEventListener('click', onMainClick);
     gallery.removeEventListener('mouseover', onThumbEnter);
     gallery.removeEventListener('click', onThumbClick);
+    gallery.removeEventListener('pointermove', onPointerMove);
     gallery.removeEventListener('mouseleave', onGalleryLeave);
     fadeLayerCleanup(main);
   };

@@ -184,11 +184,17 @@ function initSectionsPanel(root: HTMLElement) {
       return null;
     }
 
-    const anchor = scroll.scrollTop + 1;
+    // Desktop uses page scroll; mobile still uses the nested strip.
+    const nested = scroll.scrollHeight > scroll.clientHeight + 1;
+    const anchor = nested
+      ? scroll.scrollTop + 1
+      : window.scrollY + window.innerHeight * 0.45;
+
     let activeSlide = slides[0];
 
     for (const slide of slides) {
-      if (slide.offsetTop <= anchor) {
+      const top = nested ? slide.offsetTop : slide.getBoundingClientRect().top + window.scrollY;
+      if (top <= anchor) {
         activeSlide = slide;
       } else {
         break;
@@ -241,6 +247,8 @@ function initSectionsPanel(root: HTMLElement) {
   scroll.addEventListener('scroll', onScroll, { passive: true });
   scroll.addEventListener('wheel', onUserScrollIntent, { passive: true });
   scroll.addEventListener('touchstart', onUserScrollIntent, { passive: true });
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('wheel', onUserScrollIntent, { passive: true });
 
   const onRequestClick = async () => {
     if (!requestButton) {
@@ -286,6 +294,8 @@ function initSectionsPanel(root: HTMLElement) {
     scroll.removeEventListener('scroll', onScroll);
     scroll.removeEventListener('wheel', onUserScrollIntent);
     scroll.removeEventListener('touchstart', onUserScrollIntent);
+    window.removeEventListener('scroll', onScroll);
+    window.removeEventListener('wheel', onUserScrollIntent);
     requestButton?.removeEventListener('click', onRequestClick);
   };
 }

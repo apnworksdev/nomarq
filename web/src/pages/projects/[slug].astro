@@ -1,4 +1,7 @@
 ---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+
+import { fetchProjectBySlug } from '../../lib/load-project';
 import ProjectDetailPage from '../../views/ProjectDetailPage.astro';
 
 const { slug } = Astro.params;
@@ -6,6 +9,12 @@ const { slug } = Astro.params;
 if (!slug) {
   return Astro.redirect('/projects');
 }
+
+const project = await fetchProjectBySlug(slug, 'en');
+
+if (!project) {
+  return Astro.redirect(getRelativeLocaleUrl('en', '/projects'));
+}
 ---
 
-<ProjectDetailPage locale="en" slug={slug} />
+<ProjectDetailPage locale="en" slug={slug} project={project} />
