@@ -24,8 +24,18 @@ const localizedDocumentList = (
     .child(
       S.documentTypeList(typeName)
         .title(title)
+        // Default-language docs, plus docs that only exist in another language
+        // (no default-language translation) so they can still be found and deleted.
         .filter(
-          `_type == "${typeName}" && (!defined(language) || language == "${defaultLanguage}")`,
+          `_type == "${typeName}" && (
+            !defined(language) ||
+            language == "${defaultLanguage}" ||
+            count(*[
+              _type == "translation.metadata" &&
+              references(^._id) &&
+              "${defaultLanguage}" in translations[].language
+            ]) == 0
+          )`,
         )
         .defaultOrdering(ordering),
     );

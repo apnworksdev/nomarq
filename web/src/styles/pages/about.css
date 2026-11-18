@@ -29,6 +29,13 @@
   border: 0;
   transform: translate(-50%, -50%);
   pointer-events: none;
+  /* Hidden until the player reports playback, so its loading spinner never shows. */
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+
+.about-hero-embed.is-playing {
+  opacity: 1;
 }
 
 .about-hero-placeholder {

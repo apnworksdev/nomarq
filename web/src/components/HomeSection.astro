@@ -58,7 +58,7 @@ const shortDescriptionParagraphs = item.shortDescription
 
 <article
   class:list={['home-section', layoutClass, { 'is-active': index === 0 }]}
-  style={startingColumn ? { '--home-start-column': startingColumn } : undefined}
+  style={`--section-index: ${index + 1};${startingColumn ? ` --home-start-column: ${startingColumn};` : ''}`}
   data-section-type={section.sectionType}
   data-home-section={index}
   data-home-section-expandable={expandable ? 'true' : 'false'}

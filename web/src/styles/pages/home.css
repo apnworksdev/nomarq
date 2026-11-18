@@ -47,6 +47,7 @@ html[data-home-scroll-restore] {
 
   height: 100svh;
   grid-column: var(--home-start-column, 1) / span var(--home-span, 5);
+  grid-row: var(--section-index, 1);
   position: relative;
 }
 

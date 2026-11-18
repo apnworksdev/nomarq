@@ -41,6 +41,7 @@ export function getVideoEmbed(url: string): VideoEmbed | null {
         playsinline: '1',
         rel: '0',
         modestbranding: '1',
+        enablejsapi: '1',
       });
 
       return {

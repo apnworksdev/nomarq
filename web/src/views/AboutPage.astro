@@ -43,6 +43,7 @@ const privacyHref = getRelativeLocaleUrl(locale, "privacy-policy");
           videoEmbed ? (
             <iframe
               class="about-hero-embed"
+              data-about-hero-embed={videoEmbed.type}
               src={videoEmbed.src}
               title={copy.nav.about}
               allow="autoplay; fullscreen; picture-in-picture"
@@ -275,6 +276,9 @@ const privacyHref = getRelativeLocaleUrl(locale, "privacy-policy");
   import { initAboutContactFormState } from '../lib/about-contact-form';
   import { initAboutGalleryState } from '../lib/about-gallery';
   import { initAboutListHoverState } from '../lib/about-list-hover';
+  import { initAboutHeroVideo } from '../lib/about-hero-video';
+
+  initAboutHeroVideo();
 
   initAboutListHoverState();
   initAboutContactFormState();
