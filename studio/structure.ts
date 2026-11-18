@@ -24,20 +24,53 @@ const localizedDocumentList = (
     .child(
       S.documentTypeList(typeName)
         .title(title)
-        // Default-language docs, plus docs that only exist in another language
-        // (no default-language translation) so they can still be found and deleted.
+        // Spanish-only docs live under "Missing translations".
         .filter(
-          `_type == "${typeName}" && (
-            !defined(language) ||
-            language == "${defaultLanguage}" ||
-            count(*[
-              _type == "translation.metadata" &&
-              references(^._id) &&
-              "${defaultLanguage}" in translations[].language
-            ]) == 0
-          )`,
+          `_type == "${typeName}" && (!defined(language) || language == "${defaultLanguage}")`,
         )
         .defaultOrdering(ordering),
+    );
+
+/** Docs in `language` with no linked translation in `otherLanguage`. */
+const missingTranslationList = (
+  S: Parameters<StructureResolver>[0],
+  typeName: string,
+  title: string,
+  language: string,
+  otherLanguage: string,
+) =>
+  S.listItem()
+    .title(title)
+    .id(`${typeName}-only-${language}`)
+    .child(
+      S.documentTypeList(typeName)
+        .title(title)
+        .filter(
+          `_type == "${typeName}" && language == $language && count(*[
+            _type == "translation.metadata" &&
+            references(^._id) &&
+            $otherLanguage in translations[].language
+          ]) == 0`,
+        )
+        .params({ language, otherLanguage })
+        .defaultOrdering([{ field: 'title', direction: 'asc' }])
+        .canHandleIntent(() => false),
+    );
+
+const missingTranslationsFolder = (S: Parameters<StructureResolver>[0]) =>
+  S.listItem()
+    .title('Missing translations')
+    .id('missing-translations')
+    .child(
+      S.list()
+        .title('Missing translations')
+        .items([
+          missingTranslationList(S, 'project', 'Projects — only in English', 'en', 'es'),
+          missingTranslationList(S, 'project', 'Projects — only in Spanish', 'es', 'en'),
+          S.divider(),
+          missingTranslationList(S, 'journal', 'Expanded Practice — only in English', 'en', 'es'),
+          missingTranslationList(S, 'journal', 'Expanded Practice — only in Spanish', 'es', 'en'),
+        ]),
     );
 
 export const structure: StructureResolver = (S, context) =>
@@ -81,6 +114,7 @@ export const structure: StructureResolver = (S, context) =>
         S,
         context,
       }),
+      missingTranslationsFolder(S),
       S.divider(),
       S.listItem()
         .title('People')
